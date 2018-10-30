@@ -1,2 +1,8 @@
 
 \.DS_Store
+
+master/__pycache__/
+
+simulator/__pycache__/
+
+tests/bluetooth/lightblue-0\.4

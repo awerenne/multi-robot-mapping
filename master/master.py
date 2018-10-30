@@ -23,7 +23,7 @@ class Master:
         
 
         self.free_specific_ports = [33, 45]
-        self.time_limit = 20  # in seconds
+        self.time_limit = 40  # in seconds
 
     
     def get_id(self):

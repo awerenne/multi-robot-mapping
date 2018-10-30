@@ -108,6 +108,7 @@ class Worker:
 
             if situation == "normal":
                 self.actuators.go_straight()
+                self.distance += 1
 
             elif situation == "not-valid":
                 self.actuators.stop()
@@ -133,7 +134,7 @@ class Worker:
                 content_message = {"traveled_distance": self.distance,
                     "taken_direction": new_direction}
                 self.send_msg(self.master_id, "map_info", content_message)
-                self.distance = 0
+                self.distance = 1
 
 
     def direction(self, type_intersection):
