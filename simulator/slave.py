@@ -1,4 +1,3 @@
-from messenger import Messenger
 
 
 class Sensors:
@@ -17,7 +16,7 @@ class Sensors:
 
         if (left_path == 0 and current_path == 1 and
             right_path == 0 and front_path == 1):
-            return "normal"
+            return "default"
         else:
             return "intersection"
 
@@ -72,52 +71,48 @@ class Actuators:
         return None
 
 
-class Worker:
+class Slave:
 
     def __init__(self, maze, id):
         self.stop_signal = False
         self.id = id
         self.sensors = Sensors(maze, id)
         self.actuators = Actuators(maze, id)
-        self.messenger = None
         self.distance = 0
-        
-
-    def get_id(self):
-        return self.id
 
 
-    def connect(self, messenger, master_id):
-        self.master_id = master_id
-        self.messenger = messenger
+    def connect(self, master):
+        self.master = master
+        self.master.connect(self.id)
 
 
-    def receive_msg(self, sender_id, type_message, content_message):
-        if type_message == "instruction":
-            self.stop_signal = True
-
-
-    def send_msg(self, receiver_id, type_message, content_message):
-        self.messenger.send(receiver_id, type_message,
-            content_message)
+    def send_msg(self, type_, content):
+        msg = {
+            "src": self.id,
+            "type": type_,
+            "content": content
+        }
+        return self.master.deliver_msg(msg)
 
 
     def run(self):
         if not self.stop_signal:
             situation = self.sensors.get_situation()
 
-            if situation == "normal":
+            if situation == "default":
                 self.actuators.go_straight()
                 self.distance += 1
 
-            elif situation == "not-valid":
-                self.actuators.stop()
-                self.stop_signal = True
-
             elif situation == "intersection":
                 self.actuators.stop()
+
                 type_intersection = self.sensors.get_type_intersection()
-                new_direction = self.direction(type_intersection)
+                content = {
+                    "type-intersection": type_intersection,
+                    "traveled-distance": self.distance}
+                response = self.send_msg("map-update", content)
+
+                new_direction = response["content"]["new-direction"]
                 if new_direction == "left":
                     self.actuators.go_left()
                 elif new_direction == "straight":
@@ -130,26 +125,20 @@ class Worker:
                     self.actuators.stop()
                     self.stop_signal = True
 
-                # Send message to master (map information)
-                content_message = {"traveled_distance": self.distance,
-                    "taken_direction": new_direction}
-                self.send_msg(self.master_id, "map_info", content_message)
                 self.distance = 1
 
+            elif situation == "unknown":
+                self.actuators.stop()
+                content = {"error-code": "unrecognized-situtation"}
+                response = self.send_msg(self.master_id, "error", content)
+                self.stop_signal = True
 
-    def direction(self, type_intersection):
-        if type_intersection == 'A':
-            return "left"
-        elif type_intersection == 'B':
-            return "left"
-        elif type_intersection == 'C':
-            return "straight"
-        elif type_intersection == 'D':
-            return "left"
-        elif type_intersection == 'E':
-            return "left"
-        elif type_intersection == 'F':
-            return "right"
-        elif type_intersection == 'G':
-            return "uturn"
-        return "stop"
+
+
+
+
+
+
+
+
+

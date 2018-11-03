@@ -1,29 +1,18 @@
 import pygame
 import time
 import math
-# import tkinter as tk
 import sys
-sys.path.append('../master/')
+import numpy as np 
 
+sys.path.append('../master/')
 from maze import Maze
 from random import randint
 from master import Master
-from worker import Worker
-from messenger import Messenger
+from slave import Slave
+from constants import *
 
-#  TO remove
-import numpy as np 
 
-WHITE = 0
-WHITE_RGB = (255, 255, 255)
-BLACK = 1
-BLACK_RGB = (0, 0, 0) 
-RED = 2
-RED_RGB = (255, 255, 0)
-BLUE = 3
-BLUE_RGB = (0, 0, 255)
-GREEN = 4
-GREEN_RGB = (0, 255, 0)
+
 
 def draw_grid(surface, resolution, grid, grid_dimensions):
     # Compute transformation parameters to properly scale and center grid to 
@@ -39,15 +28,15 @@ def draw_grid(surface, resolution, grid, grid_dimensions):
     for y in range(h_grid):
         for x in range(w_grid):
 
-            if grid[y,x] == WHITE:
+            if grid[y,x] == WALL:
                 color = WHITE_RGB
-            elif grid[y,x] == BLACK:
+            elif grid[y,x] == EMPTY:
                 color = BLACK_RGB
-            elif grid[y,x] == RED:
-                color = RED_RGB
-            elif grid[y,x] == BLUE:
+            elif grid[y,x] == SLAVE:
                 color = BLUE_RGB
-            elif grid[y,x] == GREEN:
+            elif grid[y,x] == UNEXPLORED:
+                color = GREY_RGB
+            elif grid[y,x] == PATH:
                 color = GREEN_RGB
             
             top_left_x = (x - w_grid/2)*scaling_factor + center_x
@@ -60,11 +49,12 @@ def start_simulator():
     # Initialize simulation
     maze = Maze.load_from_file("mazes/small.txt")
     master = Master()
-    (worker1_id, worker2_id) = maze.generate_workers(2)
-    worker1 = Worker(maze, worker1_id)
-    worker2 = Worker(maze, worker2_id)
-    messenger1 = Messenger(master, worker1)
-    messenger2 = Messenger(master, worker2)
+    (slave1_id, slave2_id) = maze.generate_slaves(2)
+    slave1 = Slave(maze, slave1_id)
+    slave1.connect(master)
+    slave2 = Slave(maze, slave2_id)
+    slave2.connect(master)
+
 
     # Initialize display
     pygame.init()
@@ -96,8 +86,8 @@ def start_simulator():
             if event.type == pygame.QUIT:  # If user clicked close
                 done = True
 
-        worker1.run()
-        worker2.run()
+        slave1.run()
+        slave2.run()
 
         # Set the backgrounds
         sub_surface_maze.fill(WHITE_RGB)

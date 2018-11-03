@@ -7,16 +7,9 @@
 from numpy.random import random_integers as rand
 from draw_maze import ascii_representation
 from constants import *
-from worker import Worker
+from slave import Slave
 import pygame
 
-
-# Define some colors
-WHITE = 0
-BLACK = 1
-WORKER_1 = 2
-WORKER_2 = 3
-PATH = 4
 
 class Maze:
 
@@ -26,27 +19,27 @@ class Maze:
         self.ncolumns = columns
         self.board = np.zeros((rows, columns), dtype=WALL_TYPE)
         self.board.fill(EMPTY)
-        self.workers_positions = {}
-        self.workers_orientation = {}
+        self.slaves_positions = {}
+        self.slaves_orientation = {}
 
 
     # # # # # # # # # # # BEGIN ADDINGS  # # # # # # # # # # # # # #
 
-    def generate_workers(self, n_workers):
-        worker_id_1 = 0
-        self.workers_positions[worker_id_1] = (5,4)
-        self.workers_orientation[worker_id_1] = 'N'
+    def generate_slaves(self, n_slaves):
+        slave_id_1 = 0
+        self.slaves_positions[slave_id_1] = (11,4)
+        self.slaves_orientation[slave_id_1] = 'N'
 
-        worker_id_2 = 1
-        self.workers_positions[worker_id_2] = (2,9)
-        self.workers_orientation[worker_id_2] = 'W'
+        slave_id_2 = 1
+        self.slaves_positions[slave_id_2] = (2,9)
+        self.slaves_orientation[slave_id_2] = 'W'
 
-        return (worker_id_1, worker_id_2)
+        return (slave_id_1, slave_id_2)
 
 
-    def get_sensors_vector(self, worker_id):
-        (i, j) = self.workers_positions[worker_id]
-        orientation = self.workers_orientation[worker_id]
+    def get_sensors_vector(self, slave_id):
+        (i, j) = self.slaves_positions[slave_id]
+        orientation = self.slaves_orientation[slave_id]
         
         if orientation == 'N':
             left_path = not self.is_wall(i,j-1) and self.in_maze(i,j-1)
@@ -69,8 +62,8 @@ class Maze:
         return (current_path, left_path, right_path, front_path)
 
 
-    def turn_left(self, worker_id):
-        orientation = self.workers_orientation[worker_id]
+    def turn_left(self, slave_id):
+        orientation = self.slaves_orientation[slave_id]
         new_orientation = orientation
         if orientation == 'N':
             new_orientation = 'W'
@@ -81,12 +74,12 @@ class Maze:
         elif orientation == 'E':
             new_orientation = 'N'
 
-        self.workers_orientation[worker_id] = new_orientation
+        self.slaves_orientation[slave_id] = new_orientation
 
 
 
-    def turn_right(self, worker_id):
-        orientation = self.workers_orientation[worker_id]
+    def turn_right(self, slave_id):
+        orientation = self.slaves_orientation[slave_id]
         new_orientation = orientation
         if orientation == 'N':
             new_orientation = 'E'
@@ -97,11 +90,11 @@ class Maze:
         elif orientation == 'E':
             new_orientation = 'S'
 
-        self.workers_orientation[worker_id] = new_orientation
+        self.slaves_orientation[slave_id] = new_orientation
 
 
-    def turn_back(self, worker_id):
-        orientation = self.workers_orientation[worker_id]
+    def turn_back(self, slave_id):
+        orientation = self.slaves_orientation[slave_id]
         new_orientation = orientation
         if orientation == 'N':
             new_orientation = 'S'
@@ -112,13 +105,13 @@ class Maze:
         elif orientation == 'E':
             new_orientation = 'W'
 
-        self.workers_orientation[worker_id] = new_orientation
+        self.slaves_orientation[slave_id] = new_orientation
 
 
 
-    def go_straight(self, worker_id):
-        (i, j) = self.workers_positions[worker_id]
-        orientation = self.workers_orientation[worker_id]
+    def go_straight(self, slave_id):
+        (i, j) = self.slaves_positions[slave_id]
+        orientation = self.slaves_orientation[slave_id]
 
         (new_i, new_j) = (i, j)
         if orientation == 'N':
@@ -130,26 +123,26 @@ class Maze:
         elif orientation == 'E':
             new_j += 1
 
-        self.workers_positions[worker_id] = (new_i, new_j)
+        self.slaves_positions[slave_id] = (new_i, new_j)
 
 
     def get_grid(self):
-        grid = [[WHITE for column in 
+        grid = [[WALL for column in 
             range(self.ncolumns)] for row in range(self.nrows)]
         for row in range(self.nrows):
             for column in range(self.ncolumns):
-                color = BLACK
+                color = EMPTY
 
                 if self.is_wall(row, column):
-                    color = WHITE
+                    color = WALL
 
-                for i in range(len(self.workers_positions)):
-                    position = self.workers_positions[i]
+                for i in range(len(self.slaves_positions)):
+                    position = self.slaves_positions[i]
                     if (row, column) == position:
                         if i == 0:
-                            color = WORKER_1
+                            color = SLAVE
                         else: 
-                            color = WORKER_2
+                            color = SLAVE
                         break 
 
                 grid[row][column] = color
