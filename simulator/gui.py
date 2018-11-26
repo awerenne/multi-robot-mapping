@@ -79,18 +79,14 @@ def start_simulator():
     done = False
 
     # Used to manage how fast the screen updates (per second)
-    frame_rate = 1
+    frame_rate = 2
 
     while not done:
         for event in pygame.event.get():  # User did something
             if event.type == pygame.QUIT:  # If user clicked close
                 done = True
 
-        slave1.run()
-        slave2.run()
-
-        # Set the backgrounds
-        sub_surface_maze.fill(WHITE_RGB)
+        sub_surface_maze.fill(WHITE_RGB) 
         sub_surface_map_1.fill(WHITE_RGB)
         sub_surface_map_2.fill(WHITE_RGB)
 
@@ -116,6 +112,22 @@ def start_simulator():
         screen.blit(sub_surface_map_2, (WIDTH/2, HEIGHT/2))
         pygame.display.flip()
         time.sleep(1./frame_rate)  # Limit frame rate
+
+        # Slaves moving
+        slave1.run()
+
+        sub_surface_maze.fill(WHITE_RGB)
+        pygame.draw.line(sub_surface_maze, GREEN_RGB, (WIDTH/2,0),
+                        (WIDTH/2,WIDTH), 30)
+        (maze_grid, maze_dimensions) = maze.get_grid()
+        draw_grid(sub_surface_maze, (WIDTH/2, HEIGHT), maze_grid, maze_dimensions)
+        screen.blit(sub_surface_maze, (0,0))
+        time.sleep(1./frame_rate)  # Limit frame rate
+        pygame.display.flip()
+
+        slave2.run()
+
+
 
 
 

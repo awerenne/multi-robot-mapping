@@ -52,7 +52,18 @@ temp_map = {
     
 class Mapper:
 
-    def __init__(self):
+    def __init__(self, mapper_id, slave_id, parameters=None):
+        self._id = mapper_id
+        if parameters is None:
+            self.normal_init(slave_id)
+        else:
+            self.merge_init(parameters)
+
+    def __eq__(self, other):
+        return self._id == other._id
+        
+
+    def normal_init(self, slave_id):
         # Referential of map (! origin is at center of grid !)
         self.axis_orientation = {
             "x": 'E',
@@ -61,120 +72,130 @@ class Mapper:
             "-y": 'S'
         }
 
-        # Initial robot pose
-        self.robot_pose = {
+        # Initial slave pose
+        self.slaves = {}
+        self.slaves[slave_id] = {
             "x": 0,
+            "coming_from_x": 0,
             "y": 0,
-            "orientation": 'N'
+            "coming_from_y": 0,
+            "orientation": 'N', 
+            "slave_meeting": False
         }
 
         # Map data structures
         self.first_not_used_id = 0
-        self.current_vertice_id = self.first_not_used_id
+        self.vertices_coords_to_id = {"0,0": self.first_not_used_id}
+        self.vertices_id_to_coords = {self.first_not_used_id: (0,0)}
         self.first_not_used_id += 1
-        self.vertices_coords_to_id = {"0,0": self.current_vertice_id}
-        self.vertices_id_to_coords = {self.current_vertice_id: (0,0)}
         self.edges = {} 
-        self.grid = np.zeros((24,24), WALL_TYPE) 
+        self.dimension = (47,47)
+        self.grid = np.zeros(self.dimension, WALL_TYPE) 
+
+    def get_slave(self, slave_id):
+        return self.slaves[slave_id]
+
+    def merge_init(self, parameters):
+        # Referential of map (! origin is at center of grid !)
+        self.axis_orientation = {
+            "x": 'E',
+            "-x": 'W',
+            "y": 'N',
+            "-y": 'S'
+        }
+
+        # Initial slave pose
+        self.slaves = parameters["slaves"]
+
+        # Map data structures
+        self.first_not_used_id = parameters["first_not_used_id"]
+        self.vertices_coords_to_id = parameters["vertices_coords_to_id"]
+        self.vertices_id_to_coords = parameters["vertices_id_to_coords"]
+        self.edges = parameters["edges"]
+        self.dimension = (47,47)
+        self.grid = parameters["grid"]
 
 
-    def get_robot_pose(self):
-        return (self.axis_orientation, self.robot_pose)
+    def get_parameters(self):
+        parameters = {}
+        parameters["slaves"] = self.slaves
+
+        # Map data structures
+        parameters["first_not_used_id"] = self.first_not_used_id 
+        parameters["vertices_coords_to_id"] = self.vertices_coords_to_id 
+        parameters["vertices_id_to_coords"] = self.vertices_id_to_coords 
+        parameters["edges"] = self.edges 
+        parameters["grid"] = self.grid 
+
+        parameters["dimension"] = self.dimension
+        return parameters
+
+
+    def get_slave_pose(self, slave_id):
+        return (self.axis_orientation, self.slaves[slave_id])
 
 
     def get_grid(self):
-        return (self.grid, (24,24))
+        return (self.grid, self.dimension)
 
 
-    def update_map(self, robot_id, type_intersection, traveled_distance):
-
-        # Compute new position of robot 
-        new_x = self.robot_pose["x"]
-        new_y = self.robot_pose["y"]
-        if self.robot_pose["orientation"] == self.axis_orientation["x"]:
+    def update_map(self, slave_id, type_intersection, traveled_distance):
+        # Compute new position of slave
+        slave = self.slaves[slave_id]
+        new_x = slave["x"]
+        new_y = slave["y"]
+        if slave["orientation"] == self.axis_orientation["x"]:
             new_x += traveled_distance
-        elif self.robot_pose["orientation"] == self.axis_orientation["-x"]:
+        elif slave["orientation"] == self.axis_orientation["-x"]:
             new_x -= traveled_distance
-        elif self.robot_pose["orientation"] == self.axis_orientation["y"]:
+        elif slave["orientation"] == self.axis_orientation["y"]:
             new_y += traveled_distance
         else:
             new_y -= traveled_distance
 
         # Update 
-        new_vertice_id = self.update_vertices(new_x, new_y)
-        self.update_edges(new_vertice_id, traveled_distance)
-        self.update_grid(new_vertice_id, type_intersection)
-        self.robot_pose["x"] = new_x
-        self.robot_pose["y"] = new_y
-        self.current_vertice_id = new_vertice_id
-        return 0
+        slave["coming_from_x"] = slave["x"]
+        slave["coming_from_y"] = slave["y"]
+        slave["x"] = new_x
+        slave["y"] = new_y
+        if not slave["slave_meeting"]:
+            self.update_vertices(slave)
+            is_new_edge = self.update_edges(slave, traveled_distance)
+            if is_new_edge:
+                self.update_grid(slave, type_intersection)
+            slave["slave_meeting"] = False
 
 
-    def get_next_move(self, robot_id):
-        surroundings = self.check_surroundings(self.robot_pose["x"],
-            self.robot_pose["y"])
-        print(surroundings)
-        is_frontier = False
-        is_deadend = False
-        temp_sum = 0
-        for key, value in surroundings.items():
-            temp_sum += value
-            if value == UNEXPLORED:
-                is_frontier = True
-                break
-        if temp_sum == EMPTY: 
-            next_move = "uturn"
-            self.update_orientation(next_move)
-            return next_move
-
-        if is_frontier:
-            next_move = self.frontier_rule(surroundings)
-            self.update_orientation(next_move)
-            return next_move
-
-        frontiers = self.get_frontiers()
-        min_distance = np.inf
-        min_path = []
-        if frontiers == None:
-            return "stop"
-        for frontier in frontiers:
-            (distance, path) = self.get_shortest_path(self.current_vertice_id,
-                frontier)
-            if distance < min_distance:
-                min_path = path
-        if len(min_path) < 2:
-            return "stop"
-
-        next_move = self.edge_to_move((min_path[0], min_path[1]))
-        self.update_orientation(next_move)
-        return next_move
-
-
-    def update_vertices(self, new_x, new_y):
-        key = str(new_x) + "," + str(new_y)
+    def update_vertices(self, slave):
+        key = str(slave["x"]) + "," + str(slave["y"])
         vertice_id = self.vertices_coords_to_id.get(key)
         if vertice_id != None:
             return vertice_id
         new_vertice_id = self.first_not_used_id
         self.vertices_coords_to_id[key] = new_vertice_id 
-        self.vertices_id_to_coords[new_vertice_id] = (new_x, new_y)
+        self.vertices_id_to_coords[new_vertice_id] = (slave["x"], slave["y"])
         self.first_not_used_id += 1
-        return new_vertice_id
 
 
-    def update_edges(self, new_vertice_id, traveled_distance):
-        key = str(self.current_vertice_id) + "," + str(new_vertice_id)
-        inversed_key = str(new_vertice_id) + "," + str(self.current_vertice_id)
+    def update_edges(self, slave, traveled_distance):
+        key_coming_from = str(slave["coming_from_x"]) + "," + str(slave["coming_from_y"])
+        key_current = str(slave["x"]) + "," + str(slave["y"])
+        v_coming_from = self.vertices_coords_to_id[key_coming_from]
+        v_current = self.vertices_coords_to_id[key_current]
+        
+        key = str(v_coming_from) + "," + str(v_current)
+        inversed_key = str(v_current) + "," + str(v_coming_from)
         distance = self.edges.get(key)
         if distance != None:
-            return
+            return False
         self.edges[key] = traveled_distance
         self.edges[inversed_key] = traveled_distance
+        return True
 
 
-    def update_grid(self, new_vertice_id, type_intersection):
-        (start_x, start_y) = self.vertices_id_to_coords[self.current_vertice_id]
-        (end_x, end_y) = self.vertices_id_to_coords[new_vertice_id]
+    def update_grid(self, slave, type_intersection):
+        (start_x, start_y) = (slave["coming_from_x"], slave["coming_from_y"])
+        (end_x, end_y) = (slave["x"], slave["y"])
         (start_i, start_j) = self.get_grid_coords(start_x, start_y)
         (end_i, end_j) = self.get_grid_coords(end_x, end_y)
         a_i = min((start_i, end_i))
@@ -182,7 +203,7 @@ class Mapper:
         a_j = min((start_j, end_j))
         b_j = max((start_j, end_j))
         self.grid[a_i:b_i+1,a_j:b_j+1] = EMPTY
-        neighbors = temp_map[type_intersection][self.robot_pose["orientation"]]
+        neighbors = temp_map[type_intersection][slave["orientation"]]
         for neighbor in neighbors:
             (j, i) = neighbor
             i += end_i
@@ -190,17 +211,16 @@ class Mapper:
             if (self.grid[i,j] == EMPTY):
                 continue
             self.grid[i,j] = UNEXPLORED
-        # print(self.grid[20:30,20:30])
         
 
     def get_grid_coords(self, x, y):
-        (center_i, center_j) = (12,12)
+        (center_i, center_j) = (int(self.dimension[0]/2), int(self.dimension[1]/2))
         i = -y + center_i
         j = x + center_j
         return (int(i), int(j))
 
 
-    def check_surroundings(self, x, y):
+    def check_surroundings(self, x, y, orientation):
         (i, j) = self.get_grid_coords(x, y)
         surroundings = {
             'N': WALL, 
@@ -216,22 +236,22 @@ class Mapper:
         if i+1 <= 50:
             surroundings['S'] = self.grid[i+1,j]
 
-        if self.robot_pose["orientation"] == 'N':
+        if orientation == 'N':
             surroundings["left"] = surroundings.pop('W')
             surroundings["top"] = surroundings.pop('N')
             surroundings["right"] = surroundings.pop('E')
             surroundings["bottom"] = surroundings.pop('S')
-        elif self.robot_pose["orientation"] == 'E':
+        elif orientation == 'E':
             surroundings["left"] = surroundings.pop('N')
             surroundings["top"] = surroundings.pop('E')
             surroundings["right"] = surroundings.pop('S')
             surroundings["bottom"] = surroundings.pop('W')
-        elif self.robot_pose["orientation"] == 'S':
+        elif orientation == 'S':
             surroundings["left"] = surroundings.pop('E')
             surroundings["top"] = surroundings.pop('S')
             surroundings["right"] = surroundings.pop('W')
             surroundings["bottom"] = surroundings.pop('N')
-        elif self.robot_pose["orientation"] == 'W':
+        elif orientation == 'W':
             surroundings["left"] = surroundings.pop('S')
             surroundings["top"] = surroundings.pop('W')
             surroundings["right"] = surroundings.pop('N')
@@ -240,8 +260,8 @@ class Mapper:
         return surroundings
 
 
-    def update_orientation(self, move):
-        current_orientation = self.robot_pose["orientation"]
+    def update_orientation(self, slave_id, move):
+        current_orientation  = self.slaves[slave_id]["orientation"]
         if current_orientation == 'N' and move == "straight":
             new_orientation = 'N'
         elif current_orientation == 'N' and move == "uturn":
@@ -278,7 +298,7 @@ class Mapper:
         elif current_orientation == 'E' and move == "right":
             new_orientation = 'S'
 
-        self.robot_pose["orientation"] = new_orientation
+        self.slaves[slave_id]["orientation"] = new_orientation
 
 
     def frontier_rule(self, surroundings):
@@ -297,7 +317,7 @@ class Mapper:
         frontiers = []
         for v_id, v_coords in self.vertices_id_to_coords.items():
             (x, y) = v_coords
-            surroundings = self.check_surroundings(x, y)
+            surroundings = self.check_surroundings(x, y, 'N')
             for orientation, value in surroundings.items():
                 if value == UNEXPLORED:
                     frontiers.append(v_id)
@@ -314,8 +334,6 @@ class Mapper:
         for key, value in self.edges.items():
             (a, b) = key.split(",")
             E.append([int(a), int(b), value])
-        print(V)
-        print(E)
         solver = Dijkstra(V, E)
         return solver.dijkstra(start, end)   
 

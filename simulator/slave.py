@@ -1,4 +1,4 @@
-
+from constants import *
 
 class Sensors:
 
@@ -17,6 +17,8 @@ class Sensors:
         if (left_path == 0 and current_path == 1 and
             right_path == 0 and front_path == 1):
             return "default"
+        elif (front_path == SLAVE):
+            return "robot-encounter"
         else:
             return "intersection"
 
@@ -103,13 +105,37 @@ class Slave:
                 self.actuators.go_straight()
                 self.distance += 1
 
+            elif situation == "robot-encounter":
+                self.actuators.stop()
+
+                content = {
+                    "other-id": int(not self.id),
+                    "traveled-distance": self.distance
+                }
+                response = self.send_msg("robot-encounter", content)
+
+                new_direction = response["content"]["new-direction"]
+                if new_direction == "left":
+                    self.actuators.go_left()
+                elif new_direction == "straight":
+                    self.actuators.go_straight()
+                elif new_direction == "right":
+                    self.actuators.go_right()
+                elif new_direction == "uturn":
+                    self.actuators.go_back()
+                else:
+                    self.actuators.stop()
+                    self.stop_signal = True
+                self.distance = 1
+
             elif situation == "intersection":
                 self.actuators.stop()
 
                 type_intersection = self.sensors.get_type_intersection()
                 content = {
                     "type-intersection": type_intersection,
-                    "traveled-distance": self.distance}
+                    "traveled-distance": self.distance
+                }
                 response = self.send_msg("map-update", content)
 
                 new_direction = response["content"]["new-direction"]

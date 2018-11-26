@@ -3,12 +3,9 @@ import numpy as np
 # Constants used for maze representation
 WALL_TYPE = np.int8
 WALL = 0
-EMPTY = 1
-SLAVE = 2
-
-
-# Extra constants used for map representation
-UNEXPLORED = 3
+UNEXPLORED = 1
+EMPTY = 2
+SLAVE = 3
 PATH = 4
 
 

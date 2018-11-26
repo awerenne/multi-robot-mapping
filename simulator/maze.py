@@ -40,25 +40,35 @@ class Maze:
     def get_sensors_vector(self, slave_id):
         (i, j) = self.slaves_positions[slave_id]
         orientation = self.slaves_orientation[slave_id]
+        other_slave_id = int(not slave_id)
+        (other_i, other_j) = self.slaves_positions[other_slave_id]
         
         if orientation == 'N':
             left_path = not self.is_wall(i,j-1) and self.in_maze(i,j-1)
             right_path = not self.is_wall(i,j+1) and self.in_maze(i,j+1)
             front_path = not self.is_wall(i-1,j) and self.in_maze(i-1,j)
+            if other_i == i-1 and other_j == j:
+                front_path = SLAVE
         elif orientation == 'E':
             left_path = not self.is_wall(i-1,j) and self.in_maze(i-1,j)
             right_path = not self.is_wall(i+1,j) and self.in_maze(i,j)
             front_path = not self.is_wall(i,j+1) and self.in_maze(i,j+1)
+            if other_i == i and other_j == j+1:
+                front_path = SLAVE
         elif orientation == 'S':
             left_path = not self.is_wall(i,j+1) and self.in_maze(i,j+1)
             right_path = not self.is_wall(i,j-1) and self.in_maze(i,j-1)
             front_path = not self.is_wall(i+1,j) and self.in_maze(i+1,j)
+            if other_i == i+1 and other_j == j:
+                front_path = SLAVE
         elif orientation == 'W':
             left_path = not self.is_wall(i+1,j) and self.in_maze(i+1,j)
             right_path = not self.is_wall(i-1,j) and self.in_maze(i-1,j)
             front_path = not self.is_wall(i,j-1) and self.in_maze(i,j-1)
+            if other_i == i and other_j == j-1:
+                front_path = SLAVE
 
-        current_path = EMPTY
+        current_path = True
         return (current_path, left_path, right_path, front_path)
 
 
@@ -142,7 +152,7 @@ class Maze:
                         if i == 0:
                             color = SLAVE
                         else: 
-                            color = SLAVE
+                            color = PATH
                         break 
 
                 grid[row][column] = color
