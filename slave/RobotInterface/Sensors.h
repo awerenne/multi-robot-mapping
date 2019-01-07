@@ -3,22 +3,25 @@
 
 #include <Arduino.h>
 #include <stdlib.h>
-
 #include <QTRSensors.h>
+#include <math.h>  // floor
 
 
 class Sensors {
  public:
-    Sensors(QTRSensorsRC* qtrrc, int num_sensors, char pin_sharp);
-    void QTRRead();
+    Sensors(const byte* pins_qta, const unsigned int* parameters,
+        const byte& pin_sharp);
+    void Calibrate();
+    void QTRARead();
     bool IsRoadLeft();
     bool IsRoadRight();
-    bool IsRoadMiddle();
+    bool IsRoadHere();
+    bool IsAligned();
     int GetError();
-    float SharpRead();
+    bool IsObstacle();
     
  private:
-    QTRSensorsRC* qtrrc;
+    QTRSensorsAnalog* qtra;
     int num_sensors;
     int position;
     unsigned int* sensor_values;
