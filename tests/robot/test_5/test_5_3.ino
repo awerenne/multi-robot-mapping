@@ -39,8 +39,10 @@ void test_5_3() {
             delay(delay_);
     
             // Compute speed
-            speed_left = alpha * counter_left / ((float) (millis() - previous_time_left));
-            speed_right =  alpha * counter_right / ((float) (millis() - previous_time_right));
+            speed_left = alpha * counter_left /
+                ((float) (millis() - previous_time_left));
+            speed_right =  alpha * counter_right /
+                ((float) (millis() - previous_time_right));
 
             // Display measure to Serial
             String measure = String(previous_time_left) + ";" ;

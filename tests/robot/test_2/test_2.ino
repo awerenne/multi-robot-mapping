@@ -1,3 +1,8 @@
+/*
+  General description of tests
+*/
+
+
 const byte pin_sharp = 6;  // Analog pin 6  
 const byte led_sharp = 7;  // Analog pin 6  
 const int f = 50;  // Frequency

@@ -1,3 +1,8 @@
+/*
+  General description of tests
+*/
+
+
 #include <SoftwareSerial.h>
 
 SoftwareSerial Bluetooth(10, 11);  // RX, TX

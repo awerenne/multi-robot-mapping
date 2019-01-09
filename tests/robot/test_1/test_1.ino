@@ -1,3 +1,8 @@
+/*
+  General description of tests
+*/
+
+
 const byte pin_EN12 = 6;
 const byte pin_IN1 = 4;
 const byte pin_IN2 = 12;

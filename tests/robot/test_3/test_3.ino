@@ -1,3 +1,8 @@
+/*
+  General description of tests
+*/
+
+
 #include <QTRSensors.h>
 
 const unsigned int num_sensors = 5;

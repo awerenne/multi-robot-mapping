@@ -20,9 +20,12 @@ void test_5_2() {
         delay(delay_);
 
         // Compute speed
-        speed_left = alpha * counter_left / ((float) (millis() - previous_time_left));
-        speed_right =  alpha * counter_right / ((float) (millis() - previous_time_right));
-        Serial.println(String(pwm) + " (PWM) - " + String(speed_left) + " (speed left) - " + String(speed_right) + " (speed right)");  
+        speed_left = alpha * counter_left /
+            ((float) (millis() - previous_time_left));
+        speed_right =  alpha * counter_right /
+            ((float) (millis() - previous_time_right));
+        Serial.println(String(pwm) + " (PWM) - " + String(speed_left) +
+            " (speed left) - " + String(speed_right) + " (speed right)");  
     }
     actuators->Stop();
 }

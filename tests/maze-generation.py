@@ -2,11 +2,14 @@
 
 import random
 import numpy as np
+from math import floor
 
-dimension = 12
+dimension = 20
 WALL = 0
 EMPTY = 1
-grid = np.zeros((dimension, dimension))
+d_i = dimension
+d_j = floor(0.7*dimension)
+grid = np.zeros((d_i, d_j))
 
 
 def sample(neighbors):
@@ -18,9 +21,9 @@ def neighbors(cell):
     n = []
     (i, j) = cell
     if i > 1: n.append((i-2,j)) 
-    if i < dimension-2: n.append((i+2,j)) 
+    if i < d_i-2: n.append((i+2,j)) 
     if j > 1: n.append((i,j-2)) 
-    if j < dimension-2: n.append((i,j+2))
+    if j < d_j-2: n.append((i,j+2))
     return n
 
 def link(current_cell, next_cell):
@@ -32,13 +35,13 @@ def link(current_cell, next_cell):
         grid[a_i, int((a_j+b_j)/2)] = EMPTY
     
 
-print()
-print(grid)
-print
+# print()
+# print(grid)
+# print
 
 stack = []
 # Choose a starting cell at random
-current_cell = (random.randint(0, dimension-1), random.randint(0, dimension-1))
+current_cell = (random.randint(0, d_i-1), random.randint(0, d_j-1))
 grid[current_cell[0], current_cell[1]] = EMPTY
 stack.append(current_cell)
 
@@ -66,3 +69,19 @@ while len(stack) > 0:
 print()
 print(grid)
 print
+
+from PIL import Image
+import PIL.ImageOps
+
+img = Image.fromarray(np.uint8(255*grid))
+img = PIL.ImageOps.invert(img)
+img.save('my.png')
+img.show()
+
+
+
+
+
+
+
+

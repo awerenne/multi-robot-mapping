@@ -1,6 +1,7 @@
 void test_9_1() {
-    // Running surélevé to check it is increasing reasonably
-
-
-    // PUT ALL THESE TESTS in test 5 (encoder)
+    // Test voltage varying
+    // How is pwm-speed affected?
+    // What is the threshold when not enough battery anymore and ask recharge
+    // What strategy to decide threshold
+    // How to determine which curve we are on (pwm-speed) 
 }
