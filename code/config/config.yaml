@@ -1,0 +1,19 @@
+map:
+    wall: 0
+    free: 1
+    occupied: 2
+    frontier: 3
+gui:
+    colors:
+        wall: (255, 255, 255)
+        free: (0, 0, 0)
+        robot: (0, 0, 200)
+        direction: (0, 200, 100)
+
+
+
+
+
+
+
+

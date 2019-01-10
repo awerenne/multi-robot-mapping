@@ -1,8 +1,6 @@
 
 \.DS_Store
 
-master/__pycache__/
+code/master/__pycache__/
 
-simulator/__pycache__/
-
-tests/bluetooth/lightblue-0\.4
+code/simulator/__pycache__/

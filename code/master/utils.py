@@ -162,6 +162,22 @@ def transform(ref_slave_id, ref_distance, ref_parameters, ext_other_slave_id, ex
     return parameters
 
 
+#---------------
+class Container(dict):
+    """
+    Dictionary whose keys can be accessed as attributes.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super(Parameters, self).__init__(*args, **kwargs)
+
+    def __getattr__(self, item):
+        if item not in self:
+            return None
+        if type(self[item]) is dict:
+            self[item] = Parameters(self[item])
+        return self[item]
+
 
 
   
