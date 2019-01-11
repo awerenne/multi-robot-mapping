@@ -13,6 +13,12 @@ from yaml import load
 from astar import Astar
 from utils import Container
 
+# TODO
+#  Change id_node to only coords!!
+#  Take into account edge is bidirectional (fix by ordering small to big x+y)
+#   shortest path
+#   add edge
+#   change add operators
 
 #---------------
 class Map:
