@@ -120,8 +120,6 @@ def gui():
                 done = True 
 
         # Process all the new information in the queu (FIFO)
-
-        # Drawing separation lines
         while not q.empty():
             msg = q.get()
             type_, distance = parse_msg(msg)

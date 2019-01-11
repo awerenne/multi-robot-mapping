@@ -128,9 +128,6 @@ def start_simulator():
         slave2.run()
 
 
-
-
-
     # Be IDLE friendly. If you forget this line, the program will 'hang' on exit.
     pygame.quit()
 

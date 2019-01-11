@@ -10,7 +10,6 @@ from yaml import load
         from yaml import CLoader as Loader
     except ImportError:
         from yaml import Loader
-
 from astar import Astar
 from utils import Container
 
@@ -18,64 +17,134 @@ from utils import Container
 #---------------
 class Map:
     """ 
+    TODO: better comments
     Describe class. coordinates are in the form xy center otherwise 
     mentionned.
+    Descirbe all internal variables
+    # Nodes of the map as {id_node: (x,y)}
+    # and helper to help go back from coordinates to node id 
+    # Set of edges as {id_edge: (id_node_a,id_node_b)}
+    # Set of frontiers as {id_node: (boolean vector)}
+    # vector[idx] = True if this orientation of frontier is explored
+    # Structure in the following form 
+    # {id_robot: (x,y,orientation)}
     """
 
-    def __init__(self, init_robots):
-        # Read constants
-        stream = open('../config/config.yaml', 'r')
-        self.constants = Container(load(stream, Loader=Loader)).map
+    def __init__(self, robots):
 
-        # Nodes of the map as {id_node: (x,y)}
-        # and helper to help go back from coordinates to node id 
+        # Read parameters in config file
+        stream = open('../config/config.yaml', 'r')
+        self.parameters = Container(load(stream, Loader=Loader))
+        self.dimensions = self.parameters.map.dimensions
+        self.orientation_str2idx = self.parameters.map.orientation_str2idx
+        self.orientation_idx2str = self.parameters.map.orientation_idx2str
+
+        assert check_valid_positions(robots)
+        self._robots = robots 
+        
         self.nodes2coords = {}
         self.coords2nodes = {}
         self.last_used_id_nodes = -1
-
-        # Set of edges as {id_edge: (id_node_a,id_node_b)}
         self.edges = {}
         self.last_used_id_edges = -1
+        self._frontiers = {}  
 
-        # Bi-directional transformation between orientation string and index 
-        # N <-> 0, E <-> 1, S <-> 2, W <-> 3
-        self.str2or = {'N': 0, 'E': 1, 'S': 2, 'W': 3}
-        self.or2str = {0: 'N', 1: 'E', 2: 'S', 3: 'W'}
-
-        # Set of frontiers as {id_node: (boolean vector)}
-        # vector[idx] = True if this orientation of frontier is explored
-        self.frontiers = {}
-
-        # Structure in the following form 
-        # {id_robot: (x,y,orientation)}
-        self.robots = init_robots  
-
-        # Initialize structures
-        for robot_id, robot_pose in self.robots.items():
+        # Starting positions of robots are first nodes of the map
+        for robot_id, robot_pose in self._robots.items():
             self.add_node(robot_pose)
 
 
+    # ------------
+    @property
+    def robots(self):
+        return self._robots
+
+        
+    # ------------
+    @property
+    def frontiers(self):
+        return list(map(lambda x : self.nodes2coords[x], self._frontiers.keys()))
+
+
     #---------------
+    def check_valid_positions(self, robots):
+        """
+        Checks if robot positions are within the dimensions of the map and
+        if the orientations are defined.
+        """
+
+        for _, robot_pose in self._robots.items():
+            (x, y, orientation) = robot_pose
+            if orientation < 0 or orientation > 3:
+                return False
+            (x, y) = to_axis_xy_non_centered(x, y)
+            (x_max, y_max) = self.dimensions
+            if x < 0 or x > x_max-1:
+                return False
+            if y < 0 or y > y_max-1:
+                return False
+        return True
+
+
+    #---------------
+    def is_existing_node(self, x, y):
+        return self.coords2nodes.get((x,y)) == None  
+
+
+    # ------------
+    def is_frontier(self, node):
+        return self._frontiers[node] != None
+
+
+    #---------------
+    def update_position(self, robot, distance):
+        (x, y, orientation_idx) = self._robots[robot]
+        orientation_str = self.orientation_str2idx[orientation]
+        (new_x, new_y) = (x, y) 
+
+        if orientation_str == 'N':
+            new_y += distance
+        elif orientation_str == 'S':
+            new_y -= distance
+        elif orientation_str == 'E':
+            new_x += distance
+        elif orientation_str == 'W':
+            new_x -= distance
+
+        self._robots[robot] = (new_x, new_y, orientation_idx)
+
+
+    # ------------
+    def update_orientation(self, robot, direction):
+        (x, y, orientation_idx) = self._robots[robot]
+        new_orientation_idx = self.turn_orientation(orientation_idx, direction)
+        self._robots[robot] = (x, y, new_orientation_idx)
+
+
+    #---------------
+    # TODO: add operator
     def add_node(self, x, y, type_):
         """
-        If node already existing than we just update the frontier
+        Add node to the set if non existing and add it as a frontier 
+        node. If the node already exist - a robot travelled already passed this
+        node - we update the frontier. 
         """
 
         (x, y, orientation) = robot_pose
-        new_coords = self.make_key(x,y)
-        new_node = self.coords2nodes.get(new_coords)
-        if new_node != None:  # Node already existing
+        if self.is_existing_node(x, y):  
             self.update_frontier(new_node, orientation)
-            return
+            return self
 
         new_node = last_used_id_nodes + 1
         last_used_id_nodes += 1
-        self.nodes2coords[new_node] = (x, y)
-        self.coords2nodes[new_coords] = new_node
+        self.nodes2coords[new_node] = (x,y)
+        self.coords2nodes[(x,y)] = new_node
         self.add_frontier(new_node, orientation, type_)
+        return self
 
 
     #---------------
+    # TODO: add operator
     def add_frontier(self, node, orientation, type_):
         """
         Save which direction is already explored at frontier
@@ -83,18 +152,18 @@ class Map:
         """
 
         # Create vector and init the coming from direction to True 
-        temp = self.transform_orientation(orientation, "uturn")
+        temp = self.turn_orientation(orientation, "uturn")
         v[temp] = True
 
         # Get which direction are walls
         (wall_left, wall_front, wall_right) = (False, False, False) 
         if type_ == 'B':
             # wall @right
-            temp = self.transform_orientation(orientation, "right")
+            temp = self.turn_orientation(orientation, "right")
             v[temp] = True
         elif type_ == 'C':
             # wall @left
-            temp = self.transform_orientation(orientation, "right")
+            temp = self.turn_orientation(orientation, "right")
             v[temp] = True
         elif type_ == 'D':
             # wall @front
@@ -105,115 +174,96 @@ class Map:
             temp = orientation
             v[temp] = True
             # wall @right
-            temp = self.transform_orientation(orientation, "right")
+            temp = self.turn_orientation(orientation, "right")
             v[temp] = True
         elif type_ == 'F':
             # wall @front
             temp = orientation
             v[temp] = True
             # wall @left
-            temp = self.transform_orientation(orientation, "right")
+            temp = self.turn_orientation(orientation, "right")
             v[temp] = True
         elif type_ == 'G':
             # dead-end (everything explored - not a frontier)
             return 
 
         # Set directions where wall to True
-        self.frontiers[node] = v
+        self._frontiers[node] = v
 
 
     #---------------
     def update_frontier(self, node, orientation):
         """
-        Save new explored directions and check if node is still 
-        a frontier.
+        Update vector of directions with the direction we are coming from e.g.
+            
+            if the robot is oriented to the north while it is
+            arriving at a node, we know the south direction of the
+            frontier node is explored
+
+        Once this is done we check if node is still considered as a frontier
+        (if some directions still need to be explored).
         """
 
-        # Check if frontier already existing
-        v = self.frontiers(node)
-        temp = self.transform_orientation(orientation, "uturn")
-        v[temp] = True
-        if all(v):  # All direction of frontier are explored
-            self.frontiers.pop(node)
-            return
+        v = self._frontiers[node]
+        coming_from = self.turn_orientation(orientation, "uturn")
+        v[coming_from] = True
+        self._frontiers[node] = v
 
-        self.frontiers[node] = v
+        # Check if all direction of frontier are explored
+        if all(v):  
+            self._frontiers.pop(node)
 
-
-    #---------------
-    def make_key(self, x, y):
-        return str(x) + "," + str(y) 
-
-
-    #---------------
-    def update_position(self, robot, distance):
-        (x, y, orientation) = self.robots[robot]
-        string_orientation = self.str2or[orientation]
-        (new_x, new_y) = (x, y) 
-        if string_orientation == 'N':
-            new_y += distance
-        elif string_orientation == 'S':
-            new_y -= distance
-        elif string_orientation == 'E':
-            new_x += distance
-        elif string_orientation == 'W':
-            new_x -= distance
-        self.robots[robot] = (new_x, new_y, orientation)
+        return self
 
 
     # ------------
-    def update_orientation(self, robot, direction):
-        (x, y, orientation) = self.robots[robot]
-        new_orientation = self.transform_orientation(orientation, direction)
-        self.robots[robot] = (x, y, new_orientation)
-
-
-    # ------------
-    def transform_orientation(self, orientation, direction):
+    def turn_orientation(self, orientation_idx, direction):
         if direction == "left":
-            idx = ((idx - 1) + 4) % 4
+            new_orientation_idx = ((orientation_idx - 1) + 4) % 4
         elif direction == "right":
-            idx = ((idx + 1) + 4) % 4
+            new_orientation_idx = ((orientation_idx + 1) + 4) % 4
         elif direction == "uturn":
-            idx = ((idx + 2) + 4) % 4
-        return new_orientation
+            new_orientation_idx = ((orientation_idx + 2) + 4) % 4
+        return new_orientation_idx
 
-
+    
     # ------------
-    def get_pose(self, robot):
-        return self.robots[robot]
+    def get_neighborhood(self, robot):
+        """
+        Neigborhood of a robot is a dictionary of free directions. 
 
-
-    # ------------
-    def get_frontiers(self):
-        return list(map(lambda x : self.nodes2coords[x], frontiers.keys()))
-
-
-    # ------------
-    def is_frontier(self, node):
-        return self.frontiers[node] != None
-
-
-    # ------------
-    def get_unexplored_directions(self, robot):
-        (x, y, orientation) = self.robots[robot]
-        node = self.coords2nodes(self.make_key(x,y))
-        if node == None or self.is_frontier(node) == True:
-            return None
-
-        v = self.frontiers[node]
-        unexplored_directions = ["front", "left", "right"]
-        for i, explored in enumerate(v):
-            if explored:
-                continue
-            elif i == orientation:
-                unexplored_directions.remove("front")
-            elif i+1 == orientation
-                unexplored_directions.remove("left")
-            elif i-1 == orientation
-                unexplored_directions.remove("right")
+            e.g. a robot for which the only paths that are free are left and
+            right will return: 
+            {"left": True, "front": False, "right": True, "back": False}
         
-        return unexplored_directions
+        If not a valid a request we return None.
+        """
+        
+        (x, y, orientation_idx) = self._robots[robot]
+        if self.is_existing_node(x,y):
+            return None
+        node = self.coords2nodes[x,y]
+
+        v = self._frontiers[node]
+        neighborhood = {} 
+
+        # What direction do we need to take to go from start orientation to
+        # an end direction
+        def map_turn_to_direction(start_orientation, end_orientation):
+            if start_orientation == end_orientation:
+                return "front"
+            elif start_orientation == end_orientation+1:
+                return "right"
+            elif start_orientation == end_orientation-1:
+                return "left"
+            return "back"
+
+        for end_orientation_idx, is_explored in enumerate(v):
+            direction = map_turn_to_direction(orientation_idx,
+                    end_orientation_idx)
+            neighborhood[direction] = is_explored
+            
+        return neighborhood
 
 
 

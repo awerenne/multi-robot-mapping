@@ -1,19 +1,24 @@
-map:
-    wall: 0
-    free: 1
-    occupied: 2
-    frontier: 3
-gui:
-    colors:
-        wall: (255, 255, 255)
-        free: (0, 0, 0)
-        robot: (0, 0, 200)
-        direction: (0, 200, 100)
-
-
-
-
-
-
+shared:
+    constants:
+            WALL: 0
+            FREE: 1
+            OCCUPIED: 2
+            FRONTIER: 3
+    map:   
+        orientation_str2idx: {'N': 0, 'E': 1, 'S': 2, 'W': 3}
+        orientation_idx2str: {0: 'N', 1: 'E', 2: 'S', 3: 'W'}
+    gui:
+        colors:
+            wall: (255, 255, 255)
+            free: (0, 0, 0)
+            robot: (0, 0, 200)
+            direction: (0, 200, 100)
+simulation:
+    n_robots: 10
+    dimensions: (600, 800)
+real_world:
+    n_robots: 1
+    dimensions: (600, 800)
+    
 
 
