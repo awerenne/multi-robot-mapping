@@ -2,7 +2,6 @@
 
 
 //============
-
 Actuators::Actuators(const byte *pins, const float* parameters=NULL) { 
     this->pin_IN1 = pins[0]; 
     this->pin_IN2 = pins[1];
@@ -45,8 +44,8 @@ Actuators::Actuators(const byte *pins, const float* parameters=NULL) {
 
 
 //============
-
-void Actuators::FollowLine(const int& error) { // Init problem
+// PID controll and new line trick (explain more)
+void Actuators::FollowLine(const int& error) { 
     this->accumulated_error += error;
     if (this->new_line) {
         this->pid_value = this->kp * error;
@@ -63,17 +62,15 @@ void Actuators::FollowLine(const int& error) { // Init problem
 
 
 //============
-
 void Actuators::OneInch() {
     this->UpdateSpeed(60, 60);
-    delay(400);
+    delay(850);
     this->Stop();
     this->new_line = true;
 }
 
 
 //============
-
 void Actuators::Stop() {
     digitalWrite(this->pin_IN1, HIGH);
     digitalWrite(this->pin_IN2, HIGH); 
@@ -83,7 +80,6 @@ void Actuators::Stop() {
 
 
 //============
-
 void Actuators::Turn(const bool& clockwise, const bool& full, Sensors* sensors=NULL) {
     int n_quarters = full ? 2 : 1;
     for (int i = 0; i < n_quarters; ++i) {
@@ -91,7 +87,7 @@ void Actuators::Turn(const bool& clockwise, const bool& full, Sensors* sensors=N
             this->UpdateSpeed(65, -65);
         else
             this->UpdateSpeed(-65, 65);
-        delay(550);  // Time to do half turn
+        delay(450);  // Time to do slightly less than half turn
     }
     if (sensors)
         this->TurnToLine(clockwise, sensors);
@@ -101,24 +97,21 @@ void Actuators::Turn(const bool& clockwise, const bool& full, Sensors* sensors=N
 
 
 //============
-
+// Continue to turn until line is in centered (explain more)
 void Actuators::TurnToLine(const bool& clockwise, Sensors* sensors) {
     if (clockwise)
         this->UpdateSpeed(60, -60);
     else
         this->UpdateSpeed(-60, 60);
-    int error;
     do {
-        sensors->QTRARead();
-        error = sensors->GetError();
-    } while (error < -1000 || error > 1000);
+        delay(5);
+        // sensors->SpecialRead();
+    } while (!sensors->IsAligned());
 }
 
 
 //============
-
 void Actuators::UpdatePWM(const int& pwm_left, const int& pwm_right) {
-    // Update left motor
     if (pwm_right >= 0) {
         digitalWrite(this->pin_IN1, HIGH);
         digitalWrite(this->pin_IN2, LOW); 
@@ -129,7 +122,6 @@ void Actuators::UpdatePWM(const int& pwm_left, const int& pwm_right) {
     }
     analogWrite(this->pin_EN12, abs(pwm_right));
 
-    // Update right motor
     if (pwm_left >= 0) {
         digitalWrite(this->pin_IN3, HIGH);
         digitalWrite(this->pin_IN4, LOW); 
@@ -143,39 +135,22 @@ void Actuators::UpdatePWM(const int& pwm_left, const int& pwm_right) {
 
 
 //============
-
 void Actuators::UpdateSpeed(const float& speed_left, const float& speed_right) {
     int pwm_left = speed_left;
     int pwm_right;
     if (speed_right < 0)
-        pwm_right = speed_right - 12;
+        pwm_right = speed_right - 12;  // TODO: change to regression functions
     else 
-        pwm_right = speed_right + 12;
+        pwm_right = speed_right + 12;  // TODO: change to regression functions
     this->UpdatePWM(pwm_left, pwm_right);
 }
 
 
-//============
-
-float Actuators::GetDistance() {
-    return this->distance;
-}
 
 
-//============
 
-void Actuators::UpdateDistance(const float& velocity_left,
-        const float& velocity_right) {
-    // Returns the norm of the single velocity vector taken for a point-model
-    // float distance_wheel_to_center = this->kInterWheelDistance/2.;
-    // float angle_center_to_left = atan(velocity_left/distance_wheel_to_center);
-    // float angle_center_to_right = atan(velocity_right/distance_wheel_to_center);
-    // float l1 = sqrt(pow(velocity_left, 2) + pow(angle_center_to_left, 2));
-    // float l2 = sqrt(pow(velocity_right, 2) + pow(angle_center_to_right, 2));
-    // float norm_velocity_from_center = sqrt(pow(l1, 2) + pow(l2, 2) +
-    //         2*l1*l2*cos(angle_center_to_left + angle_center_to_right));
-    // this->distance += norm_velocity_from_center * this->kTimeStepUpdate;
-}
+
+
 
 
 

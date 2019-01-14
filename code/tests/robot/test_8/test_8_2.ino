@@ -7,13 +7,10 @@
 //============
 void test_8_2() {
 
-    Serial.println("1");
     sensors->AutomaticCalibrate();
-    Serial.println("2");
 
     int iteration = 0;
     while (true) {
-        Serial.println("3");
         bool new_msg = messenger->ReceiveMessage();  
         if (new_msg == true) {
             messenger->ParseInstruction();
@@ -21,12 +18,10 @@ void test_8_2() {
             iteration = 0;
         }
         
-        Serial.println("4");
         if (instruction == 0)
             actuators->Stop();
 
         // Follow line until intersection
-        Serial.println("5");
         if (instruction == 1) {
             sensors->QTRARead();
             int error = sensors->GetError();
@@ -40,7 +35,6 @@ void test_8_2() {
         }
     }
 
-    Serial.println("10");
     byte type_ = type_intersection();
     messenger->SendMessage(String(type_));
     left_hand_rule(type_);
@@ -69,14 +63,14 @@ bool is_intersection() {
 byte type_intersection() {
     unsigned int* temp = sensors->GetQTRValues();
     bool is_road_left = (temp[5] > 800);
-    bool is_road_here = (temp[1] > 800 || temp[2] > 800 || temp[3] > 800 || temp[4] > 800);
+    bool is_road_here = (temp[2] > 800 || temp[3] > 800);
     bool is_road_right = (temp[0] > 800);
 
     one_inch();
     sensors->QTRARead();
 
     temp = sensors->GetQTRValues();
-    is_road_front = (temp[1] > 800 || temp[2] > 800 || temp[3] > 800 || temp[4] > 800);
+    is_road_front = (temp[2] > 800 || temp[3] > 800);
 
     if (is_road_left && is_road_front && is_road_right)
         return 0;

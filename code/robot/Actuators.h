@@ -2,10 +2,13 @@
 #define ACTUATORS_H_
 
 #include <Arduino.h>
+
 #include "Sensors.h"
 
+class Sensors;  // To avoid problem of recursive definition
 
 class Actuators {
+    
  public:
     Actuators(const byte *pins, const float* parameters = NULL);
     void FollowLine(const int& error);
@@ -14,7 +17,6 @@ class Actuators {
     void Turn(const bool& clockwise, const bool& full, Sensors* sensors=NULL);
     void UpdateSpeed(const float& velocity_left, const float& velocity_right); 
     void UpdatePWM(const int& pwm_left, const int& pwm_right);
-    float GetDistance();
     
 
  private:
@@ -25,7 +27,6 @@ class Actuators {
     float distance;
 
     void TurnToLine(const bool& clockwise, Sensors* sensors);
-    void UpdateDistance(const float& velocity_left, const float& velocity_right);
 };
 
 #endif  // ACTUATORS_H_

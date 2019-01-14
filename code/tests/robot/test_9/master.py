@@ -162,13 +162,13 @@ def gui(ser):
             msg = q.get()
             type_, distance = parse_msg(msg)
             print(msg)
-            current_position = update_position(distance,
+            current_position = update_position(distance*2,
                     ORIENTATION_int2str[orientation_int], previous_position)
             if type_ != 'Z':
                 orientation = update_orientation(type_, orientation_int)
             # TODO: obstacle (type == Y)
-            pygame.draw.line(screen_surface, BLACK_RGB, previous_position,
-                            current_position, 5)
+            pygame.draw.line(surface_maze, BLACK_RGB, previous_position,
+                            current_position, 10)
             previous_position = current_position
 
         # Buttons

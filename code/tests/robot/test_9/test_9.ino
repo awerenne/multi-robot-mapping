@@ -1,5 +1,5 @@
 /*
-    Description.
+    Test autonomous exploration of maze by robot (Algorithm: left-hand rule)
 */
 
 
@@ -43,7 +43,8 @@ void setup() {
 
 //============
 void loop() {
-    // Test autonomous exploration of maze by robot (Algorithm: left-hand rule)
+    
+    sensors->AutomaticCalibrate();
 
     unsigned int iteration = 0;
     float distance = 0;
@@ -59,19 +60,20 @@ void loop() {
             digitalWrite(led_running, LOW);
         }
         else {  // Maze exploration
-
             digitalWrite(led_running, HIGH);
+            sensors->InitEncoders();
             sensors->QTRARead();
             int error = sensors->GetError();
             actuators->FollowLine(error);
+            delay(10);
             
             // Compute distance
-            distance = 2;
+            distance += sensors->GetDistance();
 
             // Check if intersection
-            if ((iteration%2) == 0 && sensors->IsIntersection()) {
+            if ((iteration%2) == 0 && sensors->IsIntersection(actuators)) {
                 byte type_ = sensors->TypeIntersection(actuators);
-                String msg = String(type_) + ";" + String(distance);
+                String msg = String(type_) + ";" + String(((int) distance));
                 messenger->SendMessage(msg);
                 left_hand_rule(type_);
                 distance = 0;
@@ -80,19 +82,17 @@ void loop() {
             // Check if obstacle
             else if ((iteration%5) == 0 && sensors->IsObstacle()) {
                 actuators->Stop();
-                String msg = "Y;" + String(distance);
+                String msg = "Y;" + String(((int) distance));
                 messenger->SendMessage(msg);
                 instruction = 0;
             }
 
             // Every now and then send update of travelled distance
             else if ((iteration%100) == 0) {
-                String msg = "Z;" + String(distance);
+                String msg = "Z;" + String(((int) distance));
                 messenger->SendMessage(msg);
                 distance = 0;
             }
-            
-            delay(10);
         }
         distance = 0;
         iteration++;

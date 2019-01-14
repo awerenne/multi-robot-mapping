@@ -8,19 +8,7 @@
 void test_8_3() {
     sensors->AutomaticCalibrate();
 
-    float ground_truth = 0;
-    for (int ground_truth = 5; ground_truth < 30; ground_truth+=5) {
-        run(ground_truth);
-        flicker_led(led_running, 15, 800);
-        digitalWrite(led_running, LOW); 
-    }
-}
-
-
-//============
-void run(float ground_truth) {
     float distance = 0;
-
     while (true) {
         bool new_msg = messenger->ReceiveMessage();  
         if (new_msg == true) {
@@ -48,7 +36,7 @@ void run(float ground_truth) {
 
             // Check if intersection
             if (is_intersection()) {
-                String msg = String(ground_truth) + ";" + String(speed) + ";" + String(diff_time);
+                String msg = String(distance);
                 messenger->SendMessage(msg);
                 return;
             }
@@ -59,5 +47,6 @@ void run(float ground_truth) {
 
 //============
 float compute_distance_naive(float speed, unsigned long diff_time) {
-    return (speed * ((float) diff_time));
+    return (speed * ((float) diff_time))/7474.322;  // This factor was not computed but simply by matching to results
+    // TODO: understand 
 }

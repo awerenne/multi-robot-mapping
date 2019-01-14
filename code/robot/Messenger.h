@@ -2,11 +2,12 @@
 #define MESSENGER_H_
 
 
-#include <Arduino.h>
-#include <SoftwareSerial.h>
+#include "Arduino.h"
+#include "SoftwareSerial.h"
 
 
 class Messenger {
+ 
  public:
     Messenger(const byte* pins);
     void SendMessage(const String& msg);
@@ -35,13 +36,6 @@ class Messenger {
     boolean newData = false;
 
     // Checksum, parity etc
-
 };
 
 #endif  // MESSENGER_H_
-
-
-
-
-
-// variables to hold the parsed data

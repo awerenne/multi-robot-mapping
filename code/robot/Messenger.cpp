@@ -1,10 +1,14 @@
-#include "Messenger.h"
+/* 
+    Most of this code was borrowed from 
+        http://forum.arduino.cc/index.php?topic=396450
+    and adapted to my needs. Many thanks to the author!
+*/
 
-// Code from : http://forum.arduino.cc/index.php?topic=396450, adapted to my needs
+
+#include "Messenger.h"
 
 
 //============
-
 Messenger::Messenger(const byte* pins) {
     this->blt = new SoftwareSerial(pins[0], pins[1]);  // RX, TX
     while (!this->blt) continue;  // Wait for connection
@@ -13,7 +17,6 @@ Messenger::Messenger(const byte* pins) {
 
 
 //============
-
 bool Messenger::ReceiveMessage() {
     static boolean recvInProgress = false;
     static byte ndx = 0;
@@ -49,7 +52,6 @@ bool Messenger::ReceiveMessage() {
 
 
 //============
-
 void Messenger::ParseInstruction() {      // split the data into its parts
     strcpy(this->tempChars, this->receivedChars);
 
@@ -69,7 +71,6 @@ void Messenger::ParseInstruction() {      // split the data into its parts
 
 
 //============
-
 void Messenger::ParsePIDParameters() {      // split the data into its parts
     strcpy(this->tempChars, this->receivedChars);
 
@@ -92,7 +93,6 @@ void Messenger::ParsePIDParameters() {      // split the data into its parts
 
 
 //============
-
 void Messenger::SendMessage(const String& msg) {
     String datagram = "<" + String(this->id_slave) + "," +
         String(this->seq_number_slave) + "," + msg + ">\n";
@@ -102,28 +102,24 @@ void Messenger::SendMessage(const String& msg) {
 
 
 //============
-
 int Messenger::GetInstruction() {
     return this->instruction;
 }
 
 
 //============
-
 float Messenger::GetKp() {
     return this->kp;
 }
 
 
 //============
-
 float Messenger::GetKd() {
     return this->kd;
 }
 
 
 //============
-
 float Messenger::GetKi() {
     return this->ki;
 }
