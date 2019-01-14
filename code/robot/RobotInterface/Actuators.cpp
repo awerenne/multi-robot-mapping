@@ -104,9 +104,9 @@ void Actuators::Turn(const bool& clockwise, const bool& full, Sensors* sensors=N
 
 void Actuators::TurnToLine(const bool& clockwise, Sensors* sensors) {
     if (clockwise)
-        this->UpdateSpeed(50, -50);
+        this->UpdateSpeed(60, -60);
     else
-        this->UpdateSpeed(-50, 50);
+        this->UpdateSpeed(-60, 60);
     int error;
     do {
         sensors->QTRARead();

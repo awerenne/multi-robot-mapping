@@ -1,8 +1,26 @@
-void test_8_3() {
-    // Test autonomous exploration of maze by robot (Algorithm: left-hand rule)
+/*
+    Test distance ground truth versus estimated
+    compare several algorithms (naive, ...)
+*/
 
-    unsigned int iteration = 0;
+
+//============
+void test_8_3() {
+    sensors->AutomaticCalibrate();
+
+    float ground_truth = 0;
+    for (int ground_truth = 5; ground_truth < 30; ground_truth+=5) {
+        run(ground_truth);
+        flicker_led(led_running, 15, 800);
+        digitalWrite(led_running, LOW); 
+    }
+}
+
+
+//============
+void run(float ground_truth) {
     float distance = 0;
+
     while (true) {
         bool new_msg = messenger->ReceiveMessage();  
         if (new_msg == true) {
@@ -10,56 +28,36 @@ void test_8_3() {
             instruction = messenger->GetInstruction();
         }
     
-        if (instruction == 0) {  // Stop 
-            actuators->Stop();
-            digitalWrite(led_running, LOW);
-        }
-        else {  // Maze exploration
-            counter_left = 0;
-            previous_time_left = millis();
-            counter_right = 0;
-            previous_time_right = millis();
-
+        // Follow line
+        if (instruction != 0) {  
+            float start_time = millis();
+            sensors->InitEncoders();
+            
             digitalWrite(led_running, HIGH);
             sensors->QTRARead();
             int error = sensors->GetError();
             actuators->FollowLine(error);
-            
-            // Compute speed
-            diff_time = (float) (millis() - previous_time_left)
-            speed_left = alpha * counter_left / diff_time;
-            speed_right =  alpha * counter_right / diff_time;
+            delay(10);
 
             // Compute distance
-            float speed = 0.5 * (speed_left + speed_right);
+            float speed_left = sensors->GetSpeedLeft();
+            float speed_right = sensors->GetSpeedRight();
+            float diff_time = (float) (millis() - start_time);
+            float speed = (speed_left + speed_right)/2;
             distance += compute_distance_naive(speed, diff_time); 
 
             // Check if intersection
-            if ((iteration%2) == 0 && is_intersection()) {
-                byte type_ = type_intersection();
-                String msg = String(type_) + ";" + String(distance);
+            if (is_intersection()) {
+                String msg = String(ground_truth) + ";" + String(speed) + ";" + String(diff_time);
                 messenger->SendMessage(msg);
-                left_hand_rule(type_);
+                return;
             }
-
-            // Check if obstacle
-            else if ((iteration%5) == 0 && sensors->IsObstacle()) {
-                actuators->Stop();
-                String msg = "Y" + ";" + String(distance);
-                messenger->SendMessage(msg);
-                instruction = 0;
-            }
-
-            // Every now and then send update of travelled distance
-            else if ((iteration%100) == 0) {
-                String msg = "Z" + ";" + String(distance);
-                messenger->SendMessage(msg);
-                distance = 0;
-            }
-            
-            delay(10);
         }
-        distance = 0;
-        iteration++;
     }
+}
+
+
+//============
+float compute_distance_naive(float speed, unsigned long diff_time) {
+    return (speed * ((float) diff_time));
 }

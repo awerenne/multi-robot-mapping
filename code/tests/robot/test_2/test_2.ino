@@ -1,5 +1,5 @@
 /*
-  General description of tests
+    General description of tests
 */
 
 
@@ -14,7 +14,6 @@ const bool light_on = true;
 
 
 //============
-
 void setup() {
     pinMode(pin_sharp, INPUT);
     pinMode(led_sharp, OUTPUT);
@@ -26,8 +25,20 @@ void setup() {
 
 
 //============
-
 void loop() {
     test_2_1();
     exit(0);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,3 +1,8 @@
+"""
+    Description.
+"""
+
+
 import serial
 import time
 
@@ -6,7 +11,7 @@ baud_rate = 9600;
 ser = serial.Serial(serial_port, baud_rate)
 
 
-######################@
+# ------------
 def test_4_1():
     delay = 0.5 
     T = 20
@@ -23,7 +28,7 @@ def test_4_1():
         t += delay
 
 
-######################@
+# ------------
 def test_4_2():
     write_to_file_path = "measures_test_2.csv";
     output_file = open(write_to_file_path, "w+");
@@ -49,7 +54,19 @@ def test_4_2():
         # output_file.write(output);
 
 
-######################@
+# ------------
+if __name__ == "_main__":
+    test_4_1()
+    # test_4_2()
 
-test_4_1()
-# test_4_2()
+
+
+
+
+
+
+
+
+
+
+    

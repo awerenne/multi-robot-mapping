@@ -6,7 +6,8 @@ import serial
 import subprocess
 
 def read_data():
-    serial_port = '/dev/cu.wchusbserial14120';
+    # serial_port = '/dev/cu.wchusbserial14120';
+    serial_port = '/dev/cu.wchusbserial14130';
     baud_rate = 9600; #In arduino, Serial.begin(baud_rate)
     write_to_file_path = "measures.txt";
 

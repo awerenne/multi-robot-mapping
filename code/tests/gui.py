@@ -90,6 +90,7 @@ def gui():
 
     WIDTH = 600
     HEIGHT = 400
+    WIDTH_USER = 200
     previous_position = (WIDTH/2, HEIGHT/2)
     current_position = (WIDTH/2, HEIGHT/2)
     orientation = 'N'
@@ -97,13 +98,25 @@ def gui():
     or2idx = {'N': 0, 'E': 1, 'S': 2, 'W': 3}
     WHITE_RGB = (255, 255, 255)
     BLACK_RGB = (0, 0, 0) 
+    BLUE_RGB = (0, 50, 200) 
+    RED_RGB = (200, 50, 0) 
+    GREEN_RGB = (50, 200, 0)
+    
 
     # Initialize display
     pygame.init()
-    screen_resolution = (WIDTH, HEIGHT)
+    FONT = pygame.font.Font("freesansbold.ttf", 25)
+    screen_resolution = (WIDTH + WIDTH_USER, HEIGHT)
     screen = pygame.display.set_mode(screen_resolution)
     screen_surface = pygame.Surface(screen_resolution)
-    screen_surface.fill(WHITE_RGB)
+    surface_maze = screen_surface.subsurface(pygame.Rect(0, 0,
+                            WIDTH, HEIGHT))
+    surface_maze.fill(WHITE_RGB)
+    surface_user = screen_surface.subsurface(pygame.Rect(WIDTH, 0,
+                            WIDTH_USER, HEIGHT))
+    surface_user.fill(BLUE_RGB)
+    button_run = pygame.Rect(50, 120, 100, 50)
+    button_stop = pygame.Rect(50, 200, 100, 50)
 
     # Set title of screen
     pygame.display.set_caption("Map")
@@ -117,7 +130,13 @@ def gui():
     while not done:
         for event in pygame.event.get():  # User did something
             if event.type == pygame.QUIT:  # If user clicked close
-                done = True 
+                done = True
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:  # 1 is the left mouse button
+                    if button_run.collidepoint(list(map(lambda a,b: a-b, event.pos, (WIDTH, 0)))):
+                        print("run")
+                    if button_stop.collidepoint(list(map(lambda a,b: a-b, event.pos, (WIDTH, 0)))):
+                        print("stop")
 
         # Process all the new information in the queu (FIFO)
         while not q.empty():
@@ -128,14 +147,24 @@ def gui():
             if type_ != 'Z':
                 orientation = update_orientation(type_, orientation,
                         or2idx, idx2or)
-            print(orientation)
-            pygame.draw.line(screen_surface, BLACK_RGB, previous_position,
+            pygame.draw.line(surface_maze, BLACK_RGB, previous_position,
                             current_position, 5)
             previous_position = current_position
 
+        # Buttons
+        pygame.draw.rect(surface_user, RED_RGB, button_run)
+        text_surf = FONT.render("Run", True, WHITE_RGB)
+        text_rect = text_surf.get_rect(center=(10, 10))
+        surface_user.blit(text_surf, (75, 135))
+
+        pygame.draw.rect(surface_user, RED_RGB, button_stop)
+        text_surf = FONT.render("Stop", True, WHITE_RGB)
+        text_rect = text_surf.get_rect(center=(50, 25))
+        surface_user.blit(text_surf, (75, 215))
+
         # Update screen
         screen.blit(screen_surface, (0,0))
-        pygame.display.flip()
+        pygame.display.update()
         time.sleep(1./frame_rate)  # Limit frame rate
 
     # Be IDLE friendly. If you forget this line, the program will 'hang' on exit.

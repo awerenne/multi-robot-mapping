@@ -1,3 +1,9 @@
+/*
+    Description.
+*/
+
+
+//============
 void test_6_2() {
     while (true) {
         bool new_msg = messenger->ReceiveMessage();  
@@ -25,3 +31,9 @@ void test_6_2() {
         delay(250);
     }
 }
+
+
+
+
+
+

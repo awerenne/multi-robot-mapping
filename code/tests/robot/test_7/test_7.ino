@@ -1,8 +1,12 @@
+/*
+    Test PID controller to follow a simple line forming an arc.
+*/
+
+
 #include <Messenger.h>
 #include <Actuators.h>
 #include <Sensors.h>
 
-// Test PID controller to follow a simple line forming an arc
 
 const byte pins_bluetooth[2] = {10, 11};  // RX, TX
 Messenger* messenger = new Messenger(pins_bluetooth);
@@ -10,9 +14,10 @@ Messenger* messenger = new Messenger(pins_bluetooth);
 const byte pins_actuators[6] = {4,12,6,7,8,9};  // IN1, IN2, EN12, IN3, IN4, EN34
 Actuators* actuators = new Actuators(pins_actuators);
 
-const byte pins_qta[6] = {0, 1, 2, 3, 4, 5};
+const byte pins_qta[6] = {0, 1, 2, 3, 4, 5};  // Analog --> Change to 14-21 range
 const unsigned int parameters_qta[3] = {5, 6, 10};  // Emitter pin (digital PWM), number of sensors, number of samples to average per sensor reading
-const unsigned char pin_sharp = 6;
+const byte pin_sharp = 6;
+const byte pins_encoder[2] = {3, 2};
 Sensors* sensors = new Sensors(pins_qta, parameters_qta, pin_sharp);
 
 const byte led_running = 13;  // Used to signal when robot is calibrating IR sensors, and when the robot is running
@@ -24,7 +29,6 @@ byte instruction = -1; // 0 stop, 1 straight, 2 turn left, 3 turn right, 4 turn 
 
 
 //============
-
 void setup() {
     Serial.begin(9600);
     while(!Serial) continue; // Wait for init
@@ -38,7 +42,6 @@ void setup() {
 
 
 //============
-
 void loop() {
     bool new_msg = messenger->ReceiveMessage();  
     if (new_msg == true) {
@@ -96,7 +99,6 @@ void loop() {
 
 
 //============
-
 void flicker_led(byte led, unsigned int n, unsigned int delay_) {
     for (int i = 0; i < n; i++) {
         digitalWrite(led, LOW);
@@ -105,3 +107,14 @@ void flicker_led(byte led, unsigned int n, unsigned int delay_) {
         delay(delay_);
     }
 }
+
+
+
+
+
+
+
+
+
+
+

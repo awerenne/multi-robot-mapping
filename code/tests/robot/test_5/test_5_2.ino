@@ -1,3 +1,9 @@
+/*
+    Description.
+*/
+
+
+//============
 void test_5_2() {
     // Test to check if encoder is worker well,
     // counter must increaser when speed increases
@@ -29,3 +35,12 @@ void test_5_2() {
     }
     actuators->Stop();
 }
+
+
+
+
+
+
+
+
+

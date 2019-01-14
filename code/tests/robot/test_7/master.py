@@ -1,12 +1,18 @@
+"""
+    Description.
+"""
+
+
 import serial
 import time
+
 
 serial_port = '/dev/cu.DSDTECHHC-05-DevB';
 baud_rate = 9600; 
 ser = serial.Serial(serial_port, baud_rate)
 
 
-######################
+# ------------
 def send_pid():
     kp = 0
     kd = 0
@@ -22,6 +28,7 @@ def send_pid():
                 "," + str(ki) + ">"
         ser.write(msg.encode())
 
-######################
 
-send_pid()
+# ------------
+if __name__ == "__main__":
+    send_pid()

@@ -1,75 +1,150 @@
-void test_8_2() {
-    // Test distance ground truth versus estimated
-    // compare several algorithms (naive, ...)
-
-    float distance = 0;
-    float ground_truth = 0;
-    unsigned int delay_ = 10;
-    float speed_left = 0, speed_right = 0;
-    unsigned long previous_time_left = millis();
-    unsigned long previous_time_right = millis();
-    unsigned long diff_time = millis() - previous_time_left;
-    
-    for (int ground_truth = 5; ground_truth < 30; ground_truth++)
-        run(ground_truth);
-}
+/*
+    Test where the goal is to follow a straight line until intersection is detected, determine which intersection and turn to desired segment.
+    Problem: Works at first intersection but when restart never sees second intersection!!!
+*/
 
 
 //============
+void test_8_2() {
 
-void run(float ground_truth) {
+    Serial.println("1");
+    sensors->AutomaticCalibrate();
+    Serial.println("2");
+
+    int iteration = 0;
     while (true) {
+        Serial.println("3");
         bool new_msg = messenger->ReceiveMessage();  
         if (new_msg == true) {
             messenger->ParseInstruction();
             instruction = messenger->GetInstruction();
+            iteration = 0;
         }
-    
-        // Follow line
-        if (instruction != 0) {  
-            counter_left = 0;
-            previous_time_left = millis();
-            counter_right = 0;
-            previous_time_right = millis();
+        
+        Serial.println("4");
+        if (instruction == 0)
+            actuators->Stop();
 
-            digitalWrite(led_running, HIGH);
+        // Follow line until intersection
+        Serial.println("5");
+        if (instruction == 1) {
             sensors->QTRARead();
             int error = sensors->GetError();
             actuators->FollowLine(error);
-            delay(delay_);
-
-            // Compute speed
-            diff_time = (float) (millis() - previous_time_left)
-            speed_left = alpha * counter_left / diff_time;
-            speed_right =  alpha * counter_right / diff_time;
-
-            // Compute distance
-            float speed = 0.5 * (speed_left + speed_right);
-            distance += compute_distance(speed, diff_time); 
-
-            // Check if intersection
-            if (is_intersection()) {
-                String msg = String(ground_truth) + ";" + String(distance);
-                messenger->SendMessage(msg);
-                return;
-            }
+            
+             if ((iteration%2) == 0 && is_intersection())
+                 break;
+    
+            delay(10);
+            iteration++;
         }
     }
+
+    Serial.println("10");
+    byte type_ = type_intersection();
+    messenger->SendMessage(String(type_));
+    left_hand_rule(type_);
+    messenger->SendMessage("aligned");
 }
 
 
 //============
-
-float compute_distance_naive(float speed, unsigned long diff_time) {
-    return (speed * ((float) diff_time));
+bool is_intersection() {
+    sensors->QTRARead();
+    unsigned int* temp = sensors->GetQTRValues();
+    bool is_road_left = (temp[5] > 800);
+    bool is_road_here = (temp[2] > 800 || temp[3] > 800);
+    bool is_road_right = (temp[0] > 800);
+    if (is_road_left || is_road_right || !is_road_here) {
+        actuators->Stop();
+        flicker_led(led_running, 20, 50);
+        digitalWrite(led_running, HIGH);
+        return true;
+    } 
+    return false;
 }
 
 
+//============
+byte type_intersection() {
+    unsigned int* temp = sensors->GetQTRValues();
+    bool is_road_left = (temp[5] > 800);
+    bool is_road_here = (temp[1] > 800 || temp[2] > 800 || temp[3] > 800 || temp[4] > 800);
+    bool is_road_right = (temp[0] > 800);
+
+    one_inch();
+    sensors->QTRARead();
+
+    temp = sensors->GetQTRValues();
+    is_road_front = (temp[1] > 800 || temp[2] > 800 || temp[3] > 800 || temp[4] > 800);
+
+    if (is_road_left && is_road_front && is_road_right)
+        return 0;
+    else if (is_road_left && is_road_front && !is_road_right)
+        return 1;
+    else if (!is_road_left && is_road_front && is_road_right)
+        return 2;
+    else if (is_road_left && !is_road_front && is_road_right)
+        return 3;
+    else if (is_road_left && !is_road_front && !is_road_right)
+        return 4;
+    else if (!is_road_left && !is_road_front && is_road_right)
+        return 5;
+    return 6;
+}
 
 
+//============
+void one_inch() {
+    actuators->UpdateSpeed(60,60);
+    delay(850);
+    actuators->Stop();
+}
 
 
+//============
+void left_hand_rule(byte type_intersection) {
+    switch (type_intersection) {
+        case 0:
+            actuators->Turn(false, false);
+            align(false);
+            break;
+        case 1:
+            actuators->Turn(false, false);
+            align(false);
+            break;
+        case 3: 
+            actuators->Turn(false, false);
+            align(false);
+            break;
+        case 4:
+            actuators->Turn(false, false);
+            align(false);
+            break;
+        case 5:
+            actuators->Turn(true, false);
+            align(true);
+            break;
+        case 6:
+            actuators->Turn(true, true);
+            align(true);
+            break;
+    }
+    delay(200);
+}
 
 
-
-
+//============
+void align(bool clockwise) {
+    if (clockwise)
+        actuators->UpdateSpeed(60, -60);
+    else
+        actuators->UpdateSpeed(-60, 60);
+    int error;
+    do {
+        delay(5);
+        sensors->QTRARead();
+    } while (!sensors->IsAligned()); //  ALIGN
+    actuators->Stop();
+    delay(200);
+}

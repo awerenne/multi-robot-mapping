@@ -1,9 +1,10 @@
 /*
-  General description of tests
+    General description of tests
 */
 
 
 #include <QTRSensors.h>
+
 
 const unsigned int num_sensors = 5;
 const unsigned int num_samples_per_sensor = 10;  // average analog samples per sensor reading
@@ -22,7 +23,6 @@ int pos = 0;  // line position
 
 
 //============
-
 void setup() {
     Serial.begin(9600);
     while (!Serial) continue;
@@ -36,7 +36,6 @@ void setup() {
 
 
 //============
-
 void loop() {
     test_3_1();
     // test_3_2();
@@ -44,29 +43,18 @@ void loop() {
 }
 
 
-//============
-
-void QTRARead() {
-    pos = qtra.readLine(sensor_values); 
-}
 
 
-//============
-
-bool isRoadLeft() {
-    return (sensor_values[NUM_SENSORS-1] > 200);
-}
 
 
-//============
-
-bool isRoadMiddle() {
-    return (pos < (NUM_SENSORS-1)*1000*0.7 && pos > (NUM_SENSORS-1)*1000*0.3);
-}
 
 
-//============
 
-bool isRoadRight() {
-    return (sensor_values[0] > 200);
-}
+
+
+
+
+
+
+
+

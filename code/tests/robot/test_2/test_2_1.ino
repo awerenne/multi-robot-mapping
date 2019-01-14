@@ -1,5 +1,10 @@
+/*
+    Flow test of sharp sensor (TODO find better explanation).
+*/
+
+
+//============
 void test_2_1() {
-    // Flow test of sharp sensor (TODO find better explanation)
     String header = "f;light_on;t;voltage";
     Serial.println(header);
 
@@ -20,3 +25,11 @@ void test_2_1() {
         delay(time_step);
     } 
 }
+
+
+
+
+
+
+
+

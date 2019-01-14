@@ -5,6 +5,7 @@
 
 #include <Actuators.h>
 
+
 const byte pin_interrupt_left = 3;
 volatile unsigned long counter_left = 0;
 const byte pin_interrupt_right = 2;
@@ -20,7 +21,6 @@ Actuators* actuators = new Actuators(pins_actuators);
 
 
 //============ 
-
 void setup() {
     pinMode(pin_interrupt_left, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(pin_interrupt_left), update_counter_left, CHANGE);
@@ -35,7 +35,6 @@ void setup() {
 
 
 //============
-
 void loop() {
     test_5_1();
     // test_5_2();
@@ -43,9 +42,14 @@ void loop() {
     exit(0);
 }
 
+
+//============
 void update_counter_left() { 
     counter_left++; 
 }
+
+
+//============
 void update_counter_right() { 
     counter_right++; 
 }
