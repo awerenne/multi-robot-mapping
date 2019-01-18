@@ -35,10 +35,26 @@ SERIAL_PORT = '/dev/cu.DSDTECHHC-05-DevB';
 BAUD_RATE = 9600; 
 
 
+#---------------
+def xy2ij(xy, dimension):
+    (x, y) = xy
+    (w, h) = dimension
+    i = -y + h
+    j = x
+    return (j, i)  # Pygame axis
+
+
+# ------------
+def scale(distance):
+    discretized = int(distance/5.) * 5
+    scaled = discretized * 2
+    return scaled
+
+
 # ------------
 def send(ser, seq_number, instruction):
-    msg = "<" + str(ID_MASTER) + "," + str(seq_number) + \
-        "," + str(instruction) + ">"
+    msg = "<" + str(ID_MASTER) + "/" + str(seq_number) + \
+        "/" + str(instruction) + ">"
     ser.write(msg.encode())
 
 
@@ -54,20 +70,21 @@ def receive(ser):
         valid_msg = raw_msg[1:-1]  # remove '<', '>' delimeters
 
         # Process
-        (src, seq_number, info) = valid_msg.split(',')
+        (src, seq_number, info) = valid_msg.split('/')
 
         #  TODO: check seq_number and src
+
+        print(info)
 
         q.put(info)
         time.sleep(0.5)
 
 
 # ------------
-def parse_msg(msg):
-    (type_, distance) = msg.split(';')
-    # distance = math.floor(float(distance))
+def parse_info(info):
+    (type_, distance) = info.split(';')
     type_ = int(type_)
-    distance = int(distance)
+    distance = float(distance)
     return (type_, distance)
 
 
@@ -136,6 +153,7 @@ def gui(ser):
     frame_rate = 2
 
     # Initialize robot
+    dim = (WIDTH, HEIGHT)
     previous_position = (WIDTH/2, HEIGHT/2)
     current_position = (WIDTH/2, HEIGHT/2)
     orientation_int = 0
@@ -157,16 +175,14 @@ def gui(ser):
 
         # Process all received messages
         while not q.empty():
-            msg = q.get()
-            type_, distance = parse_msg(msg)
-            print(msg)
-            current_position = update_position(distance*15,
+            info = q.get()
+            type_, distance = parse_info(info)
+            current_position = update_position(scale(distance),
                     ORIENTATION_int2str[orientation_int], previous_position)
             if type_ >= 0:
                 orientation_int = update_orientation(type_, orientation_int)
-            print(ORIENTATION_int2str[orientation_int])
-            pygame.draw.line(surface_maze, BLACK_RGB, previous_position,
-                            current_position, 6)
+            pygame.draw.line(surface_maze, BLACK_RGB, xy2ij(previous_position, dim),
+                            xy2ij(current_position, dim), 6)
             previous_position = current_position
 
         # Buttons
@@ -198,7 +214,6 @@ if __name__ == "__main__":
         print("Error: unable to start reception thread")
 
     gui(ser)
-
 
 
 

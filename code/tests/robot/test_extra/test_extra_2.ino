@@ -3,5 +3,5 @@
 */
 
 
-void test_9_2() {
+void test_extra_2() {
 }

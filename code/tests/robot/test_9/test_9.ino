@@ -6,7 +6,6 @@
 #include <Messenger.h>
 #include <Actuators.h>
 #include <Sensors.h>
-#include <math.h>
 
 
 const byte pin_interrupt_left = 3;
@@ -70,33 +69,28 @@ void loop() {
             
             // Compute distance
             distance += sensors->GetDistance();
+            sensors->StopEncoders();
 
             // Check if intersection
             if ((iteration%2) == 0 && sensors->IsIntersection(actuators)) {
+                sensors->InitEncoders();
                 byte type_ = sensors->TypeIntersection(actuators);
-                distance = round(distance);
-                String msg = String(type_) + ";" + String(((int) distance));
-                messenger->SendMessage(msg);
+                float distance_one_inch = sensors->GetDistance();
+                sensors->StopEncoders();
+                String information = String(type_) + ";" + String(distance);
+                messenger->SendMessage(information);
                 left_hand_rule(type_);
-                distance = 0;
+                distance = distance_one_inch;
             }
 
             // Check if obstacle
             else if ((iteration%5) == 0 && sensors->IsObstacle()) {
                 actuators->Stop();
-                String msg = "-2;" + String(((int) distance));
-                messenger->SendMessage(msg);
+                String information = "8;" + String(distance);
+                messenger->SendMessage(information);
                 instruction = 0;
             }
-
-            // Every now and then send update of travelled distance
-            // else if ((iteration%100) == 0) {
-            //     String msg = "-1;" + String(((int) distance));
-            //     messenger->SendMessage(msg);
-            //     distance = 0;
-            // }
         }
-        distance = 0;
         iteration++;
     }
     exit(0);

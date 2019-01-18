@@ -54,7 +54,7 @@ def xy2ij(xy, dimension):
     (w, h) = dimension
     i = -y + h
     j = x
-    return (i, j)
+    return (j, i)  # Pygame axis
 
 
 #---------------

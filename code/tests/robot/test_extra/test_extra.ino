@@ -7,6 +7,8 @@
 #include <Actuators.h>
 #include <Sensors.h>
 
+const byte pin_interrupt_left = 3;
+const byte pin_interrupt_right = 2;
 
 const byte pins_bluetooth[2] = {10, 11};  // RX, TX
 Messenger* messenger = new Messenger(pins_bluetooth);
@@ -42,9 +44,9 @@ void setup() {
 
 //============
 void loop() {
-    test_9_1();    
-    // test_9_2();
-    // test_9_3();
+    test_extra_1();    
+    // test_extra_2();
+    // test_extra_3();
     exit(0);
 }
 
@@ -60,7 +62,16 @@ void flicker_led(byte led, unsigned int n, unsigned int delay_) {
 }
 
 
+//============
+void update_counter_left() { 
+    sensors->IncrementLeft(); 
+}
 
+
+//============
+void update_counter_right() { 
+    sensors->IncrementRight(); 
+}
 
 
 

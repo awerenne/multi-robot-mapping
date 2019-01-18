@@ -55,8 +55,7 @@ void test_5_3() {
             measure += String(pwm) + ";" ;
             measure += String(speed_left) + ";" ;
             measure += String(speed_right);
-            Serial.println(measure);
-            
+            Serial.println(measure);        
         }
     }
     actuators->Stop();

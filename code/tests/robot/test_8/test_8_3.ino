@@ -33,6 +33,7 @@ void test_8_3() {
             float diff_time = (float) (millis() - start_time);
             float speed = (speed_left + speed_right)/2;
             distance += compute_distance_naive(speed, diff_time); 
+            sensors->StopEncoders();
 
             // Check if intersection
             if (is_intersection()) {
