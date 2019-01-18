@@ -27,7 +27,6 @@ def draw_grid(surface, resolution, grid, grid_dimensions):
     # Draw grid
     for y in range(h_grid):
         for x in range(w_grid):
-
             if grid[y,x] == WALL:
                 color = WHITE_RGB
             elif grid[y,x] == EMPTY:

@@ -13,12 +13,17 @@ shared:
             free: (0, 0, 0)
             robot: (0, 0, 200)
             direction: (0, 200, 100)
+            user-background: (120, 120, 120)
+            user-button: (120, 0, 0)
+            user-font: (255, 255, 255)
 simulation:
     n_robots: 10
     dimensions: (600, 800)
 real_world:
     n_robots: 1
-    dimensions: (600, 800)
+    dimensions_map: (600, 800)
+    dimensions_user: (200, 800)
+    dimensions_real: (200, 200)
     
 
 

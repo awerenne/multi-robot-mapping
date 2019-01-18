@@ -64,7 +64,7 @@ void Actuators::FollowLine(const int& error) {
 //============
 void Actuators::OneInch() {
     this->UpdateSpeed(60, 60);
-    delay(850);
+    delay(400);
     this->Stop();
     this->new_line = true;
 }
@@ -100,13 +100,13 @@ void Actuators::Turn(const bool& clockwise, const bool& full, Sensors* sensors=N
 // Continue to turn until line is in centered (explain more)
 void Actuators::TurnToLine(const bool& clockwise, Sensors* sensors) {
     if (clockwise)
-        this->UpdateSpeed(60, -60);
+        this->UpdateSpeed(58, -58);
     else
-        this->UpdateSpeed(-60, 60);
+        this->UpdateSpeed(-58, 58);
     do {
         delay(5);
-        // sensors->SpecialRead();
-    } while (!sensors->IsAligned());
+        sensors->QTRARead();
+    } while (!sensors->IsAligned(clockwise));
 }
 
 

@@ -105,10 +105,14 @@ bool Sensors::IsRoadHere() {
 
 
 //============
-bool Sensors::IsAligned() {  // To clean - here and in code
+bool Sensors::IsAligned(bool clockwise) {  // To clean - here and in code
     // int mid = floor(((float) this->num_sensors)/2.); TO CHANGE
     int sum = this->sensor_values[2] + this->sensor_values[3];
-    if (this->sensor_values[2] > 750 || this->sensor_values[3] > 750 || sum > 1700)
+    if (clockwise && this->sensor_values[1] > 700)
+        return true;
+    if (!clockwise && this->sensor_values[4] > 700)
+        return true;
+    if (this->sensor_values[2] > 750 || this->sensor_values[3] > 750 || sum > 1700)  // To make sure it does not pass
         return true;
     return false;
 }
@@ -142,7 +146,6 @@ void Sensors::InitEncoders() {  // To clean - here and in code
 
 //============
 float Sensors::GetSpeedLeft() {  
-    this->counter_active = false;
     return this->alpha * this->counter_left /
         ((float) (millis() - this->previous_time));
 }
@@ -157,8 +160,9 @@ float Sensors::GetSpeedRight() {
 
 //============
 float Sensors::GetDistance() {  
+    this->counter_active = false;
     float speed = (this->GetSpeedLeft() + this->GetSpeedRight())/2.;
-    return speed * ((float) (millis() - this->previous_time))/7474.322;
+    return speed * ((float) (millis() - this->previous_time))/7474.322*10;
 }
 
 
@@ -182,6 +186,7 @@ bool Sensors::IsIntersection(Actuators* actuators) {
     bool is_road_right = this->IsRoadRight();
     if (is_road_left || is_road_right || !is_road_here) {
         actuators->Stop();
+        delay(1000);
         return true;
     } 
     return false;
@@ -195,8 +200,13 @@ byte Sensors::TypeIntersection(Actuators* actuators) {
     bool is_road_right = this->IsRoadRight();
 
     actuators->OneInch();
+    delay(500);
+
     this->QTRARead();
     bool is_road_front = this->IsRoadHere();
+
+    actuators->OneInch();
+    delay(1000);
 
     if (is_road_left && is_road_front && is_road_right)
         return 0;

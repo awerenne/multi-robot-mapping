@@ -38,7 +38,10 @@ void setup() {
 void loop() {
     // Basic manipulation tests of motors
     
-    test_1_1();
+    update_pwm_left(200);
+    update_pwm_right(200);
+    delay(200000);
+    // test_1_1();
     // test_1_2();
     // test_1_3();
     exit(0);

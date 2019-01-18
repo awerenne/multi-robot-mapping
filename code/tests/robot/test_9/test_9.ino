@@ -6,9 +6,11 @@
 #include <Messenger.h>
 #include <Actuators.h>
 #include <Sensors.h>
+#include <math.h>
 
 
-// TODO: encoder pins + descibe extensively used protocol
+const byte pin_interrupt_left = 3;
+const byte pin_interrupt_right = 2;
 
 const byte pins_bluetooth[2] = {10, 11};  // RX, TX
 Messenger* messenger = new Messenger(pins_bluetooth);
@@ -30,13 +32,12 @@ bool is_road_left = false, is_road_right = false, is_road_here = false, is_road_
 
 //============
 void setup() {
-    Serial.begin(9600);
-    while(!Serial) continue; // Wait for init
-    delay(5000);
-    Serial.println("Begin test...");
+    pinMode(pin_interrupt_left, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(pin_interrupt_left), update_counter_left, CHANGE);
+    pinMode(pin_interrupt_right, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(pin_interrupt_right), update_counter_right, CHANGE);
 
     flicker_led(led_running, 10, 200);
-    sensors->Calibrate();
     digitalWrite(led_running, LOW);   
 }
 
@@ -73,6 +74,7 @@ void loop() {
             // Check if intersection
             if ((iteration%2) == 0 && sensors->IsIntersection(actuators)) {
                 byte type_ = sensors->TypeIntersection(actuators);
+                distance = round(distance);
                 String msg = String(type_) + ";" + String(((int) distance));
                 messenger->SendMessage(msg);
                 left_hand_rule(type_);
@@ -82,17 +84,17 @@ void loop() {
             // Check if obstacle
             else if ((iteration%5) == 0 && sensors->IsObstacle()) {
                 actuators->Stop();
-                String msg = "Y;" + String(((int) distance));
+                String msg = "-2;" + String(((int) distance));
                 messenger->SendMessage(msg);
                 instruction = 0;
             }
 
             // Every now and then send update of travelled distance
-            else if ((iteration%100) == 0) {
-                String msg = "Z;" + String(((int) distance));
-                messenger->SendMessage(msg);
-                distance = 0;
-            }
+            // else if ((iteration%100) == 0) {
+            //     String msg = "-1;" + String(((int) distance));
+            //     messenger->SendMessage(msg);
+            //     distance = 0;
+            // }
         }
         distance = 0;
         iteration++;
@@ -138,7 +140,16 @@ void left_hand_rule(byte type_intersection) {
 }
 
 
+//============
+void update_counter_left() { 
+    sensors->IncrementLeft(); 
+}
 
+
+//============
+void update_counter_right() { 
+    sensors->IncrementRight(); 
+}
 
 
 

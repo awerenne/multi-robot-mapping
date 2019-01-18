@@ -138,7 +138,7 @@ void align(bool clockwise) {
     do {
         delay(5);
         sensors->QTRARead();
-    } while (!sensors->IsAligned()); //  ALIGN
+    } while (!sensors->IsAligned(clockwise)); //  ALIGN
     actuators->Stop();
     delay(200);
 }

@@ -10,30 +10,16 @@ from yaml import load
         from yaml import CLoader as Loader
     except ImportError:
         from yaml import Loader
-from astar import Astar
-from utils import Container
 
-# TODO
-#  Change id_node to only coords!!
-#  Take into account edge is bidirectional (fix by ordering small to big x+y)
-#   shortest path
-#   add edge
-#   change add operators
+from graph import Graph
+from utils import Container, PriorityQueu
+
 
 #---------------
 class Map:
     """ 
-    TODO: better comments
-    Describe class. coordinates are in the form xy center otherwise 
+    Describe class & parameters. coordinates are in the form xy center otherwise 
     mentionned.
-    Descirbe all internal variables
-    # Nodes of the map as {id_node: (x,y)}
-    # and helper to help go back from coordinates to node id 
-    # Set of edges as {id_edge: (id_node_a,id_node_b)}
-    # Set of frontiers as {id_node: (boolean vector)}
-    # vector[idx] = True if this orientation of frontier is explored
-    # Structure in the following form 
-    # {id_robot: (x,y,orientation)}
     """
 
     def __init__(self, robots):
@@ -41,23 +27,21 @@ class Map:
         # Read parameters in config file
         stream = open('../config/config.yaml', 'r')
         self.parameters = Container(load(stream, Loader=Loader))
-        self.dimensions = self.parameters.map.dimensions
+        self.dimensions = self.parameters.map.dimensions_real
         self.orientation_str2idx = self.parameters.map.orientation_str2idx
         self.orientation_idx2str = self.parameters.map.orientation_idx2str
 
         assert check_valid_positions(robots)
         self._robots = robots 
         
-        self.nodes2coords = {}
-        self.coords2nodes = {}
-        self.last_used_id_nodes = -1
-        self.edges = {}
-        self.last_used_id_edges = -1
+        self.graph = Graph()
         self._frontiers = {}  
 
         # Starting positions of robots are first nodes of the map
         for robot_id, robot_pose in self._robots.items():
-            self.add_node(robot_pose)
+            (x, y, orientation) = robot_pose
+            self.graph.add_node((x,y))
+            self.add_frontier(robot_pose, type_intersection)
 
 
     # ------------
@@ -69,7 +53,7 @@ class Map:
     # ------------
     @property
     def frontiers(self):
-        return list(map(lambda x : self.nodes2coords[x], self._frontiers.keys()))
+        return self._frontiers.keys()
 
 
     #---------------
@@ -94,7 +78,7 @@ class Map:
 
     #---------------
     def is_existing_node(self, x, y):
-        return self.coords2nodes.get((x,y)) == None  
+        return self.graph.get_node((x,y)) != None  
 
 
     # ------------
@@ -128,34 +112,16 @@ class Map:
 
 
     #---------------
-    # TODO: add operator
-    def add_node(self, x, y, type_):
+    def add_frontier(self, node, orientation, type_):
         """
-        Add node to the set if non existing and add it as a frontier 
-        node. If the node already exist - a robot travelled already passed this
-        node - we update the frontier. 
+        Save which direction is already explored at frontier
+        (note that a wall is also seen as explored).
         """
 
         (x, y, orientation) = robot_pose
         if self.is_existing_node(x, y):  
             self.update_frontier(new_node, orientation)
             return self
-
-        new_node = last_used_id_nodes + 1
-        last_used_id_nodes += 1
-        self.nodes2coords[new_node] = (x,y)
-        self.coords2nodes[(x,y)] = new_node
-        self.add_frontier(new_node, orientation, type_)
-        return self
-
-
-    #---------------
-    # TODO: add operator
-    def add_frontier(self, node, orientation, type_):
-        """
-        Save which direction is already explored at frontier
-        (note that a wall is also seen as explored).
-        """
 
         # Create vector and init the coming from direction to True 
         temp = self.turn_orientation(orientation, "uturn")

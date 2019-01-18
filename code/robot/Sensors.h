@@ -23,7 +23,7 @@ class Sensors {
     bool IsRoadLeft();
     bool IsRoadRight();
     bool IsRoadHere();
-    bool IsAligned();
+    bool IsAligned(bool clockwise);
     int GetError();
     void AutomaticCalibrate();
 

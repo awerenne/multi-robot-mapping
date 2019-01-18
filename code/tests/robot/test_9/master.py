@@ -65,7 +65,9 @@ def receive(ser):
 # ------------
 def parse_msg(msg):
     (type_, distance) = msg.split(';')
-    distance = math.floor(float(distance))
+    # distance = math.floor(float(distance))
+    type_ = int(type_)
+    distance = int(distance)
     return (type_, distance)
 
 
@@ -86,25 +88,21 @@ def update_position(distance, orientation_str, previous_position):
 
 # ------------
 def update_orientation(type_, orientation_int):
-    or_str = ORIENTATION_int2str[orientation_int]
-    if type_ == 'A':
-        or_str = ((or_str - 1) + 4) % 4
-    elif type_ == 'B':
-        or_str = ((or_str - 1) + 4) % 4
-    elif type_ == 'C':
-        or_str = ((or_str + 1) + 4) % 4
-    elif type_ == 'D':
-        or_str = ((or_str - 1) + 4) % 4
-    elif type_ == 'E':
-        or_str = ((or_str - 1) + 4) % 4
-    elif type_ == 'F':
-        or_str = ((or_str + 1) + 4) % 4
-    elif type_ == 'G':
-        or_str = ((or_str + 2) + 4) % 4
-    elif type_ == 'H':
-        or_str = 0
-    or_int = ORIENTATION_str2int[or_str]
-    return or_int
+    if type_ == 0:
+        orientation_int = ((orientation_int - 1) + 4) % 4
+    elif type_ == 1:
+        orientation_int = ((orientation_int - 1) + 4) % 4
+    elif type_ == 2:
+        orientation_int = ((orientation_int + 1) + 4) % 4
+    elif type_ == 3:
+        orientation_int = ((orientation_int - 1) + 4) % 4
+    elif type_ == 4:
+        orientation_int = ((orientation_int - 1) + 4) % 4
+    elif type_ == 5:
+        orientation_int = ((orientation_int + 1) + 4) % 4
+    elif type_ == 6:
+        orientation_int = ((orientation_int + 2) + 4) % 4
+    return orientation_int
 
 
 # ------------
@@ -162,13 +160,13 @@ def gui(ser):
             msg = q.get()
             type_, distance = parse_msg(msg)
             print(msg)
-            current_position = update_position(distance*2,
+            current_position = update_position(distance*15,
                     ORIENTATION_int2str[orientation_int], previous_position)
-            if type_ != 'Z':
-                orientation = update_orientation(type_, orientation_int)
-            # TODO: obstacle (type == Y)
+            if type_ >= 0:
+                orientation_int = update_orientation(type_, orientation_int)
+            print(ORIENTATION_int2str[orientation_int])
             pygame.draw.line(surface_maze, BLACK_RGB, previous_position,
-                            current_position, 10)
+                            current_position, 6)
             previous_position = current_position
 
         # Buttons
