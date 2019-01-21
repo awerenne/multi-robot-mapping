@@ -11,18 +11,20 @@ except ImportError:
 
 from master import Master
 from gui import GUI
-from untils import Container
+from utils import Container
 from queue import Queue
 
+# TODO: when everything is finished, change instantiations accordingly
 
-# ------------
+#---------------
 if __name__ == '__main__':
 
     stream = open('../config/config.yaml', 'r')
     parameters = Container(load(stream, Loader=Loader))
-    q = Queue()  # Queue shared by Master & GUI
-    master = Master(q, parameters.shared, parameters.real_world)
-    gui = GUI(q, parameters.shared, parameters.real_world)
+    queu_gui_to_master = Queue()
+    queu_master_2_gui =  Queue()
+    master = Master(queu_master_2_gui, queu_gui_to_master, parameters.shared, parameters.real_world)
+    gui = GUI(queu_master_2_gui, queu_gui_to_master, parameters.shared, parameters.real_world)
 
     master.run()
     while gui.condition_loop:

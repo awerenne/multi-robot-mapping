@@ -7,15 +7,22 @@ import pygame
 import time
 
 
+# TODO: Receive/send methods
+# TODO: Interpret correctly drawing from summary
+# TODO: Send user requests
+# TODO: Values in config file
+
+
 #---------------
 class GUI():
     """
     Extensive description of class.
     """  
 
-    def __init__(self, q, shared_parameters, environment_parameters):
+    def __init__(self, queu_from_master, queu_to_master, shared_parameters, environment_parameters):
         
-        self.q = q
+        self.queu_from_master = queu_from_master
+        self.queu_to_master = queu_to_master
 
         self.dimensions_map = environment_parameters.dimensions_map
         self.dimensions_user = environment_parameters.dimensions_user
@@ -90,11 +97,11 @@ class GUI():
 
     #---------------
     def process_queue(self):
-        while not self.q.empty():
-            msg = self.q.get()
+        while not self.queu_from_master.empty():
+            msg = self.queu_from_master.get()
             start, end, color = parse_msg(msg)
-            pygame.draw.line(self.screen_surface, color, start,
-                    end, self.width_line)
+            # pygame.draw.line(self.screen_surface, color, start,
+            #         end, self.width_line)
 
             
     #---------------

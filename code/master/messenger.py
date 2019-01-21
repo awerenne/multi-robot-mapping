@@ -10,10 +10,12 @@ from queue import Queue
 
 
 # TODO: proper thread quitting (very low priority)
+# TODO: No asserts but error handling
+# TODO: Different directive structure (hierarchy)
+# TODO: Correct scaling function of distance + implement separate method
 
-
-# ------------
-class Messenger(Thread):
+#---------------
+class Messenger(threading.Thread):
     """
     For the moment do as if only one robot. Blabla.
     """
@@ -28,12 +30,14 @@ class Messenger(Thread):
         self.seq_number_receiving = 0
         self.id = 0
 
-    # ------------
+
+    #---------------
     def run(self):
         receiver_thread = threading.Thread(target=self.receive).start()
         sender_thread = threading.Thread(target=self.send).start()
 
-    # ------------
+
+    #---------------
     def send(self, instruction):
         while True:
             if not self.queue_from_master.empty():
@@ -44,7 +48,8 @@ class Messenger(Thread):
                 self.seq_number_sending += 1
                 time.sleep(0.5)
 
-    # ------------
+
+    #---------------
     def receive(self):
         while True:
             raw_msg = self.ser.readline().decode("utf-8");
@@ -66,14 +71,18 @@ class Messenger(Thread):
             self.queue_to_master.put(directive)
             time.sleep(0.5)
 
-    # ------------
+
+    #---------------
     def make_directive(self, id_robot, information):
         (type_intersection, distance) = information.split(';')
+        assert distance > 0
+        assert self.is_robot(id_robot)
+        
         directive = {
-            "type_directive": "update"
+            "type_directive": "update",
             "id_robot": id_robot,
             "type_intersection": int(type_intersection), 
-            "distance": int(distance)  # TODO: round to nearest!!!
+            "distance": int(distance)  
         }
         return Container(directive)
 
