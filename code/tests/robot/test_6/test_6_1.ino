@@ -15,25 +15,25 @@ void test_6_1() {
         switch (instruction) {
             case 0:  // Stop
                 actuators->Stop();
-                digitalWrite(led_running, LOW);
+                digitalWrite(led_signal, LOW);
                 break; 
             case 1:  // Go forward
                 actuators->UpdateSpeed(60, 60);
-                digitalWrite(led_running, HIGH);
+                digitalWrite(led_signal, HIGH);
                 break;
             case 2:  // Turn left
                 actuators->Turn(false, false);
-                digitalWrite(led_running, HIGH);
+                digitalWrite(led_signal, HIGH);
                 instruction = 0;
                 break;
             case 3:  // Turn right
                 actuators->Turn(true, false);
-                digitalWrite(led_running, HIGH);
+                digitalWrite(led_signal, HIGH);
                 instruction = 0;
                 break;
             case 4:  // Full turn
                 actuators->Turn(false, true);
-                digitalWrite(led_running, HIGH);
+                digitalWrite(led_signal, HIGH);
                 instruction = 0;
                 break;
         }
@@ -41,11 +41,3 @@ void test_6_1() {
         delay(250);
     }
 }
-
-
-
-
-
-
-
-

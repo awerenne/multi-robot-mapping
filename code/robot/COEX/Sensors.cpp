@@ -88,19 +88,25 @@ unsigned int Sensors::GetQTRNumberSensors() {
 
 //============
 bool Sensors::IsRoadLeft() {  
-    return (this->sensor_values[this->num_sensors-1] > 800);
+    return (this->sensor_values[this->num_sensors-1] > 750);
 }
 
 
 //============
 bool Sensors::IsRoadRight() {  
-    return (this->sensor_values[0] > 800);
+    return (this->sensor_values[0] > 750);
 }
 
 
 //============
 bool Sensors::IsRoadHere() {  
-    return (this->sensor_values[2] > 800 || this->sensor_values[3] > 800);
+    return (this->sensor_values[1]+this->sensor_values[2] > 1500 || 
+            this->sensor_values[2]+this->sensor_values[3] > 1500 ||
+            this->sensor_values[3]+this->sensor_values[4] > 1500 ||
+            this->sensor_values[1] > 750 || 
+            this->sensor_values[2] > 750 ||
+            this->sensor_values[3] > 750 ||
+            this->sensor_values[4] > 750);
 }
 
 
@@ -108,11 +114,14 @@ bool Sensors::IsRoadHere() {
 bool Sensors::IsAligned(bool clockwise) {  // To clean - here and in code
     // int mid = floor(((float) this->num_sensors)/2.); TO CHANGE
     int sum = this->sensor_values[2] + this->sensor_values[3];
-    if (clockwise && this->sensor_values[1] > 700)
+    if (clockwise && this->sensor_values[2] > 850)  // Give some margin to stop
         return true;
-    if (!clockwise && this->sensor_values[4] > 700)
+    if (!clockwise && this->sensor_values[3] > 850) // Give some margin to stop
         return true;
-    if (this->sensor_values[2] > 750 || this->sensor_values[3] > 750 || sum > 1700)  // To make sure it does not pass
+    // To make sure it does not pass 
+    if (!clockwise && this->sensor_values[2] > 600)  // Give some margin to stop
+        return true;
+    if (clockwise && this->sensor_values[3] > 600) // Give some margin to stop
         return true;
     return false;
 }
@@ -126,17 +135,20 @@ int Sensors::GetError() {
 
 
 //============
-bool Sensors::IsObstacle() {
+bool Sensors::IsObstacle(Actuators* actuators) {
     int value = analogRead(this->pin_sharp);
     float voltage = ((float) value)/1024.;
-    if (voltage < 0.75) // Obstacle detected
+    if (voltage < 0.75) {  // Obstacle detected
+        actuators->Stop();
+        delay(1000);
         return true;
+    }
     return false;
 }
 
 
 //============
-void Sensors::InitEncoders() {  // To clean - here and in code
+void Sensors::InitEncoders() {  
     this->counter_active = true;
     this->counter_left = 0;
     this->counter_right = 0;
@@ -145,24 +157,34 @@ void Sensors::InitEncoders() {  // To clean - here and in code
 
 
 //============
-float Sensors::GetSpeedLeft() {  
-    return this->alpha * this->counter_left /
+void Sensors::StopEncoders() {  
+    this->counter_active = false;
+}
+
+
+//============
+float Sensors::GetSpeedLeft() { 
+    this->StopEncoders(); 
+    float expected =  this->alpha * this->counter_left /
         ((float) (millis() - this->previous_time));
+    return expected/7474.322;
 }
 
 
 //============
 float Sensors::GetSpeedRight() {  
-    return this->alpha * this->counter_right /
+    this->StopEncoders();
+    float expected =  this->alpha * this->counter_right /
         ((float) (millis() - this->previous_time));
+    return expected/7474.322;
 }
 
 
 //============
-float Sensors::GetDistance() {  
-    this->counter_active = false;
+float Sensors::GetDistance() {
+    this->StopEncoders();  
     float speed = (this->GetSpeedLeft() + this->GetSpeedRight())/2.;
-    return speed * ((float) (millis() - this->previous_time))/7474.322*10;
+    return speed * ((float) (millis() - this->previous_time));
 }
 
 

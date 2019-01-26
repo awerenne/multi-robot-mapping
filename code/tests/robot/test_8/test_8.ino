@@ -9,24 +9,19 @@
 
 
 const byte pin_interrupt_left = 3;
-// volatile unsigned long counter_left = 0;
 const byte pin_interrupt_right = 2;
-// volatile unsigned long counter_right = 0;
-
-const byte pins_bluetooth[2] = {10, 11};  // RX, TX
-Messenger* messenger = new Messenger(pins_bluetooth);
-
-const byte pins_actuators[6] = {4,12,6,7,8,9};  // IN1, IN2, EN12, IN3, IN4, EN34
-const float parameters_pid[4] = {65., 0.014, 0.008, 0.};  // target speed, kp, kd, ki
-Actuators* actuators = new Actuators(pins_actuators, parameters_pid);
-
-const byte pins_qta[6] = {0, 1, 2, 3, 4, 5};  // Analog --> Change to 14-21 range
-const unsigned int parameters_qta[3] = {5, 6, 10};  // Emitter pin (digital PWM), number of sensors, number of samples to average per sensor reading
+const byte pins_messenger[2] = {10, 11}; // RX, TX
+const byte pins_actuators[6] = {4, 12, 6, 7, 8, 9};  // IN1, IN2, EN12, IN3, IN4, EN34
+const byte pins_qta[6] = {0, 1, 2, 3, 4, 5};  // Analog 
 const byte pin_sharp = 6;
-const byte pins_encoder[2] = {3, 2};
+const byte led_signal = 13;
+
+const float parameters_pid[4] = {65., 0.014, 0.008, 0.};  // target speed, kp, kd, ki
+const unsigned int parameters_qta[3] = {5, 6, 10};  // Emitter pin (digital PWM), number of sensors, number of samples to average per sensor reading
+Messenger* messenger = new Messenger(pins_messenger);
+Actuators* actuators = new Actuators(pins_actuators, parameters_pid);
 Sensors* sensors = new Sensors(pins_qta, parameters_qta, pin_sharp);
 
-const byte led_running = 13;  // Used to signal when robot is calibrating IR sensors, and when the robot is running
 byte instruction = 0; // 0 stop, 1 straight, 2 turn left, 3 turn right, 4 turn back
 bool is_road_left = false, is_road_right = false, is_road_here = false, is_road_front = false;
 
@@ -40,16 +35,15 @@ void setup() {
 
     Serial.begin(9600);
     while(!Serial) continue; // Wait for init
-    delay(5000);
-    Serial.println("Begin test...");
+    flicker_led(led_signal, 10, 500);
 }
 
 
 //============
 void loop() {
-    // test_8_1();
+    test_8_1();
     // test_8_2();
-    test_8_3();
+    // test_8_3();
     exit(0);
 }
 
@@ -75,3 +69,13 @@ void update_counter_left() {
 void update_counter_right() { 
     sensors->IncrementRight(); 
 }
+
+
+
+
+
+
+
+
+
+

@@ -1,5 +1,5 @@
 /*
-    General description of tests
+    Basic manipulations of motors.
 */
 
 
@@ -10,6 +10,8 @@ const byte pin_IN2 = 12;
 const byte pin_EN34 = 9;
 const byte pin_IN3 = 7;
 const byte pin_IN4 = 8;
+
+const byte led_signal = 13;
 
 
 //============
@@ -29,25 +31,28 @@ void setup() {
 
     Serial.begin(9600);
     while (!Serial) continue;
-    delay(5000);
-    Serial.println("Begin of test...");
+    flicker_led(led_signal, 10, 500);
 }
 
 
 //============
 void loop() {
-    // Basic manipulation tests of motors
-    
-    update_pwm_left(200);
-    update_pwm_right(200);
-    delay(200000);
-    // test_1_1();
+    test_1_1();
     // test_1_2();
     // test_1_3();
     exit(0);
 }
 
 
+//============
+void flicker_led(byte led, unsigned int n, unsigned int delay_) {
+    for (int i = 0; i < n; i++) {
+        digitalWrite(led, LOW);
+        delay(delay_);
+        digitalWrite(led, HIGH);
+        delay(delay_);
+    }
+}
 
 
 

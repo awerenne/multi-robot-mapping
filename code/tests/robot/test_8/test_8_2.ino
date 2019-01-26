@@ -51,8 +51,8 @@ bool is_intersection() {
     bool is_road_right = (temp[0] > 800);
     if (is_road_left || is_road_right || !is_road_here) {
         actuators->Stop();
-        flicker_led(led_running, 20, 50);
-        digitalWrite(led_running, HIGH);
+        flicker_led(led_signal, 20, 50);
+        digitalWrite(led_signal, HIGH);
         return true;
     } 
     return false;

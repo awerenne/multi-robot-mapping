@@ -6,6 +6,8 @@
 #include <SoftwareSerial.h>
 
 
+const byte led_signal = 13;
+
 SoftwareSerial Bluetooth(10, 11);  // RX, TX
 const unsigned int T = 100000;  // Test time (in milliseconds)
 unsigned long init_time;  // Initial moment test begins (stop test when time = init_time + T)
@@ -30,11 +32,9 @@ boolean newData = false;
 void setup() {
     Serial.begin(9600);
     while(!Serial) continue;
-    delay(5000);
-    Serial.println("Begin test...");
-    Serial.println("Waiting for connection...");
     Bluetooth.begin(9600);
     while(!Bluetooth) continue;
+    flicker_led(led_signal, 10, 500);
 }
 
 
@@ -46,7 +46,15 @@ void loop() {
 }
 
 
-
+//============
+void flicker_led(byte led, unsigned int n, unsigned int delay_) {
+    for (int i = 0; i < n; i++) {
+        digitalWrite(led, LOW);
+        delay(delay_);
+        digitalWrite(led, HIGH);
+        delay(delay_);
+    }
+}
 
 
 

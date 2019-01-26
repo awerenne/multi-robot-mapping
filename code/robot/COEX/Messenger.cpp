@@ -57,13 +57,13 @@ void Messenger::ParseInstruction() {      // split the data into its parts
 
     char * strtokIndx; // this is used by strtok() as an index
 
-    strtokIndx = strtok(this->tempChars,",");      // get the first part - the string
+    strtokIndx = strtok(this->tempChars,"/");      // get the first part - the string
     this->id_master = atoi(strtokIndx);     // convert this part to an integer
  
-    strtokIndx = strtok(NULL, ","); // this continues where the previous call left off
+    strtokIndx = strtok(NULL, "/"); // this continues where the previous call left off
     this->seq_number_master = atoi(strtokIndx);     // convert this part to an integer
 
-    strtokIndx = strtok(NULL, ",");
+    strtokIndx = strtok(NULL, "/");
     this->instruction = atoi(strtokIndx);     // convert this part to an integer
 
     this->newData = false;
@@ -76,16 +76,16 @@ void Messenger::ParsePIDParameters() {      // split the data into its parts
 
     char * strtokIndx; // this is used by strtok() as an index
 
-    strtokIndx = strtok(this->tempChars,",");      // get the first part - the string
+    strtokIndx = strtok(this->tempChars,"/");      // get the first part - the string
     this->instruction = atoi(strtokIndx);     // convert this part to an integer
  
-    strtokIndx = strtok(NULL, ","); // this continues where the previous call left off
+    strtokIndx = strtok(NULL, "/"); // this continues where the previous call left off
     this->kp = atof(strtokIndx);     // convert this part to an integer
 
-    strtokIndx = strtok(NULL, ","); // this continues where the previous call left off
+    strtokIndx = strtok(NULL, "/"); // this continues where the previous call left off
     this->kd = atof(strtokIndx);     // convert this part to an integer
 
-    strtokIndx = strtok(NULL, ","); // this continues where the previous call left off
+    strtokIndx = strtok(NULL, "/"); // this continues where the previous call left off
     this->ki = atof(strtokIndx);     // convert this part to an integer
 
     this->newData = false;
@@ -94,8 +94,8 @@ void Messenger::ParsePIDParameters() {      // split the data into its parts
 
 //============
 void Messenger::SendMessage(const String& msg) {
-    String datagram = "<" + String(this->id_slave) + "," +
-        String(this->seq_number_slave) + "," + msg + ">\n";
+    String datagram = "<" + String(this->id_slave) + "/" +
+        String(this->seq_number_slave) + "/" + msg + ">\n";
     this->blt->println(datagram);
     this->seq_number_slave += 1;
 }

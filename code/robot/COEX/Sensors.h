@@ -31,9 +31,10 @@ class Sensors {
     unsigned int* GetQTRValues();  // For tests 
     unsigned int GetQTRNumberSensors();  // For tests
 
-    bool IsObstacle();
+    bool IsObstacle(Actuators* actuators);
 
     void InitEncoders();
+    void StopEncoders();
     float GetSpeedLeft();
     float GetSpeedRight();
     float GetDistance();

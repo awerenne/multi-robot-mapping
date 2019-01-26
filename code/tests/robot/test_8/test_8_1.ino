@@ -19,8 +19,8 @@ void test_8_1() {
         Serial.println("Iteration " + String(i));
 
         // Warn tester ambient light measure is going to start (low frequency)
-        flicker_led(led_running, 10, 800);
-        digitalWrite(led_running, LOW); 
+        flicker_led(led_signal, 10, 800);
+        digitalWrite(led_signal, LOW); 
         
         // Read ambient light
         qtra->read(sensor_values, QTR_EMITTERS_OFF); 
@@ -29,8 +29,8 @@ void test_8_1() {
         Serial.println(msg);
 
         // Warn tester calibration is going to start (high frequency)
-        flicker_led(led_running, 10, 200);
-        digitalWrite(led_running, LOW); 
+        flicker_led(led_signal, 10, 200);
+        digitalWrite(led_signal, LOW); 
 
         sensors->Calibrate();
 

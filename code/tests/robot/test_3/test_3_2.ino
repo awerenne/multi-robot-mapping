@@ -17,7 +17,6 @@ void test_3_2() {
 }
 
 
-
 //============
 bool isRoadLeft() {
     return (sensor_values[num_sensors-1] > 200);

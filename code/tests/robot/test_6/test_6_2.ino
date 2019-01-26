@@ -15,11 +15,11 @@ void test_6_2() {
         switch (instruction) {
             case 0:  // Stop
                 actuators->Stop();
-                digitalWrite(led_running, LOW);
+                digitalWrite(led_signal, LOW);
                 break; 
             case 1:  // Go forward
                 actuators->UpdateSpeed(60, 60);
-                digitalWrite(led_running, HIGH);
+                digitalWrite(led_signal, HIGH);
                 break;
         }
     
@@ -31,9 +31,3 @@ void test_6_2() {
         delay(250);
     }
 }
-
-
-
-
-
-

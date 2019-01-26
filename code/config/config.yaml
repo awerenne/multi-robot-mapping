@@ -1,29 +1,87 @@
-constants:
-    WALL: 0
-    FREE: 1
-    OCCUPIED: 2
-    FRONTIER: 3
+is_simulation: False
+simulation:
+    n_robots: 2
+    robots: 
+        1:  
+            pose: [0, 0, 0]
+        2:  
+            pose: [50, 150, 0]
+    dimensions: [800, 800]
+    constants:
+        WALL: 0
+        FREE: 1
+        OCCUPIED: 2       
+real:
+    n_robots: 1
+    robots:     
+        1: 
+            pose: [0, 0, 0]
+            port: "/dev/cu.DSDTECHHC-05-DevB"
+            baud_rate: 9600
+    dimensions: [600, 800]
 gui:
-    colors:
-        wall: [255, 255, 255]
-        free: [0, 0, 0]
-        robot: [0, 0, 200]
-        direction: [0, 200, 100]
-        user-background: [120, 120, 120]
-        user-button: [120, 0, 0]
-        user-font: [255, 255, 255]
+    dimensions_screen: [800, 800]
     dimensions_map: [600, 800]
     dimensions_user: [200, 800]
-map:
-    simulation:
-        n_robots: 10
-        dimensions: [800, 800]
-    real_world:
-        n_robots: 1
-        robots:     
-            1: [0, 0, 0]
-        dimensions_map: [600, 800]
-    
-    
+    frame_rate: 2
+    colors:
+        background: [255, 255, 255]
+        free: [0, 0, 0]
+        frontier: [100, 100, 200]
+        robot: [0, 0, 200]
+        direction: [0, 200, 100]
+        user:
+            background: [120, 120, 120]
+            button: [120, 0, 0]
+            font: [255, 255, 255]
+    font:
+        name: "freesansbold.ttf"
+        size: 25
+    rect_run: [50, 120, 100, 50]
+    rect_stop: [50, 200, 100, 50]
+    width_line: 8
+    width_frontier: 10
+    radius_robot: 6
+    title: "COEX"
+helpers:
+    map_orientation:
+        'N': 0
+        'E': 1
+        'S': 2
+        'W': 3
+    map_type2edges:
+        0: ['N', 'E', 'S', 'W']
+        1: ['N', 'S', 'W']
+        2: ['N', 'E', 'S']
+        3: ['E', 'S', 'W']
+        4: ['S', 'W']
+        5: ['E', 'S']
+        6: ['S']
+        7: ['N']
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

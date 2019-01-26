@@ -1,14 +1,16 @@
 /*
-    General description of tests
+    General description of tests.
 */
 
 
 #include <QTRSensors.h>
 
 
+const byte led_signal = 13;
+const byte pin_emitter_pin = 5;
+
 const unsigned int num_sensors = 5;
 const unsigned int num_samples_per_sensor = 10;  // average analog samples per sensor reading
-const byte pin_emitter_pin = 5;
 QTRSensorsAnalog qtra((unsigned char[]) {0, 1, 2, 3, 4, 5}, num_sensors, num_samples_per_sensor);
 
 const int f = 50;  // frequency
@@ -26,8 +28,8 @@ int pos = 0;  // line position
 void setup() {
     Serial.begin(9600);
     while (!Serial) continue;
-    delay(5000);
-    Serial.println("Begin test...");
+    flicker_led(led_signal, 10, 500);
+
     Serial.println("Start Calibration");
     // Reads all sensors 10 times at 2500 us per read 
     for (int i = 0; i < 400; i++) qtra.calibrate(); 
@@ -43,7 +45,15 @@ void loop() {
 }
 
 
-
+//============
+void flicker_led(byte led, unsigned int n, unsigned int delay_) {
+    for (int i = 0; i < n; i++) {
+        digitalWrite(led, LOW);
+        delay(delay_);
+        digitalWrite(led, HIGH);
+        delay(delay_);
+    }
+}
 
 
 

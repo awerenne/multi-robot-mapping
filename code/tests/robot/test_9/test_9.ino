@@ -10,21 +10,18 @@
 
 const byte pin_interrupt_left = 3;
 const byte pin_interrupt_right = 2;
-
-const byte pins_bluetooth[2] = {10, 11};  // RX, TX
-Messenger* messenger = new Messenger(pins_bluetooth);
-
-const byte pins_actuators[6] = {4,12,6,7,8,9};  // IN1, IN2, EN12, IN3, IN4, EN34
-const float parameters_pid[4] = {65., 0.014, 0.008, 0.};  // target speed, kp, kd, ki
-Actuators* actuators = new Actuators(pins_actuators, parameters_pid);
-
-const byte pins_qta[6] = {0, 1, 2, 3, 4, 5};  // Analog --> Change to 14-21 range
-const unsigned int parameters_qta[3] = {5, 6, 10};  // Emitter pin (digital PWM), number of sensors, number of samples to average per sensor reading
+const byte pins_messenger[2] = {10, 11}; // RX, TX
+const byte pins_actuators[6] = {4, 12, 6, 7, 8, 9};  // IN1, IN2, EN12, IN3, IN4, EN34
+const byte pins_qta[6] = {0, 1, 2, 3, 4, 5};  // Analog 
 const byte pin_sharp = 6;
-const byte pins_encoder[2] = {3, 2};
-Sensors* sensors = new Sensors(pins_qta, parameters_qta, pin_sharp);
+const byte led_signal = 13;
 
-const byte led_running = 13;  // Used to signal when robot is calibrating IR sensors, and when the robot is running
+const float parameters_pid[4] = {65., 0.014, 0.008, 0.};  // target speed, kp, kd, ki
+const unsigned int parameters_qta[3] = {5, 6, 10};  // Emitter pin (digital PWM), number of sensors, number of samples to average per sensor reading
+Messenger* messenger = new Messenger(pins_messenger);
+Actuators* actuators = new Actuators(pins_actuators, parameters_pid);
+Sensors* sensors = new Sensors(pins_qta, parameters_qta, pin_sharp);
+  
 byte instruction = 0; // 0 stop, 1 straight, 2 turn left, 3 turn right, 4 turn back
 bool is_road_left = false, is_road_right = false, is_road_here = false, is_road_front = false;
 
@@ -36,8 +33,8 @@ void setup() {
     pinMode(pin_interrupt_right, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(pin_interrupt_right), update_counter_right, CHANGE);
 
-    flicker_led(led_running, 10, 200);
-    digitalWrite(led_running, LOW);   
+    flicker_led(led_signal, 10, 200);
+    digitalWrite(led_signal, LOW);   
 }
 
 
@@ -57,10 +54,10 @@ void loop() {
     
         if (instruction == 0) {  // Stop 
             actuators->Stop();
-            digitalWrite(led_running, LOW);
+            digitalWrite(led_signal, LOW);
         }
         else {  // Maze exploration
-            digitalWrite(led_running, HIGH);
+            digitalWrite(led_signal, HIGH);
             sensors->InitEncoders();
             sensors->QTRARead();
             int error = sensors->GetError();
@@ -80,7 +77,7 @@ void loop() {
                 String information = String(type_) + ";" + String(distance);
                 messenger->SendMessage(information);
                 left_hand_rule(type_);
-                distance = distance_one_inch;
+                distance += distance_one_inch;
             }
 
             // Check if obstacle

@@ -50,8 +50,6 @@ def test_4_2():
         parsed_msg = raw_msg[1:-1]  # remove <> symbols
         parsed_msg = parsed_msg.split(',')
         print("Parsed msg:" + str(parsed_msg))
-        # output = str(frequency_slave) + ";" + str(arrival_time_step_master) + ";" + str(seq_number)
-        # output_file.write(output);
 
 
 # ------------

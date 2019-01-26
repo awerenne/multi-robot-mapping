@@ -21,7 +21,7 @@ void test_8_3() {
             float start_time = millis();
             sensors->InitEncoders();
             
-            digitalWrite(led_running, HIGH);
+            digitalWrite(led_signal, HIGH);
             sensors->QTRARead();
             int error = sensors->GetError();
             actuators->FollowLine(error);

@@ -8,21 +8,18 @@
 #include <Sensors.h>
 
 
-const byte pins_bluetooth[2] = {10, 11};  // RX, TX
-Messenger* messenger = new Messenger(pins_bluetooth);
-
-const byte pins_actuators[6] = {4,12,6,7,8,9};  // IN1, IN2, EN12, IN3, IN4, EN34
-Actuators* actuators = new Actuators(pins_actuators);
-
-const byte pins_qta[6] = {0, 1, 2, 3, 4, 5};  // Analog --> Change to 14-21 range
-const unsigned int parameters_qta[3] = {5, 6, 10};  // Emitter pin (digital PWM), number of sensors, number of samples to average per sensor reading
+const byte pins_messenger[2] = {10, 11}; // RX, TX
+const byte pins_actuators[6] = {4, 12, 6, 7, 8, 9};  // IN1, IN2, EN12, IN3, IN4, EN34
+const byte pins_qta[6] = {0, 1, 2, 3, 4, 5};  // Analog 
 const byte pin_sharp = 6;
-const byte pins_encoder[2] = {3, 2};
+const byte led_signal = 13;
+
+Messenger* messenger = new Messenger(pins_messenger);
+Actuators* actuators = new Actuators(pins_actuators);
+const unsigned int parameters_qta[3] = {5, 6, 10};  // Emitter pin (digital PWM), number of sensors, number of samples to average per sensor reading
 Sensors* sensors = new Sensors(pins_qta, parameters_qta, pin_sharp);
 
-const byte led_running = 13;  // Used to signal when robot is calibrating IR sensors, and when the robot is running
 const float target_speed = 65.;  // TODO: to change to speed and not pwm
-
 int error = sensors->GetError(), previous_error = sensors->GetError(), accumulated_error = 0;
 float kp = 0, kd = 0, ki = 0, pid_value = 0;
 byte instruction = -1; // 0 stop, 1 straight, 2 turn left, 3 turn right, 4 turn back
@@ -32,12 +29,11 @@ byte instruction = -1; // 0 stop, 1 straight, 2 turn left, 3 turn right, 4 turn 
 void setup() {
     Serial.begin(9600);
     while(!Serial) continue; // Wait for init
-    delay(5000);
-    Serial.println("Begin test...");
+    flicker_led(led_signal, 10, 500);
 
-    flicker_led(led_running, 10, 200);
+    flicker_led(led_signal, 10, 200);
     sensors->Calibrate();
-    digitalWrite(led_running, LOW);   
+    digitalWrite(led_signal, LOW);   
 }
 
 
@@ -55,7 +51,7 @@ void loop() {
     switch (instruction) {
         case 0:  // Stop
             actuators->Stop();
-            digitalWrite(led_running, LOW);
+            digitalWrite(led_signal, LOW);
             break; 
             
         case 1:  // Go forward
@@ -67,25 +63,25 @@ void loop() {
             float speed_left = target_speed - pid_value;
             float speed_right = target_speed + pid_value;
             actuators->UpdateSpeed(speed_left, speed_right);
-            digitalWrite(led_running, HIGH);
+            digitalWrite(led_signal, HIGH);
             break;
             
         case 2:  // Turn left
             actuators->Turn(false, false);
             instruction = 0;
-            digitalWrite(led_running, LOW);
+            digitalWrite(led_signal, LOW);
             break;
             
         case 3:  // Turn right
             actuators->Turn(true, false);
             instruction = 0;
-            digitalWrite(led_running, LOW);
+            digitalWrite(led_signal, LOW);
             break;
             
         case 4:  // Full turn
             actuators->Turn(false, true);
             instruction = 0;
-            digitalWrite(led_running, LOW);
+            digitalWrite(led_signal, LOW);
             break;
     }
 
@@ -107,14 +103,3 @@ void flicker_led(byte led, unsigned int n, unsigned int delay_) {
         delay(delay_);
     }
 }
-
-
-
-
-
-
-
-
-
-
-

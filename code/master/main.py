@@ -3,36 +3,58 @@
 """
 
 
-from yaml import load
-try:
-    from yaml import CLoader as Loader
-except ImportError:
-    from yaml import Loader
-
-from master import Master
-from gui import GUI
-from utils import Container
 from queue import Queue
 
-# TODO: when everything is finished, change instantiations accordingly
+from master import NaiveMaster
+from gui import GUI
+from utils import Parameters, Container
+from robots import Robots
+from environment import Environment
+
+
+#---------------
+def make_queues():
+    q_master = {
+        "master2gui": Queue(),
+        "gui2master": Queue(),
+        "robots2messenger": Queue(),
+        "messenger2robots": Queue()
+    }
+    q_gui = {
+        "master2gui": q_master["master2gui"],
+        "gui2master": q_master["gui2master"]
+    }
+    q_robots = {
+        "robots2messenger": q_master["robots2messenger"],
+        "messenger2robots": q_master["messenger2robots"]
+    }
+    q = {
+        "master": q_master,
+        "robots": q_robots,
+        "gui": q_gui
+    } 
+    return Container(q)
+
 
 #---------------
 if __name__ == '__main__':
 
-    stream = open('../config/config.yaml', 'r')
-    parameters = Container(load(stream, Loader=Loader))
-    queu_gui_to_master = Queue()
-    queu_master_2_gui =  Queue()
-    master = Master(queu_master_2_gui, queu_gui_to_master, parameters.shared, parameters.real_world)
-    gui = GUI(queu_master_2_gui, queu_gui_to_master, parameters.shared, parameters.real_world)
+    params = Parameters()
+    q = make_queues()
+    env = Environment().new()
+    robots = Robots(params, q.robots)
+    master = NaiveMaster(params, q.master)
+    gui = GUI(params, q.gui, env.ground_truth)
 
-    master.run()
-    while gui.condition_loop:
+    # Start child threads
+    robots.start()
+    master.start()
+
+    # Main thread
+    while not gui.close:
         gui.check_user_event().update()
-    gui.quit()
 
-
-
+    # Quit properly threads TODO
 
 
 
