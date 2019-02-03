@@ -47,9 +47,25 @@ class Map:
 
     #---------------
     @property
+    def frontiers_gui(self):
+        frontiers = []
+        for frontier in iter(self._frontiers):
+            node = self.graph.get_node(frontier)
+            (x, y) = node.position
+            orientations = node.unexplored_orientations
+            for orientation in orientations:
+                if orientation == 0: frontiers.append((x,y+5))
+                elif orientation == 1: frontiers.append((x+5,y))
+                elif orientation == 2: frontiers.append((x,y-5))
+                elif orientation == 3: frontiers.append((x-5,y))
+        return frontiers
+
+
+    #---------------
+    @property
     def summary(self):
         edges = self.graph.edges
-        frontiers = self.frontiers
+        frontiers = self.frontiers_gui
         robots = [(robot.position, robot.orientation) for robot in self._robots.values()]
         return (edges, frontiers, robots)
 
@@ -146,7 +162,6 @@ class Map:
         orientation_robot = robot.orientation
         node = self.graph.get_node(position)
         orientation_edges = node.unexplored_orientations
-        print(orientation_edges)
         return [Robot.or2dir(orientation_robot, o) for o in orientation_edges]
     
 

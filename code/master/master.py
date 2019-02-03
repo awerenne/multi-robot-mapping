@@ -125,7 +125,6 @@ class Master(Thread, metaclass=ABCMeta):
         direction = self.make_decision(id_robot)
         self.map.turn_robot(id_robot, direction)
         instruction = self.direction2instruction(direction)
-        print(instruction)
         self.send_instruction_to_robot(id_robot, instruction)
         self.send_summary_to_gui(self.map.summary)
 
@@ -168,7 +167,6 @@ class NaiveMaster(Master):
 
     #---------------
     def left_hand_rule(self, directions):
-        print(directions)
         if "left" in directions:
             return "left"
         if "straight" in directions:

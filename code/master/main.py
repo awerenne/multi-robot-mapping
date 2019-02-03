@@ -39,7 +39,7 @@ def make_queues():
 #---------------
 if __name__ == '__main__':
 
-    params = Parameters()
+    params = Parameters(path="../config/config.yaml")
     q = make_queues()
     env = Environment().new()
     robots = Robots(params, q.robots)

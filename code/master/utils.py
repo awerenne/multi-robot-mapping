@@ -15,12 +15,11 @@ except ImportError:
 #---------------
 class Parameters():
 
-    path = "../config/config.yaml"
-
     #---------------
-    def __init__(self):
+    def __init__(self, path="../config/config.yaml"):
+        self.path = path
         self.load().build()
-
+        
 
     #---------------
     def __str__(self):
@@ -38,7 +37,7 @@ class Parameters():
 
     #---------------
     def load(self):
-        self.container = Container(load(open(Parameters.path, 'r'),
+        self.container = Container(load(open(self.path, 'r'),
                 Loader=Loader))
         return self
 

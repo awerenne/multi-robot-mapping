@@ -23,27 +23,26 @@ class Robots(Thread):
 
     def run(self):
         self.q.messenger2robots.get()  # Run instruction
-        while True:
-            self.temp()
-            time.sleep(5)
+        self.temp()
+        while True: time.sleep(5)
 
     def temp(self):
 
-        self.q.robots2messenger.put("<1/1/0;50>")
+        self.q.robots2messenger.put("<1/1/0;20>")
         self.q.messenger2robots.get()
-        time.sleep(5)
+        time.sleep(3)
 
-        self.q.robots2messenger.put("<2/1/1;100>")
+        self.q.robots2messenger.put("<1/2/5;10>")
         self.q.messenger2robots.get()
-        time.sleep(10)
+        time.sleep(3)
 
-        self.q.robots2messenger.put("<1/2/3;80>")
+        self.q.robots2messenger.put("<1/3/5;10>")
         self.q.messenger2robots.get()
-        time.sleep(10)
+        time.sleep(3)
 
-        self.q.robots2messenger.put("<1/2/0;35>")
+        self.q.robots2messenger.put("<1/4/1;15>")
         self.q.messenger2robots.get()
-        time.sleep(10)
+        time.sleep(3)
 
 
         
