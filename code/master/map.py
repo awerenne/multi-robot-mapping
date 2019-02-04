@@ -5,6 +5,7 @@
 
 
 import numpy as np
+from copy import deepcopy
 
 from graph import Graph, Node
 from utils import PriorityQueue, center2xy
@@ -42,6 +43,9 @@ class Map:
     #---------------
     @property
     def frontiers(self):
+        temp = deepcopy(self._frontiers)
+        for frontier in temp:
+            self.update_frontier(frontier)
         return list(self._frontiers)
 
 
@@ -97,6 +101,11 @@ class Map:
         assert self.is_robot(id_robot)
         return self._robots[id_robot].position
 
+    #---------------
+    def get_robot_orientation(self, id_robot):
+        assert self.is_robot(id_robot)
+        return self._robots[id_robot].orientation
+
 
     #---------------
     def is_robot(self, id_robot):
@@ -139,7 +148,8 @@ class Map:
         going_to = robot.orientation
         coming_from = (robot.orientation + 2) % 4
 
-        self.graph.new_node(robot.position, robot.orientation, type_intersection)
+        self.graph.new_node(robot.position, robot.orientation,
+                type_intersection)
         self.graph.new_edge(previous_position, going_to, robot.position,
                 coming_from, distance)
         self.new_frontier(robot.position)
@@ -168,33 +178,39 @@ class Map:
     #---------------
     def shortest_path(self, start_, end_, heuristic):  
         assert self.is_node(start_) and self.is_node(end_)
+        self.graph.reset()
         start_ = self.graph.get_node(start_)
         end_ = self.graph.get_node(end_)
-        self.graph.reset()
-        priority_frontiers = PriorityQueue()
+        pq = PriorityQueue()
 
         # A* shortest path
-        priority_frontiers.put(start_, 0.0)
-        while not priority_frontiers.is_empty():
-            current = priority_frontiers.get()
-            if current == target:
+        start_.cost = 0
+        start_.visited = True
+        pq.put(start_, 0.0)
+        while not pq.is_empty():
+            current = pq.get()
+            if current.position == end_.position:
                 break
-
             for (neighbor, weight) in current.neighbors:
                 g = current.cost + weight
                 if not neighbor.visited or g <= neighbor.cost:  
                     neighbor.cost = g
                     neighbor.parent = current
                     f = g + heuristic(neighbor.position, end_.position)
-                    priority_frontiers.put(neighbor, f)
+                    pq.put(neighbor, f)
                 neighbor.visited = True
 
         # Unrol shortest path
         path = []
+        node = end_
         while (node != None):
-            path.append(node.coords)
+            path.append(node.position)
+            if node == start_: break
             node = node.parent
-        return reverse(path)
+        path.reverse()
+        # print("Path: " + str(path))
+        assert node == start_
+        return path
 
 
     

@@ -16,7 +16,8 @@ const byte pins_qta[6] = {0, 1, 2, 3, 4, 5};  // Analog
 const byte pin_sharp = 6;
 const byte led_signal = 13;
 
-const float parameters_pid[4] = {65., 0.014, 0.008, 0.};  // target speed, kp, kd, ki
+// const float parameters_pid[4] = {65., 0.014, 0.008, 0.};  // target speed, kp, kd, ki
+const float parameters_pid[4] = {71., 0.0163, 0.012, 0.};  // target speed (default 65), kp, kd, ki
 const unsigned int parameters_qta[3] = {5, 6, 10};  // Emitter pin (digital PWM), number of sensors, number of samples to average per sensor reading
 Messenger* messenger = new Messenger(pins_messenger);
 Actuators* actuators = new Actuators(pins_actuators, parameters_pid);
@@ -56,6 +57,9 @@ void loop() {
             case 4: turn_back();
                     follow_line();
                     break;
+            case 5: stop();
+                    actuators->Accelerate();
+                    break;
             default: stop();
         }
     }
@@ -85,7 +89,8 @@ void stop() {
 void follow_line() {
     digitalWrite(led_signal, HIGH);
     distance = 0;
-    for (unsigned int i = 0; true; i++) {
+    instruction = 1;
+    for (unsigned int i = 0; instruction == 1; i++) {
         follow_line_step();
         distance += sensors->GetDistance();
         if (i % 2 == 0 && sensors->IsIntersection(actuators)) {
@@ -95,6 +100,12 @@ void follow_line() {
         if (i % 5 == 0 && sensors->IsObstacle(actuators)) {
             send_message(8, distance);
             break;
+        }
+
+        if (i % 10 == 0) {
+            instruction = check_message(instruction);
+            if (instruction != 1)
+                return;
         }
     }
     instruction = 0;
@@ -167,12 +178,3 @@ void update_counter_left() {
 void update_counter_right() { 
     sensors->IncrementRight(); 
 }
-
-
-
-
-
-
-
-
-

@@ -40,6 +40,7 @@ Actuators::Actuators(const byte *pins, const float* parameters=NULL) {
     }
     this->pid_value = 0;
     this->new_line = true;
+    this->start_acceleration = millis();
 }
 
 
@@ -50,20 +51,27 @@ void Actuators::FollowLine(const int& error) {
     if (this->new_line) {
         this->pid_value = this->kp * error;
         this->new_line = false;
+        this->start_acceleration = millis();
     }
     else
         this->pid_value = (this->kp * error) + (this->kd *
             (error - this->previous_error)) + (this->ki * this->accumulated_error);
     this->previous_error = error;
-    float speed_left = 65 - pid_value;
-    float speed_right = 65 + pid_value;
+
+    float target_speed = this->target_speed;
+    if ((millis() - this->start_acceleration) < 800)
+        target_speed *= 0.87;
+
+    float speed_left = target_speed - pid_value;
+    float speed_right = target_speed + pid_value;
     this->UpdateSpeed(speed_left, speed_right); 
 }
 
 
 //============
 void Actuators::OneInch() {
-    this->UpdateSpeed(60, 60);
+    float target_speed = this->target_speed * 0.93;
+    this->UpdateSpeed(target_speed, target_speed);
     delay(400);
     this->Stop();
     this->new_line = true;
@@ -82,11 +90,12 @@ void Actuators::Stop() {
 //============
 void Actuators::Turn(const bool& clockwise, const bool& full, Sensors* sensors=NULL) {
     int n_quarters = full ? 2 : 1;
+    float target_speed = this->target_speed * 0.93;
     for (int i = 0; i < n_quarters; ++i) {
         if (clockwise)
-            this->UpdateSpeed(65, -65);
+            this->UpdateSpeed(target_speed, -target_speed);
         else
-            this->UpdateSpeed(-65, 65);
+            this->UpdateSpeed(-target_speed, target_speed);
         delay(450);  // Time to do slightly less than half turn
     }
     if (sensors)
@@ -99,10 +108,11 @@ void Actuators::Turn(const bool& clockwise, const bool& full, Sensors* sensors=N
 //============
 // Continue to turn until line is in centered (explain more)
 void Actuators::TurnToLine(const bool& clockwise, Sensors* sensors) {
+    float target_speed = this->target_speed * 0.895;
     if (clockwise)
-        this->UpdateSpeed(58, -58);
+        this->UpdateSpeed(target_speed, -target_speed);
     else
-        this->UpdateSpeed(-58, 58);
+        this->UpdateSpeed(-target_speed, target_speed);
     do {
         delay(5);
         sensors->QTRARead();
@@ -146,7 +156,10 @@ void Actuators::UpdateSpeed(const float& speed_left, const float& speed_right) {
 }
 
 
-
+//============
+void Actuators::Accelerate() {
+    this->target_speed += 5;
+}
 
 
 

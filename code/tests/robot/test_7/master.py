@@ -24,8 +24,9 @@ def send_pid():
             kp = float(input_[1])
             kd = float(input_[2])
             ki = float(input_[3])
-        msg = "<" + str(instruction) + "," + str(kp) + "," + str(kd) + \
-                "," + str(ki) + ">"
+        msg = "<" + str(instruction) + "/" + str(kp) + "/" + str(kd) + \
+                "/" + str(ki) + ">"
+        print(msg)
         ser.write(msg.encode())
 
 

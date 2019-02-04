@@ -23,6 +23,7 @@ class Master(Thread, metaclass=ABCMeta):
 
     def __init__(self, params, queues):  
         Thread.__init__(self)
+        self.travels = {}
         self.params = params
         self.q = queues
         self.id_robots = self.params.robots.keys()
@@ -76,8 +77,10 @@ class Master(Thread, metaclass=ABCMeta):
             directive = self.q.gui2master.get()
             if directive.type_directive == "request_run":
                 self.run_robots()
-            if directive.type_directive == "request_stop":
+            elif directive.type_directive == "request_stop":
                 self.stop_robots()
+            elif directive.type_directive == "request_increment":
+                self.increment_speed()
 
 
     #--------------- 
@@ -119,9 +122,18 @@ class Master(Thread, metaclass=ABCMeta):
 
 
     #--------------- 
+    def increment_speed(self):
+        for id_robot in self.id_robots:
+            self.send_instruction_to_robot(id_robot, 5)
+
+
+    #--------------- 
     def process_information(self, id_robot, information):
-        self.map.update(id_robot, information.type_intersection,
-                information.distance)
+        if id_robot in self.travels.keys():
+            dist = self.travels.pop(id_robot)  # discard if already explored
+        else:
+            dist = information.distance
+        self.map.update(id_robot, information.type_intersection, dist)
         direction = self.make_decision(id_robot)
         self.map.turn_robot(id_robot, direction)
         instruction = self.direction2instruction(direction)
@@ -156,8 +168,12 @@ class NaiveMaster(Master):
     #---------------
     def make_decision(self, id_robot):
         if self.map.is_robot_at_frontier(id_robot):
+            self.remove_target(id_robot)
             directions = self.map.unexplored_directions(id_robot)
             return self.left_hand_rule(directions)
+
+        if self.target_reached(id_robot):
+            self.remove_target(id_robot)
 
         if not self.target_assigned(id_robot):
             self.assign_target_to_robot(id_robot)
@@ -174,6 +190,18 @@ class NaiveMaster(Master):
         if "right" in directions:
             return "right"
         return "uturn"
+
+
+    #---------------
+    def remove_target(self, id_robot):
+        if self.target_assigned(id_robot):
+            del self.targets[id_robot]
+
+
+    #---------------
+    def target_reached(self, id_robot):
+        return self.target_assigned(id_robot) and \
+            self.targets[id_robot] == self.map.get_robot_position(id_robot)
 
 
     #---------------
@@ -194,7 +222,7 @@ class NaiveMaster(Master):
         remaining_targets = self.get_remaining_targets()
         if len(remaining_targets) == 0:
             self.targets[id_robot] = self.nearest(start_, self.map.frontiers)
-        return self.nearest(start_, remaining_targets)
+        self.targets[id_robot] = self.nearest(start_, remaining_targets)
 
 
     #---------------
@@ -208,7 +236,34 @@ class NaiveMaster(Master):
         assert self.target_assigned(id_robot)
         start_ = self.map.get_robot_position(id_robot)
         end_ = self.targets[id_robot]
-        return self.map.shortest_path(start_, end_, manhattan_distance)[0]
+        if start_ == end_:
+            self.remove_target(id_robot)
+            return self.make_decision(id_robot)
+
+        neighbor = self.map.shortest_path(start_, end_, manhattan_distance)[1]
+        
+        # TODO: CHANGE and put in map
+        sx, sy = start_
+        nx, ny = neighbor
+        current_orientation = self.map.get_robot_orientation(id_robot)
+        if ny > sy:
+            target_orientation = 0
+        elif ny < sy:
+            target_orientation = 2
+        elif nx > sx:
+            target_orientation = 1
+        elif nx < sx:
+            target_orientation = 3
+        else:
+            assert False
+        direction = self.map.get_robot(id_robot).or2dir(current_orientation, target_orientation)
+
+        # print("Current position: " + str(start_))
+        # print("Target position: " + str(end_))
+        # print("Next position: " + str(neighbor))
+
+        self.travels[id_robot] = manhattan_distance(start_, neighbor)
+        return direction
 
 
         

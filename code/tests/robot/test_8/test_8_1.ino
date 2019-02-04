@@ -42,13 +42,13 @@ void test_8_1() {
         msg = "C2;" + vector2string(calibratedMaximumOn, num_sensors);
         Serial.println(msg);
 
-        unsigned int *calibratedMinimumOff = qtra->calibratedMinimumOff;
-        msg = "C3;" + vector2string(calibratedMinimumOff, num_sensors);
-        Serial.println(msg);
+        // unsigned int *calibratedMinimumOff = qtra->calibratedMinimumOff;
+        // msg = "C3;" + vector2string(calibratedMinimumOff, num_sensors);
+        // Serial.println(msg);
 
-        unsigned int *calibratedMaximumOff = qtra->calibratedMaximumOff; 
-        msg = "C4;" + vector2string(calibratedMaximumOff, num_sensors);
-        Serial.println(msg);        
+        // unsigned int *calibratedMaximumOff = qtra->calibratedMaximumOff; 
+        // msg = "C4;" + vector2string(calibratedMaximumOff, num_sensors);
+        // Serial.println(msg);        
     }
              
 }

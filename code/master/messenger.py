@@ -87,7 +87,7 @@ class Messenger(Thread, metaclass=ABCMeta):
         if not self.valid_syntax(raw_msg):
             return None
         parsed_msg = self.parse_msg(raw_msg)
-        print(parsed_msg)
+        print("Parsed message:" + str(parsed_msg))
         return self.valid_msg(parsed_msg)
 
 
@@ -186,7 +186,6 @@ class MessengerReal(Messenger):
     def check_msg_from_robot(self, id_robot=None):
         serial = self.robots[id_robot]["serial"]    
         raw_msg = serial.readline().decode("utf-8").rstrip();
-        print(raw_msg)
         return self.process_msg_from_robot(id_robot, raw_msg)
 
 

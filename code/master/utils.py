@@ -4,6 +4,7 @@
 
 
 import numpy as np
+import heapq
 from yaml import load
 try:
     from yaml import CLoader as Loader
@@ -76,7 +77,8 @@ class PriorityQueue():
     def __str__(self): 
         return self.queue.__str__() 
   
-
+    def size(self):
+        return len(self.queue)
     #---------------
     def is_empty(self): 
         return len(self.queue) == 0 
@@ -116,7 +118,7 @@ class Container(dict):
 
 #---------------
 def manhattan_distance(a, b):
-    return abs(a[0]-b[0]) + abs(a[1]+b[1])
+    return abs(a[0]-b[0]) + abs(a[1]-b[1])
 
 
 #---------------

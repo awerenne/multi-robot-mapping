@@ -7,7 +7,7 @@ import pygame
 import time
 from utils import Container, xy2ij, center2xy
 
-
+# TODO change input target speed with scroll bar input instead
 
 class GUI():
     """
@@ -31,10 +31,10 @@ class GUI():
 
     #---------------
     def load_params(self, params):
-        self.dimensions_screen = (1000,500)
-        self.dimensions_map = (550,450)
+        self.dimensions_screen = (1025,500)
+        self.dimensions_map = (700,450)
         self.dimensions_user = (300,400)
-        (self.w, self.h) = (1000,600)
+        (self.w, self.h) = self.dimensions_screen
         (self.wm, self.hm) = self.dimensions_map
         (self.wu, self.hu) = self.dimensions_user
 
@@ -64,9 +64,9 @@ class GUI():
 
         self.screen = pygame.display.set_mode(self.dimensions_screen)
         self.surface_screen = pygame.Surface(self.dimensions_screen)
-        self.surface_map = self.surface_screen.subsurface(pygame.Rect(50, 25,
+        self.surface_map = self.surface_screen.subsurface(pygame.Rect(25, 25,
                             self.wm, self.hm))
-        self.surface_user = self.surface_screen.subsurface(pygame.Rect(650,
+        self.surface_user = self.surface_screen.subsurface(pygame.Rect(725,
                             50, self.wu, self.hu))
         self.surface_screen.fill((45,45,45)) 
         self.surface_user.fill((45,45,45)) 
@@ -75,6 +75,8 @@ class GUI():
         self.rect_run = pygame.Rect((50, 50, 50, 50))
         self.icon_stop = pygame.image.load('icons/stop_small.png').convert_alpha() 
         self.rect_stop = pygame.Rect((125, 50, 50, 50))
+
+        self.rect_increment = pygame.Rect((200, 50, 50, 50))
         
         self.timer = pygame.Rect((50, 125, 200, 50))
         self.log = pygame.Rect((50, 200, 200, 150))
@@ -121,11 +123,13 @@ class GUI():
             self.send_user_request_to_master("run")
         elif self.is_mouse_on_button(position, self.rect_stop):
             self.send_user_request_to_master("stop")
+        elif self.is_mouse_on_button(position, self.rect_increment):
+            self.send_user_request_to_master("increment")
 
 
     #---------------
     def is_mouse_on_button(self, position, button):
-        relative_position = (position[0]-650, position[1]-50) 
+        relative_position = (position[0]-725, position[1]-50) 
         if button.collidepoint(relative_position):
             return True
         return False
@@ -179,16 +183,18 @@ class GUI():
     def draw_buttons(self):
         self.draw_button(self.rect_run, self.icon_run)
         self.draw_button(self.rect_stop, self.icon_stop)
+        self.draw_button(self.rect_increment)
 
 
     #---------------
-    def draw_button(self, rect, icon):    
+    def draw_button(self, rect, icon=None):    
         if self.is_mouse_on_button(pygame.mouse.get_pos(), rect):
             color = (228,106,104)
         else:
             color = (171,171,171)
         pygame.draw.rect(self.surface_user, color, rect)
-        self.surface_user.blit(icon, (rect.x+12, rect.y, rect.w, rect.h))
+        if icon != None:
+            self.surface_user.blit(icon, (rect.x+12, rect.y, rect.w, rect.h))
 
 
     #---------------

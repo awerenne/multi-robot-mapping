@@ -85,7 +85,7 @@ void loop() {
             break;
     }
 
-    if (sensors->IsObstacle()) {
+    if (sensors->IsObstacle(actuators)) {
         actuators->Stop();
         instruction = 0;
     }

@@ -17,6 +17,7 @@ class Actuators {
     void Turn(const bool& clockwise, const bool& full, Sensors* sensors=NULL);
     void UpdateSpeed(const float& velocity_left, const float& velocity_right); 
     void UpdatePWM(const int& pwm_left, const int& pwm_right);
+    void Accelerate();
     
 
  private:
@@ -25,6 +26,7 @@ class Actuators {
     bool new_line; // Too avoid problem at init between error & previous error & reset distance for each segment
     float kp, kd, ki, pid_value, target_speed;
     float distance;
+    unsigned long start_acceleration;
 
     void TurnToLine(const bool& clockwise, Sensors* sensors);
 };

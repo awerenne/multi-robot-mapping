@@ -70,6 +70,7 @@ class Graph():
         node_b = self.get_node(position_b)
 
         edge = Edge(node_a, node_b, weight)
+        
         # Make orientation
         node_a.connect(edge, orientation_a)
         node_b.connect(edge, orientation_b)
@@ -78,7 +79,9 @@ class Graph():
 
     #---------------      
     def reset(self):
-        map(lambda node: node.reset(), self.nodes.itervalues())
+        for position, node in self.nodes.items():
+            self.nodes[position] = node.reset()
+        return self
 
 
 
@@ -125,6 +128,16 @@ class Node():
 
 
     #---------------
+    @property
+    def parent_to_son_orientation(self):
+        for orientation, edge in self.edges.items():
+            temp = edge.connected_to(self.position)
+            if self._parent != None and temp.position == self._parent.position:
+                return orientation
+        assert False
+
+
+    #---------------
     @parent.setter
     def parent(self, parent):
         self._parent = parent
@@ -146,9 +159,9 @@ class Node():
     @property
     def neighbors(self):
         neighbors = []
-        for _, edge in edges.items():
+        for _, edge in self.edges.items():
             if edge != None:  
-                neighbors.append(edge.connected_to(self.position), edge.weight)
+                neighbors.append((edge.connected_to(self.position), edge.weight))
         return neighbors
 
 
@@ -160,6 +173,11 @@ class Node():
             if edge == None:  
                 unexplored.append(orientation)
         return unexplored
+
+
+    #--------------- 
+    def __lt__(self, other):
+        return self.position < other.position
 
 
     #---------------
@@ -201,6 +219,7 @@ class Node():
     #---------------
     def connect(self, edge, orientation):
         self.edges[orientation] = edge
+        # print("Node: " + str(self._position) + " -- connections: " + str(self.edges))
 
 
     #---------------
@@ -208,6 +227,7 @@ class Node():
         self._visited = False
         self._parent = None
         self._cost = float('Inf')
+        return self
 
 
 

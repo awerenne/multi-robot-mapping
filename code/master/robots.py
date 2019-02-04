@@ -27,22 +27,13 @@ class Robots(Thread):
         while True: time.sleep(5)
 
     def temp(self):
+        infos = ["4;40", "3;20", "6;20", "2;15", "4;25", "0;40", "4;45", "5;20",
+                    "6;15"]
 
-        self.q.robots2messenger.put("<1/1/0;20>")
-        self.q.messenger2robots.get()
-        time.sleep(3)
-
-        self.q.robots2messenger.put("<1/2/5;10>")
-        self.q.messenger2robots.get()
-        time.sleep(3)
-
-        self.q.robots2messenger.put("<1/3/5;10>")
-        self.q.messenger2robots.get()
-        time.sleep(3)
-
-        self.q.robots2messenger.put("<1/4/1;15>")
-        self.q.messenger2robots.get()
-        time.sleep(3)
+        for seq_number, info in enumerate(infos):
+            msg = "<1/" + str(seq_number) + "/" + info + ">"
+            self.q.robots2messenger.put(msg)
+            time.sleep(1)
 
 
         
