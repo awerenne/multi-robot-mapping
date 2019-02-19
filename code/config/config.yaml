@@ -1,4 +1,4 @@
-is_simulation: False
+is_simulation: True
 simulation:
     n_robots: 2
     robots: 

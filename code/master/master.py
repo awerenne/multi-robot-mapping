@@ -13,6 +13,7 @@ from utils import Container, manhattan_distance
 
 
 # TODO: proper thread/general quitting - join (low priority)
+# Write unit testing framework
 
 
 #---------------

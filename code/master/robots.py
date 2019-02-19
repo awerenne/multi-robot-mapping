@@ -33,7 +33,7 @@ class Robots(Thread):
         for seq_number, info in enumerate(infos):
             msg = "<1/" + str(seq_number) + "/" + info + ">"
             self.q.robots2messenger.put(msg)
-            time.sleep(1)
+            time.sleep(1.5)
 
 
         
