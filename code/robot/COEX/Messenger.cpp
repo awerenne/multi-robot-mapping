@@ -1,5 +1,5 @@
 /* 
-    Most of this code was borrowed from 
+    Code inspired from 
         http://forum.arduino.cc/index.php?topic=396450
     and adapted to my needs. Many thanks to the author!
 */
@@ -9,120 +9,140 @@
 
 
 //============
-Messenger::Messenger(const byte* pins) {
-    this->blt = new SoftwareSerial(pins[0], pins[1]);  // RX, TX
-    while (!this->blt) continue;  // Wait for connection
-    this->blt->begin(9600);
+Messenger::Messenger(const byte* pins, int baud_rate, int parse_option=0) {
+    this->initBluetooth(pins, baud_rate);
+    this->resetCommunication();
+    this->parse_option = parse_option;
+    this->id_self = 1;
+    this->id_master = 0;
+    this->start_marker = '<';
+    this->end_marker = '>';
+    this->received_chars = (char*) malloc(this->num_chars * sizeof(char));
+    this->temp_chars = (char*) malloc(this->num_chars * sizeof(char));
 }
 
 
 //============
-bool Messenger::ReceiveMessage() {
-    static boolean recvInProgress = false;
-    static byte ndx = 0;
-    char startMarker = '<';
-    char endMarker = '>';
-    char rc;
+void Messenger::resetCommunication() {
+    this->seq_number_self = 0;
+    this->seq_number_master = 0;
+    this->new_data = false;
+    this->instruction = 0;
+    this->kp = 0.05;
+    this->kd = 0;
+    this->ki = 0;
+}
 
-    while (this->blt->available() > 0 && this->newData == false) {
-        rc = this->blt->read();
 
-        if (recvInProgress == true) {
-            if (rc != endMarker) {
-                this->receivedChars[ndx] = rc;
-                ndx++;
-                if (ndx >= numChars) {
-                    ndx = numChars - 1;
-                }
+//============
+void Messenger::initBluetooth(const byte* pins, int baud_rate) {
+    this->bluetooth = new SoftwareSerial(pins[0], pins[1]);  
+    while (!this->bluetooth) continue;  
+    this->bluetooth->begin(baud_rate);
+}
+
+
+//============
+bool Messenger::receiveMessage() {
+    static boolean reception_in_progress = false;
+    static byte index = 0;
+    char received_char;
+
+    while (this->bluetooth->available() > 0 && this->new_data == false) {
+        received_char = this->bluetooth->read();
+
+        if (reception_in_progress == true) {
+            if (received_char != this->end_marker) {
+                this->received_chars[index] = received_char;
+                index++;
+                if (index >= this->num_chars) index = this->num_chars - 1;
             }
             else {
-                this->receivedChars[ndx] = '\0'; // terminate the string
-                recvInProgress = false;
-                ndx = 0;
-                this->newData = true;
+                this->received_chars[index] = '\0';  // terminate 
+                reception_in_progress = false;
+                index = 0;
+                this->new_data = true;
             }
         }
 
-        else if (rc == startMarker) {
-            recvInProgress = true;
-        }
+        else if (received_char == this->start_marker) 
+            reception_in_progress = true;
     }
-    return this->newData;
+    return this->new_data;
 }
 
 
 //============
-void Messenger::ParseInstruction() {      // split the data into its parts
-    strcpy(this->tempChars, this->receivedChars);
-
-    char * strtokIndx; // this is used by strtok() as an index
-
-    strtokIndx = strtok(this->tempChars,"/");      // get the first part - the string
-    this->id_master = atoi(strtokIndx);     // convert this part to an integer
- 
-    strtokIndx = strtok(NULL, "/"); // this continues where the previous call left off
-    this->seq_number_master = atoi(strtokIndx);     // convert this part to an integer
-
-    strtokIndx = strtok(NULL, "/");
-    this->instruction = atoi(strtokIndx);     // convert this part to an integer
-
-    this->newData = false;
+void Messenger::sendMessage(const String& information) {
+    String msg = String(this->start_marker); 
+    msg += String(this->id_self) + "/";
+    msg += String(this->seq_number_self) + "/";
+    msg += String(information) + String(this->end_marker) + "\n";
+    this->bluetooth->println(msg);
+    this->seq_number_self += 1;
 }
 
 
 //============
-void Messenger::ParsePIDParameters() {      // split the data into its parts
-    strcpy(this->tempChars, this->receivedChars);
-
-    char * strtokIndx; // this is used by strtok() as an index
-
-    strtokIndx = strtok(this->tempChars,"/");      // get the first part - the string
-    this->instruction = atoi(strtokIndx);     // convert this part to an integer
- 
-    strtokIndx = strtok(NULL, "/"); // this continues where the previous call left off
-    this->kp = atof(strtokIndx);     // convert this part to an integer
-
-    strtokIndx = strtok(NULL, "/"); // this continues where the previous call left off
-    this->kd = atof(strtokIndx);     // convert this part to an integer
-
-    strtokIndx = strtok(NULL, "/"); // this continues where the previous call left off
-    this->ki = atof(strtokIndx);     // convert this part to an integer
-
-    this->newData = false;
+void Messenger::parseMessage() {
+    switch (this->parse_option) {
+        case 0: this->parseNormal(); break;
+        case 1: this->parsePID(); break;
+        default: this->parseNormal(); break;
+    }
 }
 
 
 //============
-void Messenger::SendMessage(const String& msg) {
-    String datagram = "<" + String(this->id_slave) + "/" +
-        String(this->seq_number_slave) + "/" + msg + ">\n";
-    this->blt->println(datagram);
-    this->seq_number_slave += 1;
+void Messenger::parseNormal() {
+    strcpy(this->temp_chars, this->received_chars);
+    char* ptr; 
+
+    ptr = strtok(this->temp_chars, "/");     
+    this->id_master = atoi(ptr); 
+
+    ptr = strtok(NULL, "/"); 
+    this->seq_number_master = atoi(ptr); 
+
+    ptr = strtok(NULL, "/");
+    this->instruction = atoi(ptr);     
+    this->new_data = false;
 }
 
 
 //============
-int Messenger::GetInstruction() {
-    return this->instruction;
+void Messenger::parsePID() {
+    strcpy(this->temp_chars, this->received_chars);
+    char* ptr; 
+
+    ptr = strtok(this->temp_chars, "/");     
+    this->instruction = atoi(ptr);     
+
+    ptr = strtok(NULL, "/"); 
+    this->kp = atof(ptr);   
+
+    ptr = strtok(NULL, "/");
+    this->kd = atof(ptr);
+
+    ptr = strtok(NULL, "/");
+    this->ki = atof(ptr);       
+    this->new_data = false;
 }
 
 
 //============
-float Messenger::GetKp() {
-    return this->kp;
+void Messenger::updateInstruction(int& instruction) {
+    instruction = this->instruction;
 }
-
+   
 
 //============
-float Messenger::GetKd() {
-    return this->kd;
+void Messenger::updateParameters(float& kp, float& kd, float& ki) {
+    kp = this->kp;
+    kd = this->kd;
+    ki = this->ki;
 }
 
-
-//============
-float Messenger::GetKi() {
-    return this->ki;
-}
 
 
 
