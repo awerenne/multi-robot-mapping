@@ -78,8 +78,10 @@ void test_3() {
         and 2 cm/s as a wave function. (robot surélevé)
 
         Best tuning:
-        Kp left = 
-        Ki left = 
+        Kp left used battery = 65 
+        Ki left used battery = 0,045
+        Kp left charged battery = 40 
+        Ki left charged battery = 0,025
         Kp right = 
         Ki right = 
     */
@@ -87,9 +89,9 @@ void test_3() {
     pid_speed->reset();
     sensors->encodersReset();
 
-    int delay_ = 50;
+    int delay_ = 50, iter = 0;
     int pwm = 0;
-    float target_speed = 8, beta = 0, measured_speed;
+    float target_speed = 6, beta = 0, measured_speed;
     
     actuators->updatePWM(pwm, 0);
     while (true) {
@@ -100,8 +102,15 @@ void test_3() {
         pwm = beta;
         actuators->updatePWM(pwm, 0);
         measured_speed = sensors->getSpeedLeft();
-        Serial.println(String(target_speed) + "/" + String(measured_speed));
+        Serial.println(String(iter) + "/" + String(target_speed) + "/" + String(measured_speed));
+
+        if (iter % 200 == 0) {
+            if (target_speed == 6) target_speed = 7;
+            else target_speed = 6;
+        }
+        
         delay(delay_);
+        iter++;
     }
     actuators->stop();
 }
@@ -115,10 +124,10 @@ void test_4() {
         (robot surélevé)
 
         Best tuning:
-        Kp_speed = 
-        Ki_speed = 
-        Kp_forward = 
-        Ki_forward = 
+        Kp_speed = 50
+        Ki_speed = 0.025
+        Kp_forward = 30
+        Ki_forward = 0.020
     */
 
     pid_speed->reset();
@@ -126,7 +135,7 @@ void test_4() {
     sensors->encodersReset();
 
     int delay_ = 50, iter = 0;
-    float alpha = 0, beta = 0, target_speed = 0;
+    float alpha = 0, beta = 0, target_speed = 6;
     int pwm_left = 0, pwm_right = 0;
 
     actuators->updatePWM(pwm_left, pwm_right);
@@ -139,12 +148,12 @@ void test_4() {
         pwm_left = beta + alpha;
         pwm_right = beta - alpha;
         actuators->updatePWM(pwm_left, pwm_right);
-        Serial.println(String(target_speed) + "/" + String(sensors->getSpeed())\
+        Serial.println(String(iter) + "/" + String(target_speed) + "/" + String(sensors->getSpeed())\
             + "/" + String(sensors->getSpeedLeft()) + "/" +\
             String(sensors->getSpeedRight()));
 
-        if (iter % 20 == 0) {
-            if (target_speed == 6) target_speed = 9;
+        if (iter % 200 == 0) {
+            if (target_speed == 6) target_speed = 8;
             else target_speed = 6;
         }
 
@@ -166,9 +175,9 @@ void test_5() {
     pid_forward->reset();
     sensors->encodersReset();
 
-    pid_speed->setParameters(0,0,0);
-    pid_forward->setParameters(0,0,0);
-    const float target_speed = 5;
+    pid_speed->setParameters(50, 0, 0.025);
+    pid_forward->setParameters(30, 0, 0.02);
+    const float target_speed = 6;
 
     int delay_ = 50;
     float alpha = 0, beta = 0;

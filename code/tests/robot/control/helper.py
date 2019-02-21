@@ -35,61 +35,75 @@ def set_pid_values():
 # ------------
 def plot_measures():
     # serial_port = '/dev/cu.wchusbserial1d1120';
+    seq_number = 0
     serial_port = '/dev/cu.wchusbserial14120';
     baud_rate = 9600; 
-    ser = serial.Serial(serial_port, baud_rate)
-    i = 0
-    plt.axis([0, 100, 0, 10])
-    for i in range(1000):
+    ser = serial.Serial(serial_port, baud_rate, timeout=0.1)
+    last_lower_interval = seq_number
+    size_interval = 1200
+    plt.axis([last_lower_interval, last_lower_interval+size_interval, 4, 10])
+    while True:
+        time.sleep(0.05)
         try: 
+            ser.flushInput()
             msg = ser.readline().decode("utf-8").rstrip();
             measures = msg.split('/')
             measures = list(map(lambda x: float(x), measures))
-        except: continue
-        print(measures)
-        if len(measures) != 2: continue
-        plt.plot(i, measures[0], color='red')
-        plt.scatter(i, measures[1], color='blue')
-        plt.pause(0.25)
-        if i % 100 == 0: 
+        except: 
+            # print("Error")
+            continue
+        if len(measures) != 3: continue
+        if seq_number >= measures[0]: continue
+        # print(measures)
+        seq_number = measures[0]
+        plt.scatter(seq_number, measures[1], color='red')
+        plt.scatter(seq_number, measures[2], color='blue')
+        plt.pause(0.001)
+        if seq_number > (last_lower_interval+size_interval-10): 
+            last_lower_interval += size_interval
             x1,x2,y1,y2 = plt.axis()
-            plt.axis([i, i+100, y1, y2])
+            plt.axis([last_lower_interval, last_lower_interval+size_interval, y1, y2])
     plt.show()
 
 
 # ------------
 def sub_plot_measures():
     # serial_port = '/dev/cu.wchusbserial1d1120';
+    seq_number = 0
     serial_port = '/dev/cu.wchusbserial14120';
     baud_rate = 9600; 
-    ser = serial.Serial(serial_port, baud_rate)
-    i = 0
+    ser = serial.Serial(serial_port, baud_rate, timeout=0.1)
+    last_lower_interval = seq_number
+    size_interval = 1200
 
     fig,ax = plt.subplots(2,1)
-    ax[0].axis([0, 100, 0, 10])
-    ax[1].axis([0, 100, 0, 10])
+    ax[0].axis([last_lower_interval, last_lower_interval+size_interval, 4, 10])
+    ax[1].axis([last_lower_interval, last_lower_interval+size_interval, 4, 10])
 
-    for i in range(1000):
+    while True:
+        time.sleep(0.05)
         try: 
+            ser.flushInput()
             msg = ser.readline().decode("utf-8").rstrip();
             measures = msg.split('/')
             measures = list(map(lambda x: float(x), measures))
         except: 
-            print("Error")
-            time.sleep(0.05)
+            # print("Error")
             continue
-        print(measures)
-        if len(measures) != 4: continue
-        ax[0].scatter(i, measures[0], color='red', label='v_target')
-        ax[0].scatter(i, measures[1], color='blue', label='v_measured')
-        ax[1].scatter(i, measures[2], color='green', label='v_left')
-        ax[1].scatter(i, measures[3], color='orange', label='v_right')
-        time.sleep(0.05)
+        # print(measures)
+        if len(measures) != 5: continue
+        if seq_number >= measures[0]: continue
+        seq_number = measures[0]
+        ax[0].scatter(seq_number, measures[1], color='red', label='v_target')
+        ax[0].scatter(seq_number, measures[2], color='blue', label='v_measured')
+        ax[1].scatter(seq_number, measures[3], color='green', label='v_left')
+        ax[1].scatter(seq_number, measures[4], color='orange', label='v_right')
         plt.pause(0.001)
-        if i % 100 == 0: 
+        if seq_number > (last_lower_interval+size_interval-10): 
+            last_lower_interval += size_interval
             x1,x2,y1,y2 = ax[0].axis()
-            ax[0].axis([i, i+100, y1, y2])
-            ax[1].axis([i, i+100, y1, y2])
+            ax[0].axis([last_lower_interval, last_lower_interval+size_interval, y1, y2])
+            ax[1].axis([last_lower_interval, last_lower_interval+size_interval, y1, y2])
     plt.show()
 
 

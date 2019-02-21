@@ -37,40 +37,40 @@ void receive_msg_pid() {
 //============
 float speed_control(float target_speed) {
     float error = target_speed - sensors->getSpeed();
-    return pid_speed->update(error);
+    return pid_speed->compute(error);
 }
 
 
 //============
 float speed_control_left(float target_speed) {
     float error = target_speed - sensors->getSpeedLeft();
-    return pid_speed->update(error);
+    return pid_speed->compute(error);
 }
 
 
 //============
 float speed_control_right(float target_speed) {
     float error = target_speed - sensors->getSpeedRight();
-    return pid_speed->update(error);
+    return pid_speed->compute(error);
 }
 
 
 //============
 float forward_control() {
     float error = sensors->getSpeedRight() - sensors->getSpeedLeft();
-    return pid_forward->update(error);
+    return pid_forward->compute(error);
 }
 
 
 //============
 float line_control() {
     float error = sensors->getError();;
-    return pid_line->update(error);
+    return pid_line->compute(error);
 }
 
 
 //============
 float turn_control() {
     float error = sensors->getSpeedLeft() + sensors->getSpeedRight();
-    return pid_forward->update(error);
+    return pid_forward->compute(error);
 }

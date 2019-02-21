@@ -10,15 +10,17 @@
 //============
 class PIDController {
     private:
-        float kp, kd, ki;
+        float Kp, Kd, Ki;
         float prev_error, acc_error;
-        void updateError(float error);
-
+        float prev_t;
+        float max;
+        void update(float error, unsigned long t);
+        float antiWindup(float error, float ki);
 
     public: 
-        PIDController(float kp, float kd, float ki);
-        void setParameters(float kp, float kd, float ki);
-        float update(float error);
+        PIDController(float Kp, float Kd, float Ki);
+        void setParameters(float Kp, float Kd, float Ki);
+        float compute(float error);
         void reset();
         float getKp();
         float getKd();
