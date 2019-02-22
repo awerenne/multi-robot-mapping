@@ -40,8 +40,8 @@ def plot_measures():
     baud_rate = 9600; 
     ser = serial.Serial(serial_port, baud_rate, timeout=0.1)
     last_lower_interval = seq_number
-    size_interval = 1200
-    plt.axis([last_lower_interval, last_lower_interval+size_interval, 4, 10])
+    size_interval = 600
+    plt.axis([last_lower_interval, last_lower_interval+size_interval, 5, 9])
     while True:
         time.sleep(0.05)
         try: 
@@ -74,11 +74,11 @@ def sub_plot_measures():
     baud_rate = 9600; 
     ser = serial.Serial(serial_port, baud_rate, timeout=0.1)
     last_lower_interval = seq_number
-    size_interval = 1200
+    size_interval = 600
 
     fig,ax = plt.subplots(2,1)
-    ax[0].axis([last_lower_interval, last_lower_interval+size_interval, 4, 10])
-    ax[1].axis([last_lower_interval, last_lower_interval+size_interval, 4, 10])
+    ax[0].axis([last_lower_interval, last_lower_interval+size_interval, 0, 10])
+    ax[1].axis([last_lower_interval, last_lower_interval+size_interval, 0, 10])
 
     while True:
         time.sleep(0.05)

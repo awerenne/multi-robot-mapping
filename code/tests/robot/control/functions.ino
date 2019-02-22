@@ -35,6 +35,19 @@ void receive_msg_pid() {
 
 
 //============
+void receive_msg_line() {
+    bool new_msg = messenger->receiveMessage(); 
+    if (new_msg == true) {
+        float kp, kd, ki;
+        messenger->parseMessage();  
+        messenger->updateInstruction(instruction);
+        messenger->updateParameters(kp, kd, ki);
+        pid_line->setParameters(kp, kd, ki); 
+    }
+}
+
+
+//============
 float speed_control(float target_speed) {
     float error = target_speed - sensors->getSpeed();
     return pid_speed->compute(error);
@@ -64,7 +77,8 @@ float forward_control() {
 
 //============
 float line_control() {
-    float error = sensors->getError();;
+    float error = sensors->getError();
+    Serial.println(error);
     return pid_line->compute(error);
 }
 

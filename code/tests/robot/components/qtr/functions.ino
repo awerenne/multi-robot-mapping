@@ -84,3 +84,67 @@ void get_min_max(unsigned int* v, int len, unsigned int& min, unsigned int& max)
         if (v[i] > max) max = v[i];
     }
 } 
+
+
+//============
+bool ambient_is_dark() {
+    qtra.read(sensor_values, QTR_EMITTERS_OFF); 
+    int min_value = 1000;
+    for (int i = 0; i < num_sensors; i++) 
+        if (sensor_values[i] < min_value) min_value = sensor_values[i];
+    if (min_value >= 400) return true;
+    return false;
+}
+
+
+//============
+void set_calibration(unsigned int* calib_min, unsigned int* calib_max) {
+    qtra.calibratedMinimumOn = calib_min;
+    qtra.calibratedMaximumOn = calib_max;
+}      
+
+
+//============
+void automatic_calibration() {
+    unsigned int calib_min_dark[6] = {100,100,100,100,100,100};  
+    unsigned int calib_max_dark[6] = {750,750,750,750,750,750}; 
+    unsigned int calib_min_light[6] = {100,100,100,100,100,100};  
+    unsigned int calib_max_light[6] = {600,600,600,600,600,600};  
+    if (ambient_is_dark())
+        set_calibration(calib_min_dark, calib_max_dark);
+    else
+        set_calibration(calib_min_light, calib_max_light);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

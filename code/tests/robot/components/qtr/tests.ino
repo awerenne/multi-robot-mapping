@@ -19,6 +19,9 @@ void test(byte test_id) {
         case 4:
             test_4();
             break;
+        case 5:
+            test_5();
+            break;
     }
 }
 
@@ -26,17 +29,15 @@ void test(byte test_id) {
 
 //============
 void test_1() {
-    String header = "num_samples_avg;dimming_level;f;light_on;h;t;position;vector_0;vector_1;vector_2;vector_3;vector_4;vector_5";
+    String header = "mode;num_samples_avg;f;t;position;v0;v1;v2;v3;v4;v5";
     Serial.println(header);
-    
+    String mode = "manual";
     int time_step = 1000/f;
     for (unsigned int t = 0; t < T; t += time_step) {
         QTRARead();
-        String measure = String(num_samples_per_sensor) + ";" ;
-        measure += String(dimming_level) + ";" ;
+        String measure = mode + ";" ;
+        measure += String(num_samples_per_sensor) + ";" ;
         measure += String(f) + ";" ;
-        measure += String(light_on) + ";" ;
-        measure += String(h) + ";" ;
         measure += String(t) + ";" ;
         measure += String(pos) + ";" ;
         for (unsigned int i = 0; i < num_sensors; ++i) {
@@ -47,6 +48,7 @@ void test_1() {
         Serial.println(measure);
         delay(time_step);
     }
+    delay(5000);  
 }
 
 
@@ -78,7 +80,7 @@ void test_3() {
     String msg;
 
     bool led_value = false;
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 12; i++) {
         Serial.println("iteration: " + String(i));
 
         if (i == 0) {
@@ -93,7 +95,9 @@ void test_3() {
         }
         
         qtra.read(sensor_values, QTR_EMITTERS_OFF); 
-        msg = "ambient-light: " + summarize_ambient_light();
+        msg = "\tlights on: " + String(led_value);
+        Serial.println(msg);
+        msg = "\tambient-light: " + summarize_ambient_light();
         Serial.println(msg);
 
         flicker_led(led_signal, 10, 200);
@@ -101,43 +105,45 @@ void test_3() {
         else digitalWrite(led_signal, LOW);
         calibrate();
 
-        msg = "calib-min: " + vector2string(qtra.calibratedMinimumOn);
+        msg = "\tcalib-min: " + vector2string(qtra.calibratedMinimumOn);
         Serial.println(msg);
-        msg = "calib-max: " + vector2string(qtra.calibratedMaximumOn);
+        msg = "\tcalib-max: " + vector2string(qtra.calibratedMaximumOn);
         Serial.println(msg);     
     }
-             
+    delay(5000);         
 }
 
 
 //============
 void test_4() {
-    /*
-        Test dimming level. consume less battery
-    */
+    String header = "mode;num_samples_avg;f;t;position;v0;v1;v2;v3;v4;v5";
+    Serial.println(header);
+    String mode = "automatic";
+    automatic_calibration();
+    int time_step = 1000/f;
+    for (unsigned int t = 0; t < T; t += time_step) {
+        QTRARead();
+        String measure = String(mode) + ";" ;
+        measure += String(num_samples_per_sensor) + ";" ;
+        measure += String(f) + ";" ;
+        measure += String(t) + ";" ;
+        measure += String(pos) + ";" ;
+        for (unsigned int i = 0; i < num_sensors; ++i) {
+          measure += String(sensor_values[i]);
+          if (i+1 < num_sensors) measure += ";" ;
+        }
+    
+        Serial.println(measure);
+        delay(time_step);
+    }
+    delay(5000);  
 }
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//============
+void test_5() {
+    /*
+        Test dimming level. consume less battery
+    */
+}

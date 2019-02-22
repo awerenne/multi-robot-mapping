@@ -6,7 +6,8 @@
 #include <Messenger.h>
 #include <Actuators.h>
 #include <Sensors.h>
-#include "PIDController.h"
+#include "PidController.h"
+#include "FrequencyState.h"
 
 
 const byte pins_messenger[2] = {10, 11}; // RX, TX
@@ -19,7 +20,7 @@ const byte pin_interrupt_left = 3;
 
 Messenger* messenger = new Messenger(pins_messenger, 9600, 1);
 Actuators* actuators = new Actuators(pins_actuators);
-const unsigned int parameters_qta[3] = {5, 6, 4};  // Emitter pin (digital PWM), number of sensors, number of samples to average per sensor reading
+const unsigned int parameters_qta[3] = {5, 6, 10};  // Emitter pin (digital PWM), number of sensors, number of samples to average per sensor reading
 Sensors* sensors = new Sensors(pins_qta, parameters_qta, pin_sharp);
 
 PIDController* pid_speed = new PIDController(0,0,0);
@@ -41,13 +42,13 @@ void setup() {
     digitalWrite(led_signal, LOW); 
     while(!Serial) continue; // Wait for init
     sensors->automaticCalibration();
-    digitalWrite(led_signal, HIGH);   
+    digitalWrite(led_signal, LOW);   
 }
 
 
 //============
 void loop() {
-    test(4);
+    test(12);
     exit(0);
 }
 
