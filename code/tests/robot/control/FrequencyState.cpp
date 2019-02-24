@@ -34,6 +34,14 @@ int FrequencyState::getInterval(unsigned long t) {
 }
 
 
+//============
+void FrequencyState::setFrequency(float frequency) {
+    if (frequency == this->frequency) return;
+    this->frequency = frequency;
+    this->reset();
+}
+
+
 
 
 

@@ -60,14 +60,20 @@ float speed_control(float target_speed) {
 //============
 float speed_control_left(float target_speed) {
     float error = target_speed - sensors->getSpeedLeft();
-    return pid_speed->compute(error);
+    float beta = pid_speed->compute(error);
+    if (beta < 0) return 0;
+    if (beta > 255) return 255;
+    return beta;
 }
 
 
 //============
 float speed_control_right(float target_speed) {
     float error = target_speed - sensors->getSpeedRight();
-    return pid_speed->compute(error);
+    float beta = pid_speed->compute(error);
+    if (beta < 0) return 0;
+    if (beta > 255) return 255;
+    return beta;
 }
 
 

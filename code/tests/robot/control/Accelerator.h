@@ -25,11 +25,7 @@ class Accelerator {
         void stop();
         void accelerate(float& progress_speed);  
         bool saturation(const float& progress_speed);  
-        void Accelerator::yo(float& T,float& beta,float& alpha,float& B, float& t, float& a)  {
-            T=this->T;beta=this->beta;alpha=this->alpha;B=A / (1-this->alpha);
-            t = this->prev_t;
-            a = this->integralTrapezoidProfile(this->prev_t);
-        }   
+        bool isRunning() { return this->is_running; } 
 };
 
 

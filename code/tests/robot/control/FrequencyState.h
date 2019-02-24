@@ -18,6 +18,7 @@ class FrequencyState {
     public: 
         FrequencyState(float frequency);
         bool isNewState();
+        void setFrequency(float frequency);
 };
 
 
