@@ -41,7 +41,7 @@ def plot_measures():
     ser = serial.Serial(serial_port, baud_rate, timeout=0.1)
     last_lower_interval = seq_number
     size_interval = 600
-    plt.axis([last_lower_interval, last_lower_interval+size_interval, 5, 9])
+    plt.axis([last_lower_interval, last_lower_interval+size_interval, -1, 10])
     while True:
         time.sleep(0.05)
         try: 

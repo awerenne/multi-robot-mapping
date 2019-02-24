@@ -50,7 +50,10 @@ void receive_msg_line() {
 //============
 float speed_control(float target_speed) {
     float error = target_speed - sensors->getSpeed();
-    return pid_speed->compute(error);
+    float beta = pid_speed->compute(error);
+    if (beta < 0) return 0;
+    if (beta > 255) return 255;
+    return beta; 
 }
 
 
@@ -79,7 +82,7 @@ float forward_control() {
 float line_control() {
     float error = sensors->getError();
     Serial.println(error);
-    return pid_line->compute(error);
+    return pid_line->compute(-error);
 }
 
 

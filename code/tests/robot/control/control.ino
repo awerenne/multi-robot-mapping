@@ -8,6 +8,7 @@
 #include <Sensors.h>
 #include "PidController.h"
 #include "FrequencyState.h"
+#include "Accelerator.h"
 
 
 const byte pins_messenger[2] = {10, 11}; // RX, TX
@@ -20,7 +21,7 @@ const byte pin_interrupt_left = 3;
 
 Messenger* messenger = new Messenger(pins_messenger, 9600, 1);
 Actuators* actuators = new Actuators(pins_actuators);
-const unsigned int parameters_qta[3] = {5, 6, 10};  // Emitter pin (digital PWM), number of sensors, number of samples to average per sensor reading
+const unsigned int parameters_qta[3] = {5, 6, 8};  // Emitter pin (digital PWM), number of sensors, number of samples to average per sensor reading
 Sensors* sensors = new Sensors(pins_qta, parameters_qta, pin_sharp);
 
 PIDController* pid_speed = new PIDController(0,0,0);
@@ -41,14 +42,13 @@ void setup() {
     flicker_led(led_signal, 10, 200);
     digitalWrite(led_signal, LOW); 
     while(!Serial) continue; // Wait for init
-    sensors->automaticCalibration();
     digitalWrite(led_signal, LOW);   
 }
 
 
 //============
 void loop() {
-    test(12);
+    test(3);
     exit(0);
 }
 

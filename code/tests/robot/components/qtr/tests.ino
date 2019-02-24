@@ -29,7 +29,7 @@ void test(byte test_id) {
 
 //============
 void test_1() {
-    String header = "mode;num_samples_avg;f;t;position;v0;v1;v2;v3;v4;v5";
+    String header = "mode;num_samples_avg;f;t;error;v0;v1;v2;v3;v4;v5";
     Serial.println(header);
     String mode = "manual";
     int time_step = 1000/f;
@@ -39,7 +39,7 @@ void test_1() {
         measure += String(num_samples_per_sensor) + ";" ;
         measure += String(f) + ";" ;
         measure += String(t) + ";" ;
-        measure += String(pos) + ";" ;
+        measure += String(get_error(pos)) + ";" ;
         for (unsigned int i = 0; i < num_sensors; ++i) {
           measure += String(sensor_values[i]);
           if (i+1 < num_sensors) measure += ";" ;
@@ -55,6 +55,8 @@ void test_1() {
 
 //============
 void test_2() {
+    calibrate();
+    digitalWrite(led_signal, LOW);
     String measure;
     while (true) {
         QTRARead();
@@ -84,19 +86,19 @@ void test_3() {
         Serial.println("iteration: " + String(i));
 
         if (i == 0) {
-            flicker_led(led_signal, 10, 800);
             led_value = true;
             digitalWrite(led_signal, HIGH);  // Do measures with light
         }
         if (i >= 2) {
-            flicker_led(led_signal, 10, 800);
             led_value = false;
             digitalWrite(led_signal, LOW);  // Do measures in the dark
         }
+
+        msg = "Next test (lights on: " + String(led_value) + ")";
+        Serial.println(msg);
+        flicker_led(led_signal, 10, 800);
         
         qtra.read(sensor_values, QTR_EMITTERS_OFF); 
-        msg = "\tlights on: " + String(led_value);
-        Serial.println(msg);
         msg = "\tambient-light: " + summarize_ambient_light();
         Serial.println(msg);
 

@@ -17,7 +17,7 @@ void flicker_led(byte led, unsigned int n, unsigned int delay_) {
 
 //============
 void calibrate() {
-    for (int i = 0; i < 400; i++) qtra.calibrate(); 
+    for (int i = 0; i < 600; i++) qtra.calibrate(); 
 }
 
 
@@ -51,6 +51,11 @@ bool isRoadRight() {
     return (sensor_values[0] > 600);
 }
 
+
+//============
+int get_error(int position) {
+    return position - (num_sensors-1)*1000/2;  
+}
 
 
 //============
@@ -92,7 +97,7 @@ bool ambient_is_dark() {
     int min_value = 1000;
     for (int i = 0; i < num_sensors; i++) 
         if (sensor_values[i] < min_value) min_value = sensor_values[i];
-    if (min_value >= 400) return true;
+    if (min_value >= 450) return true;
     return false;
 }
 
@@ -106,45 +111,12 @@ void set_calibration(unsigned int* calib_min, unsigned int* calib_max) {
 
 //============
 void automatic_calibration() {
-    unsigned int calib_min_dark[6] = {100,100,100,100,100,100};  
+    unsigned int calib_min_dark[6] = {100,150,170,170,150,100};  
     unsigned int calib_max_dark[6] = {750,750,750,750,750,750}; 
-    unsigned int calib_min_light[6] = {100,100,100,100,100,100};  
-    unsigned int calib_max_light[6] = {600,600,600,600,600,600};  
+    unsigned int calib_min_light[6] = {100,150,170,170,150,100};  
+    unsigned int calib_max_light[6] = {800,700,700,700,700,800};  
     if (ambient_is_dark())
         set_calibration(calib_min_dark, calib_max_dark);
     else
         set_calibration(calib_min_light, calib_max_light);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
