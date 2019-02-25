@@ -59,7 +59,7 @@ void loop() {
 
     if (dynamic_state) {
         acc->accelerate(progress_speed);
-        coex->lineFollowing(progress_speed);
+        coex->followLine(progress_speed);
     }
     delay(delay_);
 }
