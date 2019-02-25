@@ -417,21 +417,27 @@ void test_9() {
     int delay_ = 5;
     FrequencyState* freq_receiver = new FrequencyState(10);
     FrequencyState* freq_obstacle = new FrequencyState(10);
-    FrequencyState* freq_speed_control = new FrequencyState(5);
-    FrequencyState* freq_direction_control = new FrequencyState(25);
-    FrequencyState* freq_acceleration = new FrequencyState(5);
+    FrequencyState* freq_speed_control = new FrequencyState(10);
+    FrequencyState* freq_angular_check = new FrequencyState(20);
+    FrequencyState* freq_direction_control = new FrequencyState(50);
+    FrequencyState* freq_acceleration = new FrequencyState(10);
 
-    float alpha = 0, beta = 0, progress_speed = 0, target_speed = 6;
+    float alpha = 0, beta = 0, progress_speed = 3, target_speed = 6;
     int pwm_left = 0, pwm_right = 0;
 
-    Accelerator* acc = new Accelerator(0.1);
+    Accelerator* acc = new Accelerator(0.05);
     bool clock_wise = true;
+    float theta_goal = 3.1415/2;
+    float current_theta = 0;
+    unsigned long prev_t = millis();
+    unsigned long current_t = prev_t;
     while (true) {
-        acc->start(progress_speed, 6, 2);
+        if (freq_obstacle->isNewState() && sensors->isObstacle()) break;
+        acc->start(progress_speed, 6, 1);
         unsigned long start_t = millis();
         clock_wise = !clock_wise;
         for (int i = 0; true; delay(delay_)) {
-            if (millis() > (start_t + 2620)) break; 
+            // if (millis() > (start_t + 2620)) break; 
             if (freq_receiver->isNewState()) receive_msg_pid();
             if (freq_obstacle->isNewState() && sensors->isObstacle()) break;
             if (freq_direction_control->isNewState()) {
@@ -440,19 +446,27 @@ void test_9() {
                 if (freq_speed_control->isNewState()) 
                     beta = speed_control(progress_speed);
             }
-
             pwm_left = beta + alpha;
             pwm_right = beta - alpha;
             if (!clock_wise) actuators->updatePWM(pwm_left, -pwm_right);
             else actuators->updatePWM(-pwm_left, pwm_right);
             if (freq_acceleration->isNewState()) acc->accelerate(progress_speed);
+            if (freq_angular_check->isNewState()) {
+                current_t = millis();
+                float delta_t = (float) (current_t-prev_t);
+                current_theta += 2*sensors->getSpeed()*delta_t/1000/9.3;
+                if (current_theta >= theta_goal) break;
+                Serial.println(current_theta);
+                prev_t = current_t;
+            }
         }
         acc->stop();
         actuators->stop();
         delay(200);
+        break;
         pid_speed->reset();
         pid_forward->reset();
-        sensors->encodersReset();
+        progress_speed = 3;
     }
     
 }
@@ -461,6 +475,7 @@ void test_9() {
 //============
 void test_10() {
     /* Little back and forth movements with calibration sensors at the same time */
+    // BUGS TODO
 
     pid_speed->setParameters(12, 0, 0.022);
     pid_forward->setParameters(15, 0.07, 0.065);
@@ -479,12 +494,13 @@ void test_10() {
     bool forward = true;
     unsigned long init_t = millis();
     int i = 0;
-    while (i < 100) {
+    while (millis() > (init_t + 14000)) {
+    // while (i < 100) {
         if (freq_obstacle->isNewState() && sensors->isObstacle()) break;
         unsigned long start_t = millis();
         forward = !forward;
         while (true) {
-            if (millis() > (start_t + 200)) break; 
+            if (millis() > (start_t + 500)) break; 
             if (freq_obstacle->isNewState() && sensors->isObstacle()) break;
             if (freq_direction_control->isNewState()) {
                 sensors->encodersRead();
@@ -499,11 +515,11 @@ void test_10() {
             delay(5);
         }
         actuators->stop();
-        for (int j = 0; j < 50; j++) {
-            sensors->oneStepCalibrate();
-            i++;
-        }
-        Serial.println(i);
+        // for (int j = 0; j < 50; j++) {
+        //     sensors->oneStepCalibrate();
+        //     i++;
+        // }
+        // Serial.println(i);
         pid_speed->reset();
         pid_forward->reset();
     }
