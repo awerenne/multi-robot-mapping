@@ -1,7 +1,9 @@
 #include <Actuators.h>
 #include <Sensors.h>
 #include <FrequencyState.h>
+#include <Accelerator.h>
 #include <Coex.h>
+#include <PidController.h>
 
 
 const byte pins_messenger[2] = {10, 11}; 
@@ -21,6 +23,8 @@ bool dynamic_state = false;
 byte instruction; 
 float target_speed = 6;
 
+PIDController* pid_speed = new PIDController(12, 0, 0.022);
+PIDController* pid_forward = new PIDController(15, 0.07, 0.065);
 
 //============
 void setup() {
@@ -38,7 +42,7 @@ void setup() {
 
 //============
 void loop() {
-    test(1);
+    test(3);
     exit(0);
 }
 
