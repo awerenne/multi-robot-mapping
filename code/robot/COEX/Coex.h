@@ -11,15 +11,19 @@
 #include <Accelerator.h>
 
 
-
 //============
 class Coex {
     public: 
         Coex(const byte* pins_messenger, const byte* pins_actuators,
-            const byte* pins_qta, const byte pin_sharp, const int* parameters_blt,
+            const byte* pins_qta, const byte pin_sharp, const int baud_rate,
             const unsigned int* parameters_qta);
+        void stop();
+        bool availableMsg();
+        void readMsg();
+        void sendMsg(String msg) { messenger->sendMessage(msg); }
+        int getMsgInstruction();
         void setTargetSpeed(const float& target_speed);
-        void calibration();
+        void calibration() {sensors->manualCalibration();}
         void newLine(const float& target_speed, const bool& with_distance);
         byte followLine();
         void newForward(const float& target_speed);
@@ -32,17 +36,19 @@ class Coex {
         void uturn(const float& speed);
         byte typeIntersection();
 
+        Sensors* getSensors() { return this->sensors; }
+
     private:
         Sensors* sensors;
         Actuators* actuators;
         Messenger* messenger;
         PIDController *pid_speed, *pid_forward, *pid_line;
         FrequencyState *f_obstacle, *f_speed_ctrl, *f_dir_fwd_ctrl,
-                *f_dir_line_ctrl, *f_acc;
+                *f_dir_line_ctrl, *f_acc, *f_msg;
         Accelerator *acc_normal, *acc_rotation;
         bool with_distance;
         int delay_;
-        float progress_speed, target_speed;
+        float progress_speed, target_speed, alpha, beta;
 
         bool isIntersection();
         byte turnTheta(const float& Theta, const bool& clockwise);

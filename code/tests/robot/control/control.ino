@@ -19,7 +19,7 @@ const byte led_signal = 13;
 const byte pin_interrupt_right = 2;
 const byte pin_interrupt_left = 3;
 
-Messenger* messenger = new Messenger(pins_messenger, 9600, 1);
+Messenger* messenger = new Messenger(pins_messenger, 9600);
 Actuators* actuators = new Actuators(pins_actuators);
 const unsigned int parameters_qta[3] = {5, 6, 8};  // Emitter pin (digital PWM), number of sensors, number of samples to average per sensor reading
 Sensors* sensors = new Sensors(pins_qta, parameters_qta, pin_sharp);

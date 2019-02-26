@@ -16,13 +16,13 @@ void flicker_led(byte led, unsigned int n, unsigned int delay_) {
 
 //============
 void receive_msg_pid() {
-    bool new_msg = messenger->receiveMessage(); 
-    if (new_msg == true) {
+    if (messenger->receiveMessage()) {
+        messenger->parseMessage();
         float kp, kd, ki;
-        int selection = 0;
-        messenger->parseMessage();  
-        messenger->updateInstruction(selection);
-        messenger->updateParameters(kp, kd, ki);
+        int selection = (int) messenger->getMessage()[0];
+        kp = (int) messenger->getMessage()[1];
+        kd = (int) messenger->getMessage()[2];
+        ki = (int) messenger->getMessage()[3];
 
         switch (int(selection)) {
             case 0: pid_speed->setParameters(kp, kd, ki); break;
@@ -36,12 +36,13 @@ void receive_msg_pid() {
 
 //============
 void receive_msg_line() {
-    bool new_msg = messenger->receiveMessage(); 
-    if (new_msg == true) {
-        float kp, kd, ki;
-        messenger->parseMessage();  
-        messenger->updateInstruction(instruction);
-        messenger->updateParameters(kp, kd, ki);
+    if (messenger->receiveMessage()) {
+        messenger->parseMessage();
+        float kp, kd, ki; 
+        instruction = (int) messenger->getMessage()[0];
+        kp = (int) messenger->getMessage()[1];
+        kd = (int) messenger->getMessage()[2];
+        ki = (int) messenger->getMessage()[3];
         pid_line->setParameters(kp, kd, ki); 
     }
 }

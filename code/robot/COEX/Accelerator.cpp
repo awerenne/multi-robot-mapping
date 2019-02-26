@@ -3,8 +3,8 @@
 
 //============
 Accelerator::Accelerator(float alpha=0) {
-    alpha = alpha;
-    min_speed = 2.5;
+    this->alpha = alpha;
+    min_speed = 2;
     float nil;
     stop(nil);
 }
@@ -18,11 +18,11 @@ void Accelerator::start(float& progress_speed, const float& target_speed,
     this->target_speed = target_speed;
     float delta_speed = target_speed - progress_speed;
     this->T = T;
-    this->A = delta_speed / T;
-    this->B = A / (1-alpha);
-    this->beta = alpha * T;
-    this->start_t = millis();
-    this->prev_t = 0;
+    A = delta_speed / T;
+    B = A / (1-alpha);
+    beta = alpha * T;
+    start_t = millis();
+    prev_t = 0;
 }
 
 
@@ -46,7 +46,8 @@ void Accelerator::accelerate(float& progress_speed) {
 //============
 bool Accelerator::saturation(const float& progress_speed) {
     return (A == 0) || (A > 0 && progress_speed >= target_speed) ||
-           (A < 0 && progress_speed <= target_speed);
+           (A < 0 && (progress_speed <= target_speed || 
+                      progress_speed <= min_speed));
 }
 
 

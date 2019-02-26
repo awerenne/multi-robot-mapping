@@ -21,123 +21,50 @@ void test(byte test_id) {
 
 
 
-/*
-    Test where the goal is to follow a straight line until intersection is detected, determine which intersection and turn to desired segment.
-    Problem: Works at first intersection but when restart never sees second intersection!!!
-*/
-
-
 //============
-void test_8_2() {
-
-    sensors->AutomaticCalibrate();
-
-    int iteration = 0;
+void test_1() {
+    digitalWrite(led_signal, HIGH);  
+    coex->calibration();
+    digitalWrite(led_signal, LOW);  
+    delay(3000);
+    Sensors* sensors = coex->getSensors();
+    FrequencyState *f_speed_ctrl = new FrequencyState(10);
+    FrequencyState *f_dir_ctrl = new FrequencyState(50);
+    coex->newLine(6, false);
+    unsigned long prev_t = millis();
+    float dist = 0, mean = 0;
+    float i = 1;
     while (true) {
-        bool new_msg = messenger->ReceiveMessage();  
-        if (new_msg == true) {
-            messenger->ParseInstruction();
-            instruction = messenger->GetInstruction();
-            iteration = 0;
+        if (coex->followLine() == 1) {
+            coex->stop();
+            coex->sendMsg(String(dist) + "-" + String(mean));
+            break;
         }
-        
-        if (instruction == 0)
-            actuators->Stop();
-
-        // Follow line until intersection
-        if (instruction == 1) {
-            sensors->QTRARead();
-            int error = sensors->GetError();
-            actuators->FollowLine(error);
-            
-             if ((iteration%2) == 0 && is_intersection())
-                 break;
-    
-            delay(10);
-            iteration++;
+        if (f_speed_ctrl->isNewState()) {
+            float v = sensors->getSpeed();
+            float delta_t = (float) (millis()-prev_t);
+            dist += v * delta_t / 1000;
+            prev_t += delta_t;
         }
+        if (f_dir_ctrl->isNewState()) {
+            float err = sensors->getError();
+            err = err < 0 ? -err : err;
+            mean = (i-1)/i*mean + err/i;
+            i++;
+        }
+        delay(5);
     }
-
-    byte type_ = type_intersection();
-    messenger->SendMessage(String(type_));
-    left_hand_rule(type_);
-    messenger->SendMessage("aligned");
+    delay(5000);
 }
 
 
-/*
-    Test distance ground truth versus estimated
-    compare several algorithms (naive, ...)
-*/
-
-
 //============
-void test_8_3() {
-    sensors->AutomaticCalibrate();
-
-    float distance = 0;
-    while (true) {
-        bool new_msg = messenger->ReceiveMessage();  
-        if (new_msg == true) {
-            messenger->ParseInstruction();
-            instruction = messenger->GetInstruction();
-        }
-    
-        // Follow line
-        if (instruction != 0) {  
-            float start_time = millis();
-            sensors->InitEncoders();
-            
-            digitalWrite(led_signal, HIGH);
-            sensors->QTRARead();
-            int error = sensors->GetError();
-            actuators->FollowLine(error);
-            delay(10);
-
-            // Compute distance
-            float speed_left = sensors->GetSpeedLeft();
-            float speed_right = sensors->GetSpeedRight();
-            float diff_time = (float) (millis() - start_time);
-            float speed = (speed_left + speed_right)/2;
-            distance += compute_distance_naive(speed, diff_time); 
-            sensors->StopEncoders();
-
-            // Check if intersection
-            if (is_intersection()) {
-                String msg = String(distance);
-                messenger->SendMessage(msg);
-                return;
-            }
-        }
-    }
+void test_2() {
+    ;
 }
 
 
-
-// Determine trajectory with error and distance computed with initial pertubation
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//============
+void test_3() {
+    ;
+}

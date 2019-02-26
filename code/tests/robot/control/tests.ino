@@ -41,7 +41,7 @@ void test_1() {
     while (true) {
         if (freq_msg->isNewState()) receive_msg_pid();
         if (freq_obstacle->isNewState() && sensors->isObstacle()) break;
-        Serial.println("Kp of speed pid: " + String(pid_speed->getKp()));
+        //Serial.println("Kp of speed pid: " + String(pid_speed->getKp()));
         delay(delay_);   
     }
     actuators->stop();
@@ -91,8 +91,8 @@ void test_3() {
     float progress_speed = 0, target_speed = 6, measured_speed = 0;
     float alpha = 0, beta = 0;
     
-    Accelerator* acc = new Accelerator(0.1);
-    acc->start(progress_speed, target_speed, 8);
+    Accelerator* acc = new Accelerator(0.2);
+    acc->start(progress_speed, target_speed, 3);
     for (int seq_nb = 0; true; delay(delay_)) {
         if (freq_receiver->isNewState()) receive_msg_pid();   
         if (freq_obstacle->isNewState() && sensors->isObstacle()) break;

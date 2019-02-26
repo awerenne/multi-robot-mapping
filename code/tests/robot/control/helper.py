@@ -26,8 +26,8 @@ def set_pid_values():
             kp = float(input_[1])
             kd = float(input_[2])
             ki = float(input_[3])
-        msg = "<" + str(instruction) + "/" + str(kp) + "/" + str(kd) + \
-                "/" + str(ki) + ">"
+        msg = "<1/0/" + str(instruction) + "/" + str(kp) + "/" + str(kd) + \
+                "/" + str(ki) + "/0.0" + ">"
         print(msg)
         ser.write(msg.encode())
 

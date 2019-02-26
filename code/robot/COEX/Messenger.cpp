@@ -2,10 +2,9 @@
 
 
 //============
-Messenger::Messenger(const byte* pins, int baud_rate, int parse_option=0) {
+Messenger::Messenger(const byte* pins, int baud_rate) {
     initBluetooth(pins, baud_rate);
     resetCommunication();
-    this->parse_option = parse_option;
     id_self = 1;
     id_master = 0;
     start_marker = '<';
@@ -20,10 +19,6 @@ void Messenger::resetCommunication() {
     seq_number_self = 0;
     seq_number_master = 0;
     new_data = false;
-    instruction = 0;
-    kp = 0;
-    kd = 0;
-    ki = 0;
 }
 
 
@@ -57,7 +52,7 @@ bool Messenger::receiveMessage() {
         }
         else if (received_char == start_marker) reception_in_progress = true;
     }
-    return this->new_data;
+    return new_data;
 }
 
 
@@ -74,65 +69,25 @@ void Messenger::sendMessage(const String& information) {
 
 //============
 void Messenger::parseMessage() {
-    switch (parse_option) {
-        case 0: parseNormal(); break;
-        case 1: parsePID(); break;
-        default: parseNormal(); break;
-    }
-}
-
-
-//============
-void Messenger::parseNormal() {
     strcpy(temp_chars, received_chars);
     char* ptr; 
 
     ptr = strtok(temp_chars, "/");     
     id_master = atoi(ptr); 
-
     ptr = strtok(NULL, "/"); 
     seq_number_master = atoi(ptr); 
-
-    ptr = strtok(NULL, "/");
-    instruction = atoi(ptr);     
+    for (int i = 0; i < 5; i++) {
+        ptr = strtok(NULL, "/"); 
+        data[i] = atof(ptr);   
+    }      
     new_data = false;
-}
+} 
 
 
 //============
-void Messenger::parsePID() {
-    strcpy(temp_chars, received_chars);
-    char* ptr; 
-
-    ptr = strtok(temp_chars, "/");     
-    instruction = atoi(ptr);     
-
-    ptr = strtok(NULL, "/"); 
-    kp = atof(ptr);   
-
-    ptr = strtok(NULL, "/");
-    kd = atof(ptr);
-
-    ptr = strtok(NULL, "/");
-    ki = atof(ptr);       
-    new_data = false;
-}
-
-
-//============
-void Messenger::updateInstruction(int& instruction) {
-    instruction = this->instruction;
-}
-   
-
-//============
-void Messenger::updateParameters(float& kp, float& kd, float& ki) {
-    kp = this->kp;
-    kd = this->kd;
-    ki = this->ki;
-}
-
-
+float* Messenger::getMessage() {
+    return data;
+} 
 
 
 
