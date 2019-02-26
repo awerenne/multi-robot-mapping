@@ -30,11 +30,10 @@ def test_4_1():
 
 # ------------
 def test_4_2():
-    write_to_file_path = "measures_test_2.csv";
+    write_to_file_path = "./yo.txt";
     output_file = open(write_to_file_path, "w+");
     output_file.write("frequency_slave;arrival_time_step_master;seq_number")
     init_t = time.time()
-        
     while True:
         raw_msg = ser.readline().decode("utf-8");
         t = time.time()-init_t
@@ -53,7 +52,7 @@ def test_4_2():
 
 
 # ------------
-if __name__ == "_main__":
+if __name__ == "__main__":
     test_4_1()
     # test_4_2()
 

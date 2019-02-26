@@ -8,17 +8,18 @@
 
 //============
 class FrequencyState {
-    private:
-        float frequency;
-        unsigned long start_t;
-        int prev_interval_number;
-        int getInterval(unsigned long t);
-        void reset();
-
     public: 
         FrequencyState(float frequency);
         bool isNewState();
         void setFrequency(float frequency);
+
+    private:
+        float frequency;
+        unsigned long start_t;
+        int prev_interval_number;
+        
+        int getInterval(unsigned long t);
+        void reset();
 };
 
 

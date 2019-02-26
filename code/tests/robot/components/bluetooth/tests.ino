@@ -7,6 +7,9 @@
 //============
 void test(byte test_id) {
     switch (test_id) {
+        case 0:
+            test_0();
+            break;
         case 1:
             test_1();
             break;
@@ -16,6 +19,14 @@ void test(byte test_id) {
     }
 }
 
+
+//============
+void test_0() {
+    Serial.println("Start test");
+    while (true) {
+        Serial.println(Bluetooth.available());
+    }
+}
 
 
 //============
@@ -55,11 +66,3 @@ void test_2() {
 
 // Test frequency limit (higher than that receiving frequency data will be lost
 // due to the fact it can not process fast enough)
-
-
-
-
-
-
-
-

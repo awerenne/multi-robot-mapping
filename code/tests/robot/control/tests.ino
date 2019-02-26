@@ -38,12 +38,8 @@ void test_1() {
     FrequencyState* freq_msg = new FrequencyState(10);
     FrequencyState* freq_obstacle = new FrequencyState(5);
 
-
     while (true) {
-        if (freq_msg->isNewState()) {
-            receive_msg_pid();
-            if (instruction == 0) break;
-        }
+        if (freq_msg->isNewState()) receive_msg_pid();
         if (freq_obstacle->isNewState() && sensors->isObstacle()) break;
         Serial.println("Kp of speed pid: " + String(pid_speed->getKp()));
         delay(delay_);   
@@ -247,10 +243,9 @@ void test_6() {
 
     flicker_led(led_signal, 10, 300);
     digitalWrite(led_signal, HIGH); 
-    sensors->manualCalibration();
+    //sensors->manualCalibration();
     //test_10();
     digitalWrite(led_signal, LOW); 
-    delay(5000);
 
     pid_speed->reset();
     pid_line->reset();
@@ -275,12 +270,11 @@ void test_6() {
         if (freq_receiver->isNewState()) receive_msg_line();
         if (instruction != 1) {
             progress_speed = 2;
-            acc->stop();
+            acc->stop(progress_speed);
             actuators->stop();
             continue;
         }
-        if (instruction == 1 && !acc->isRunning()) 
-            acc->start(progress_speed, 6, 2);
+        if (instruction == 1 && !acc->isRunning()) acc->start(progress_speed, 6, 2);
         if (freq_obstacle->isNewState() && sensors->isObstacle()) break;
         if (freq_direction_control->isNewState()) {
             sensors->qtraRead();
@@ -404,7 +398,7 @@ void test_8() {
 //============
 void test_9() {
     /*
-        Alternating between 90-180 degrees in both directions. Still work to do.
+        Alternating between 90-180 degrees in both directions. 
     */
     
     pid_speed->setParameters(12, 0, 0.022);
@@ -427,17 +421,18 @@ void test_9() {
 
     Accelerator* acc = new Accelerator(0.05);
     bool clock_wise = true;
-    float theta_goal = 3.1415/2;
-    float current_theta = 0;
+    float theta_goal = 3.1415/4;
+    float current_theta;
     unsigned long prev_t = millis();
     unsigned long current_t = prev_t;
-    while (true) {
+    for (int i = 0; true; i++) {
         if (freq_obstacle->isNewState() && sensors->isObstacle()) break;
         acc->start(progress_speed, 6, 1);
         unsigned long start_t = millis();
         clock_wise = !clock_wise;
+        current_theta = 0;
+        if (i % 2 == 0) theta_goal = (theta_goal == 3.1415/2) ? 3.1415/4 : 3.1415/2;
         for (int i = 0; true; delay(delay_)) {
-            // if (millis() > (start_t + 2620)) break; 
             if (freq_receiver->isNewState()) receive_msg_pid();
             if (freq_obstacle->isNewState() && sensors->isObstacle()) break;
             if (freq_direction_control->isNewState()) {
@@ -460,13 +455,11 @@ void test_9() {
                 prev_t = current_t;
             }
         }
-        acc->stop();
+        acc->stop(progress_speed);
         actuators->stop();
         delay(200);
-        break;
         pid_speed->reset();
         pid_forward->reset();
-        progress_speed = 3;
     }
     
 }
@@ -529,9 +522,10 @@ void test_10() {
 
 //============
 void test_11() {
+    ;
 }
 
 //============
 void test_12() {
-
+    ;
 }

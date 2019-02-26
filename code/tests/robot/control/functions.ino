@@ -50,7 +50,7 @@ void receive_msg_line() {
 //============
 float speed_control(float target_speed) {
     float error = target_speed - sensors->getSpeed();
-    float beta = pid_speed->compute(error);
+    float beta = pid_speed->correction(error);
     if (beta < 0) return 0;
     if (beta > 255) return 255;
     return beta; 
@@ -60,7 +60,7 @@ float speed_control(float target_speed) {
 //============
 float speed_control_left(float target_speed) {
     float error = target_speed - sensors->getSpeedLeft();
-    float beta = pid_speed->compute(error);
+    float beta = pid_speed->correction(error);
     if (beta < 0) return 0;
     if (beta > 255) return 255;
     return beta;
@@ -70,7 +70,7 @@ float speed_control_left(float target_speed) {
 //============
 float speed_control_right(float target_speed) {
     float error = target_speed - sensors->getSpeedRight();
-    float beta = pid_speed->compute(error);
+    float beta = pid_speed->correction(error);
     if (beta < 0) return 0;
     if (beta > 255) return 255;
     return beta;
@@ -80,7 +80,7 @@ float speed_control_right(float target_speed) {
 //============
 float forward_control() {
     float error = sensors->getSpeedRight() - sensors->getSpeedLeft();
-    return pid_forward->compute(error);
+    return pid_forward->correction(error);
 }
 
 
@@ -88,34 +88,12 @@ float forward_control() {
 float line_control() {
     float error = sensors->getError();
     Serial.println(error);
-    return pid_line->compute(-error);
+    return pid_line->correction(-error);
 }
 
 
 //============
 float turn_control() {
     float error = sensors->getSpeedLeft() + sensors->getSpeedRight();
-    return pid_forward->compute(error);
+    return pid_forward->correction(error);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

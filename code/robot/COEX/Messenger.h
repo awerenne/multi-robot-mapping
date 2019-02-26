@@ -1,18 +1,16 @@
 #ifndef MESSENGER_H_
 #define MESSENGER_H_
 
-#include "Arduino.h"
-#include "SoftwareSerial.h"
+#include <Arduino.h>
+#include <SoftwareSerial.h>
 
 
 class Messenger {
- 
     public:
         Messenger(const byte* pins, int baud_rate, int parse_option=0);
         void sendMessage(const String& information);
         bool receiveMessage();
         void parseMessage();
-
         void updateInstruction(int& instruction);
         void updateParameters(float& kp, float& kd, float& ki);
     
@@ -35,6 +33,7 @@ class Messenger {
         void parseNormal();
         void parsePID();
         // TODO: checksum, parity etc
+
 };
 
 

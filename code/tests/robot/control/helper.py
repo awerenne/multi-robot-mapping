@@ -13,7 +13,7 @@ plt.style.use('seaborn-whitegrid')
 
 # ------------
 def set_pid_values():
-    serial_port = '/dev/cu.DSDTECHHC-05-DevB';
+    serial_port = '/dev/cu.DSDTECHHC-06-DevB';
     baud_rate = 9600; 
     ser = serial.Serial(serial_port, baud_rate)
     kp = 0
