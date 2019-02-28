@@ -34,9 +34,9 @@ def set_pid_values():
 
 # ------------
 def plot_measures():
-    # serial_port = '/dev/cu.wchusbserial1d1120';
+    serial_port = '/dev/cu.wchusbserial1d1120';
     seq_number = 0
-    serial_port = '/dev/cu.wchusbserial14120';
+    # serial_port = '/dev/cu.wchusbserial14120';
     baud_rate = 9600; 
     ser = serial.Serial(serial_port, baud_rate, timeout=0.1)
     last_lower_interval = seq_number
@@ -68,9 +68,9 @@ def plot_measures():
 
 # ------------
 def sub_plot_measures():
-    # serial_port = '/dev/cu.wchusbserial1d1120';
+    serial_port = '/dev/cu.wchusbserial1d1120';
     seq_number = 0
-    serial_port = '/dev/cu.wchusbserial14120';
+    # serial_port = '/dev/cu.wchusbserial14120';
     baud_rate = 9600; 
     ser = serial.Serial(serial_port, baud_rate, timeout=0.1)
     last_lower_interval = seq_number

@@ -11,7 +11,7 @@ import math
 # Constants
 TEST = 3
 ID_MASTER = 0
-SERIAL_PORT = '/dev/cu.DSDTECHHC-05-DevB';
+SERIAL_PORT = '/dev/cu.DSDTECHHC-06-DevB';
 BAUD_RATE = 9600; 
 
 

@@ -35,13 +35,16 @@ void test_1() {
     */
 
     int delay_ = 5;
-    FrequencyState* freq_msg = new FrequencyState(10);
+    FrequencyState* freq_msg = new FrequencyState(5);
     FrequencyState* freq_obstacle = new FrequencyState(5);
 
     while (true) {
-        if (freq_msg->isNewState()) receive_msg_pid();
+        if (freq_msg->isNewState()) {
+            receive_msg_pid();
+            Serial.println("Kp of speed pid: " + String(pid_speed->getKp()));
+        }
         if (freq_obstacle->isNewState() && sensors->isObstacle()) break;
-        //Serial.println("Kp of speed pid: " + String(pid_speed->getKp()));
+        
         delay(delay_);   
     }
     actuators->stop();
@@ -194,7 +197,7 @@ void test_5() {
     */
 
     pid_speed->setParameters(12, 0, 0.022);
-    pid_forward->setParameters(15, 0.07, 0.065);
+    pid_forward->setParameters(15, 0.08, 0.065);
 
     pid_speed->reset();
     pid_forward->reset();
@@ -232,18 +235,16 @@ void test_5() {
 //============
 void test_6() {
     /*
-        Follows a complex curved line at constant speed and stops at obstacle.
+        Follows a complex curved line at constant speed and stops at obstacle with continuation.
 
         Kp = 0.06, Kd = 0.00015, Ki = 0.00022 (f = 75)
-        Kp = 0.062, Kd = 0.00017, Ki = 0.00022 (f = 50)
-
-        TODO check at lower frequency!!!!!
+        Kp = 0.070, Kd = 0.0005, Ki = 0.00010 (f = 50) ! 
     
     */
 
     flicker_led(led_signal, 10, 300);
     digitalWrite(led_signal, HIGH); 
-    //sensors->manualCalibration();
+    sensors->manualCalibration();
     //test_10();
     digitalWrite(led_signal, LOW); 
 
@@ -267,6 +268,14 @@ void test_6() {
     Accelerator* acc = new Accelerator(0.2);
     instruction = -1;
     for (;true;delay(delay_)) {
+        if (freq_obstacle->isNewState() && sensors->isObstacle()) {
+            actuators->stop();
+            delay(2000);
+            pid_speed->reset();
+            pid_line->reset();
+            sensors->encodersReset();
+            continue;
+        }
         if (freq_receiver->isNewState()) receive_msg_line();
         if (instruction != 1) {
             progress_speed = 2;
@@ -275,7 +284,6 @@ void test_6() {
             continue;
         }
         if (instruction == 1 && !acc->isRunning()) acc->start(progress_speed, 6, 2);
-        if (freq_obstacle->isNewState() && sensors->isObstacle()) break;
         if (freq_direction_control->isNewState()) {
             sensors->qtraRead();
             alpha = line_control();

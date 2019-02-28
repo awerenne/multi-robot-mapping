@@ -55,16 +55,14 @@ void test_1() {
 
 //============
 void test_2() {
-    calibrate();
-    digitalWrite(led_signal, LOW);
     String measure;
     while (true) {
         QTRARead();
-        measure = String(isRoadLeft()) + " ";
-        measure += String(isRoadCenter()) + " ";
+        measure = String(isRoadLeft()) + " - ";
+        measure += String(isRoadCenter()) + " - ";
         measure += String(isRoadRight());
         Serial.println(measure);
-        delay(1000);
+        delay(500);
     }
 }
 

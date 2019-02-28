@@ -4,6 +4,7 @@
 #include <Accelerator.h>
 #include <Coex.h>
 #include <PidController.h>
+#include "Anomalies.h"
 
 
 const byte pins_messenger[2] = {10, 11}; 
@@ -42,7 +43,7 @@ void setup() {
 
 //============
 void loop() {
-    test(3);
+    test(2);
     exit(0);
 }
 
