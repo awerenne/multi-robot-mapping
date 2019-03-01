@@ -4,7 +4,8 @@
 
 
 #include <Actuators.h>
-#include "EncoderState.h"
+#include <SoftwareSerial.h>
+#include <EncoderState.h>
 
 
 const byte led_signal = 13;
@@ -14,9 +15,11 @@ const byte pins_actuators[6] = {4, 12, 6, 7, 8, 9};  // IN1, IN2, EN12, IN3, IN4
 Actuators* actuators = new Actuators(pins_actuators);
 EncoderState* encoder_left = new EncoderState();
 EncoderState* encoder_right = new EncoderState();
+SoftwareSerial* bluetooth = new SoftwareSerial(10, 11);
 
 //============ 
 void setup() {
+    digitalWrite(led_signal, HIGH);
     pinMode(pin_interrupt_left, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(pin_interrupt_left),
             update_counter_left, CHANGE);
@@ -26,13 +29,17 @@ void setup() {
     
     Serial.begin(9600);
     while (!Serial) continue;
-    flicker_led(led_signal, 10, 200);
-    digitalWrite(led_signal, HIGH);
+      
+    while (!bluetooth) continue;  
+    bluetooth->begin(9600);
+
+    digitalWrite(led_signal, LOW);
+    delay(5000);
 }
 
 
 //============
 void loop() {
-    test(2);
+    test(3);
     exit(0);
 }

@@ -7,33 +7,16 @@
 //============
 void test(byte test_id) {
     switch (test_id) {
-        case 1:
-            test_1();
-            break;
-        case 2:
-            test_2();
-            break;
-        case 3:
-            test_3();
-            break;
-        case 4:
-            test_4();
-            break;
-        case 5:
-            test_5();
-            break;
-        case 6:
-            test_6();
-            break;
-        case 7:
-            test_7();
-            break;
-        case 8:
-            test_8();
-            break;
-        case 9:
-            test_9();
-            break;
+        case 1: test_1(); break;
+        case 2: test_2(); break;
+        case 3: test_3(); break;
+        case 4: test_4(); break;
+        case 5: test_5(); break;
+        case 6: test_6(); break;
+        case 7: test_7(); break;
+        case 8: test_8(); break;
+        case 9: test_9(); break;
+        case 10: test_10(); break;
     }
 }
 
@@ -49,24 +32,23 @@ void test_1() {
         important performance tuning. However very bizarre because theta seems
         to be correct. (saturday) 
     */
+
     digitalWrite(led_signal, HIGH);  
     coex->calibration();
     digitalWrite(led_signal, LOW);  
-    delay(15000);
+    delay(10000);
     Sensors* sensors = coex->getSensors();
+    coex->newLine(6, false);
     FrequencyState *f_speed_ctrl = new FrequencyState(10);
     FrequencyState *f_dir_ctrl = new FrequencyState(50);
-    coex->newLine(6, false);
+    
     unsigned long prev_t = millis();
-    float dist = 0, mse = 0;
-    float i = 1;
+    float i = 1, dist = 0, mse = 0;
     while (true) {
         if (coex->followLine() == 1) {
             coex->stop();
             coex->sendMsg(String(dist) + "-" + String(sqrt(mse)));
-            delay(10000);
-            coex->newLine(6, false);
-            continue;
+            break;
         }
         if (f_speed_ctrl->isNewState()) {
             float v = sensors->getSpeed();
@@ -76,8 +58,8 @@ void test_1() {
         }
         if (f_dir_ctrl->isNewState()) {
             float se = sensors->getError();
-            se *= se;
-            mse = (i-1)/i*mse + se/i;
+            se *= se;  // Squared error
+            mse = (i-1)/i*mse + se/i;  // Rolling average mean
             i++;
         }
         delay(5);
@@ -92,27 +74,27 @@ void test_2() {
         Intersection test: forward on short distance, count anomalies on both sides,
         stop at obstacle, send anomalies counting.
     */
+
     digitalWrite(led_signal, HIGH);  
     coex->calibration();
     digitalWrite(led_signal, LOW);  
-    delay(15000);
+    delay(10000);
     Sensors* sensors = coex->getSensors();
-    FrequencyState *f_speed_ctrl = new FrequencyState(10);
-    FrequencyState *f_dir_ctrl = new FrequencyState(50);
     coex->newForward(6);
-    unsigned int my_counter_left = 0, my_counter_right = 0;
-    int start_counter = 0;
+    FrequencyState *f_speed_ctrl = new FrequencyState(10);
+    FrequencyState *f_sensors = new FrequencyState(100);
+
+    int my_counter_left = 0, my_counter_right = 0, start_counter = 0, counter = 0;
     while (true) {
         if (coex->forward() == 1) {
             coex->stop();
-            coex->sendMsg(String(start_counter) + "-" + String(my_counter_left) + "-" + String(my_counter_right));
-            delay(15000);
-            coex->newForward(6);
-            my_counter_left = 0;
-            my_counter_right = 0;
-            continue;
-        }
-        if (f_dir_ctrl->isNewState()) {
+            coex->sendMsg(String(counter) + "-" + String(start_counter) + "-"\
+                + String(my_counter_left) + "-" + String(my_counter_right));
+            break;
+        } 
+        if (f_sensors->isNewState()) {
+            counter++;
+            sensors->qtraRead();
             if (sensors->isRoadLeft()) my_counter_left++;
             if (sensors->isRoadRight()) my_counter_right++;
             if (my_counter_left > 0 || my_counter_right > 0) start_counter++;
@@ -127,43 +109,56 @@ void test_2() {
 void test_3() {
     /* 
         Static test of alignment with simulation of sensors reading.
-        Used to initial tuning.
+        Used to initial tuning. Do it in both directions!!!
     */ 
+
     Sensors* sensors = coex->getSensors();
     Actuators* actuators = coex->getActuators();
-    float beta = turn_to_speed(4);
-    unsigned long prev_t = millis(), current_t = millis();
-    float xinit = 2.25, e = 0.15, L=10;
-    float x = xinit;
-    bool clockwise = true;
-    float a = (sensors->getSpeed() - 2)/((xinit-e)*(xinit-e));
     PIDController* pid_responsive = new PIDController(10, 15, 0);
     FrequencyState *f_ctrl = new FrequencyState(100);
-    while (x > e) {
+
+    bool clockwise = false;
+    float beta = turn_to_speed(6, clockwise);
+
+    unsigned long prev_t = millis(), current_t = millis();
+    float xinit = 2.25, e = 0.25, L = 10, v_min = 1.5, x;
+    if (clockwise) {
+        xinit *= -1;
+        e *= -1;
+    }
+    float a = (sensors->getSpeed() - v_min)/((xinit-e)*(xinit-e));
+    x = xinit;
+    while (true) {
+        if ((clockwise && x > e) || (!clockwise && x < e)) break;
         if (f_ctrl->isNewState()) {
             sensors->encodersRead();
-            float alpha = pid_forward->correction(sensors->getSpeedRight() - sensors->getSpeedLeft());
+            float alpha = pid_forward->correction(sensors->getSpeedRight() -\
+                    sensors->getSpeedLeft());
             float v = sensors->getSpeed();
-            Serial.println("\n");
-            Serial.println("Speed:" + String(v));
 
             current_t = millis();
             float delta_t = (float) (current_t-prev_t);
-            float delta_theta = 2 * v * delta_t/1000/9.3;
+            float delta_theta = 2 * v * delta_t/(1000*9.3);
+            if (clockwise) x += L*delta_theta;
+            else x += L*delta_theta;
             prev_t = current_t;
-
-            x -= L*delta_theta;
-            Serial.println("Position: " + String(x));
-            float gamma = pid_responsive->correction(f(x,a,e) - v);
-            Serial.println(gamma);
-            Serial.println(beta);
+            
+            float gamma = pid_responsive->correction(f(x,a,e,v_min) - v);
             beta += gamma;
-            Serial.println(alpha);
             float pwm_left = beta + alpha;
+            pwm_left = pwm_left < 0 ? 0 : pwm_left;
             pwm_left = clockwise ? pwm_left : -pwm_left;
             float pwm_right = beta - alpha;
+            pwm_right = pwm_right < 0 ? 0 : pwm_right;
             pwm_right = clockwise ? -pwm_right : pwm_right;
             actuators->updatePWM(pwm_left, pwm_right);
+
+            Serial.println("\n");
+            Serial.println("Speed:" + String(v));
+            Serial.println("Estimated position: " + String(x));
+            Serial.println("Gamma: " + String(gamma));
+            Serial.println("New beta: " + String(beta));
+            Serial.println("Alpha: " + String(alpha));
         }
         delay(5);
     }
@@ -179,20 +174,37 @@ void test_4() {
     /* 
         Simulate alignment with inactive motors. 
     */
+
+    digitalWrite(led_signal, HIGH);  
+    coex->calibration();
+    digitalWrite(led_signal, LOW);  
+    delay(10000);
     Sensors* sensors = coex->getSensors();
-    float xinit = 2, e = 0.15, L=10;
-    float x = xinit;
-    bool clockwise = true;
-    float a = 0;
     FrequencyState *f_ctrl = new FrequencyState(100);
-    bool signal = false;
-    while (x > e) {
+
+    float xinit = 2.25, e = 0.25, L = 10, v_min = 1.5, a = 0, x;
+    bool clockwise = false, signal_ = false;
+    if (clockwise) {
+        xinit *= -1;
+        e *= -1;
+    }
+    x = xinit;
+    while (true) {
+        if ((clockwise && x > e) || (!clockwise && x < e)) break;
         if (f_ctrl->isNewState()) {    
             sensors->qtraRead();
-            bool change = signal;
-            signal = signal || sensors->isRoadLeft();
-            if (change != signal) a = (6 - 2)/((xinit-e)*(xinit-e));
-            if (signal) x = sensors->getError()/1250;  // To cm
+            bool change = signal_;
+            if (clockwise) signal_ = signal_ || sensors->isRoadRight();
+            else signal_ = signal_ || sensors->isRoadLeft();
+            if (change != signal_) {
+                x = xinit;
+                a = (6 - v_min)/((xinit-e)*(xinit-e));
+                Serial.println("Trigger");
+            }
+            if (signal_) {
+                x = ((float) sensors->getError())/1250.;  // To cm
+                Serial.println(x);
+            }
         }
         delay(5);
     }
@@ -203,97 +215,143 @@ void test_4() {
 //============
 void test_5() {
     /* 
-        Turn 90 alignment 
+        Turn in one direction and straight stop when signal. Be sure
+        it works in both directions in light and dark environments. And that it
+        stops before being aligned (determine max turning speed and acceleration).
+        Otherwise it does not make sense to play with alignment. 
     */
+
+    digitalWrite(led_signal, HIGH);  
+    coex->calibration();
+    digitalWrite(led_signal, LOW);  
+    delay(4000);
     Sensors* sensors = coex->getSensors();
     Actuators* actuators = coex->getActuators();
-    float beta = turn_to_speed(4);
-    unsigned long prev_t = millis(), current_t = millis();
-    float xinit = 2.25, e = 0.15, L=10;
-    float x = xinit;
-    bool clockwise = true;
-    float a = (sensors->getSpeed() - 2)/((xinit-e)*(xinit-e));
+    pid_speed->reset();
+    pid_forward->reset();
     PIDController* pid_responsive = new PIDController(10, 15, 0);
+    sensors->encodersReset();
+    float progress_speed;
+    Accelerator* acc = new Accelerator(0.1);
+    acc->start(progress_speed, 5, 1.5);
     FrequencyState *f_ctrl = new FrequencyState(100);
-    while (x > e) {
+    FrequencyState *f_acc = new FrequencyState(20);
+    FrequencyState *f_speed_ctrl = new FrequencyState(20);
+
+    float xinit = 2.25, e = 0.25, L = 10, v_min = 1.5, a = 0, x;
+    float alpha = 0, beta = 0, pwm_left = 0, pwm_right = 0;
+    bool clockwise = false, signal_ = false;
+    if (clockwise) {
+        xinit *= -1;
+        e *= -1;
+    }
+    x = xinit;
+    while (true) {
+        if ((clockwise && x > e) || (!clockwise && x < e)) break;
         if (f_ctrl->isNewState()) {
             sensors->encodersRead();
-            float alpha = pid_forward->correction(sensors->getSpeedRight() - sensors->getSpeedLeft());
-            float v = sensors->getSpeed();
-            Serial.println("\n");
-            Serial.println("Speed:" + String(v));
-
-            current_t = millis();
-            float delta_t = (float) (current_t-prev_t);
-            float delta_theta = 2 * v * delta_t/1000/9.3;
-            prev_t = current_t;
-
-            x -= L*delta_theta;
-            Serial.println("Position: " + String(x));
-            float gamma = pid_responsive->correction(f(x,a,e) - v);
-            Serial.println(gamma);
-            Serial.println(beta);
-            beta += gamma;
-            Serial.println(alpha);
-            float pwm_left = beta + alpha;
-            pwm_left = clockwise ? pwm_left : -pwm_left;
-            float pwm_right = beta - alpha;
-            pwm_right = clockwise ? -pwm_right : pwm_right;
-            actuators->updatePWM(pwm_left, pwm_right);
+            sensors->qtraRead();
+            bool change = signal_;
+            if (clockwise) signal_ = signal_ || sensors->isRoadRight();
+            else signal_ = signal_ || sensors->isRoadLeft();
+            if (change != signal_) {
+                x = xinit;
+                a = (sensors->getSpeed() - v_min)/((xinit-e)*(xinit-e));
+                Serial.println("Trigger");
+            }
+            if (signal_) {
+                actuators->stop();
+                break;
+            }
+            else {
+                alpha = pid_forward->correction(sensors->getSpeedRight() - sensors->getSpeedLeft());
+                if (f_speed_ctrl->isNewState()) beta = pid_speed->correction(progress_speed - sensors->getSpeed());
+                pwm_left = beta + alpha;
+                pwm_left = clockwise ? pwm_left : -pwm_left;
+                pwm_right = beta - alpha;
+                pwm_right = clockwise ? -pwm_right : pwm_right;
+                actuators->updatePWM(pwm_left, pwm_right);
+            }
         }
+        if (f_acc->isNewState()) acc->accelerate(progress_speed);
         delay(5);
     }
-    actuators->stop();
     delay(5000);
 }
-
-
 
 
 //============
 void test_6() {
     /* 
-        Turn 180 alignment
+        Turn in one direction and align with pid correction. Test in both 
+        directions.
     */
+
+    digitalWrite(led_signal, HIGH);  
+    coex->calibration();
+    digitalWrite(led_signal, LOW);  
+    delay(4000);
     Sensors* sensors = coex->getSensors();
     Actuators* actuators = coex->getActuators();
-    float beta = turn_to_speed(4);
-    unsigned long prev_t = millis(), current_t = millis();
-    float xinit = 2.25, e = 0.15, L=10;
-    float x = xinit;
-    bool clockwise = true;
-    float a = (sensors->getSpeed() - 2)/((xinit-e)*(xinit-e));
+    pid_speed->reset();
+    pid_forward->reset();
     PIDController* pid_responsive = new PIDController(10, 15, 0);
+    sensors->encodersReset();
+    float progress_speed;
+    Accelerator* acc = new Accelerator(0.1);
+    acc->start(progress_speed, 5, 1.5);
     FrequencyState *f_ctrl = new FrequencyState(100);
-    while (x > e) {
+    FrequencyState *f_acc = new FrequencyState(20);
+    FrequencyState *f_speed_ctrl = new FrequencyState(20);
+
+    float xinit = 2.25, e = 0.25, L = 10, v_min = 1.5, a = 0, x;
+    float alpha = 0, beta = 0, pwm_left = 0, pwm_right = 0;
+    bool clockwise = false, signal_ = false;
+    if (clockwise) {
+        xinit *= -1;
+        e *= -1;
+    }
+    x = xinit;
+    while (true) {
+        if ((clockwise && x > e) || (!clockwise && x < e)) break;
         if (f_ctrl->isNewState()) {
             sensors->encodersRead();
-            float alpha = pid_forward->correction(sensors->getSpeedRight() - sensors->getSpeedLeft());
-            float v = sensors->getSpeed();
-            Serial.println("\n");
-            Serial.println("Speed:" + String(v));
-
-            current_t = millis();
-            float delta_t = (float) (current_t-prev_t);
-            float delta_theta = 2 * v * delta_t/1000/9.3;
-            prev_t = current_t;
-
-            x -= L*delta_theta;
-            Serial.println("Position: " + String(x));
-            float gamma = pid_responsive->correction(f(x,a,e) - v);
-            Serial.println(gamma);
-            Serial.println(beta);
-            beta += gamma;
-            Serial.println(alpha);
-            float pwm_left = beta + alpha;
-            pwm_left = clockwise ? pwm_left : -pwm_left;
-            float pwm_right = beta - alpha;
-            pwm_right = clockwise ? -pwm_right : pwm_right;
-            actuators->updatePWM(pwm_left, pwm_right);
+            sensors->qtraRead();
+            bool change = signal_;
+            if (clockwise) signal_ = signal_ || sensors->isRoadRight();
+            else signal_ = signal_ || sensors->isRoadLeft();
+            if (change != signal_) {
+                x = xinit;
+                a = (sensors->getSpeed() - v_min)/((xinit-e)*(xinit-e));
+                Serial.println("Trigger");
+            }
+            if (signal_) {
+                alpha = pid_forward->correction(sensors->getSpeedRight() - sensors->getSpeedLeft());
+                float v = sensors->getSpeed();
+                x = ((float) sensors->getError())/1250.;
+                float gamma = pid_responsive->correction(f(x,a,e,v_min) - v);
+                beta += gamma;
+                pwm_left = beta + alpha;
+                pwm_left = pwm_left < 0 ? 0 : pwm_left;
+                pwm_left = clockwise ? pwm_left : -pwm_left;
+                pwm_right = beta - alpha;
+                pwm_right = pwm_right < 0 ? 0 : pwm_right;
+                pwm_right = clockwise ? -pwm_right : pwm_right;
+                actuators->updatePWM(pwm_left, pwm_right);
+            }
+            else {
+                alpha = pid_forward->correction(sensors->getSpeedRight() - sensors->getSpeedLeft());
+                if (f_speed_ctrl->isNewState()) beta = pid_speed->correction(progress_speed - sensors->getSpeed());
+                pwm_left = beta + alpha;
+                pwm_left = clockwise ? pwm_left : -pwm_left;
+                pwm_right = beta - alpha;
+                pwm_right = clockwise ? -pwm_right : pwm_right;
+                actuators->updatePWM(pwm_left, pwm_right);
+            }
         }
+        if (!signal && f_acc->isNewState()) acc->accelerate(progress_speed);
         delay(5);
     }
-    actuators->stop();
     delay(5000);
 }
 
@@ -302,16 +360,162 @@ void test_6() {
 //============
 void test_7() {
     /* 
-        Line following with intersection detection. Counts anomalies, stops
-        when intersection, sends percentages via bluetooth.
+        Turn with alignment but pass first line (uturn if road left and right)
     */
-    ;
+
+    digitalWrite(led_signal, HIGH);  
+    coex->calibration();
+    digitalWrite(led_signal, LOW);  
+    delay(4000);
+    Sensors* sensors = coex->getSensors();
+    Actuators* actuators = coex->getActuators();
+    pid_speed->reset();
+    pid_forward->reset();
+    PIDController* pid_responsive = new PIDController(10, 15, 0);
+    sensors->encodersReset();
+    float progress_speed;
+    Accelerator* acc = new Accelerator(0.1);
+    acc->start(progress_speed, 5, 1.5);
+    FrequencyState *f_ctrl = new FrequencyState(100);
+    FrequencyState *f_acc = new FrequencyState(20);
+    FrequencyState *f_speed_ctrl = new FrequencyState(20);
+
+    float xinit = 2.25, e = 0.25, L = 10, v_min = 1.5, a = 0, x;
+    float alpha = 0, beta = 0, pwm_left = 0, pwm_right = 0;
+    bool clockwise = false, signal_ = false, second_pass = true;
+    if (clockwise) {
+        xinit *= -1;
+        e *= -1;
+    }
+    x = xinit;
+    while (true) {
+        if ((clockwise && x > e) || (!clockwise && x < e)) break;
+        if (f_ctrl->isNewState()) {
+            sensors->encodersRead();
+            sensors->qtraRead();
+            bool change = signal_;
+            if (clockwise) signal_ = signal_ || sensors->isRoadRight();
+            else signal_ = signal_ || sensors->isRoadLeft();
+            if (change != signal_) {
+                if (second_pass) {
+                    unsigned long prev_t = millis(), current_t = millis();
+                    float theta = 0;
+                    while (theta < 3.1415/10) {
+                        if (f_ctrl->isNewState()) {
+                            sensors->encodersRead();
+                            alpha = pid_forward->correction(sensors->getSpeedRight() - sensors->getSpeedLeft());
+                            if (f_speed_ctrl->isNewState()) beta = pid_speed->correction(progress_speed - sensors->getSpeed());
+                            pwm_left = beta + alpha;
+                            pwm_left = clockwise ? pwm_left : -pwm_left;
+                            pwm_right = beta - alpha;
+                            pwm_right = clockwise ? -pwm_right : pwm_right;
+                            actuators->updatePWM(pwm_left, pwm_right);
+                            current_t = millis();
+
+                            float delta_t = (float) (current_t-prev_t);
+                            theta += 2 * sensors->getSpeed() * delta_t/1000/9.3;
+                            prev_t = current_t;
+                        }
+                        if (f_acc->isNewState()) acc->accelerate(progress_speed);
+                        delay(5);
+                    }
+                }
+                x = xinit;
+                a = (sensors->getSpeed() - v_min)/((xinit-e)*(xinit-e));
+                Serial.println("Trigger");
+            }
+            if (signal_) {
+                alpha = pid_forward->correction(sensors->getSpeedRight() - sensors->getSpeedLeft());
+                float v = sensors->getSpeed();
+                x = ((float) sensors->getError())/1250.;
+                float gamma = pid_responsive->correction(f(x,a,e,v_min) - v);
+                beta += gamma;
+                pwm_left = beta + alpha;
+                pwm_left = pwm_left < 0 ? 0 : pwm_left;
+                pwm_left = clockwise ? pwm_left : -pwm_left;
+                pwm_right = beta - alpha;
+                pwm_right = pwm_right < 0 ? 0 : pwm_right;
+                pwm_right = clockwise ? -pwm_right : pwm_right;
+                actuators->updatePWM(pwm_left, pwm_right);
+            }
+            else {
+                alpha = pid_forward->correction(sensors->getSpeedRight() - sensors->getSpeedLeft());
+                if (f_speed_ctrl->isNewState()) beta = pid_speed->correction(progress_speed - sensors->getSpeed());
+                pwm_left = beta + alpha;
+                pwm_left = clockwise ? pwm_left : -pwm_left;
+                pwm_right = beta - alpha;
+                pwm_right = clockwise ? -pwm_right : pwm_right;
+                actuators->updatePWM(pwm_left, pwm_right);
+            }
+        }
+        if (!signal && f_acc->isNewState()) acc->accelerate(progress_speed);
+        delay(5);
+    }
+    delay(5000);
 }
 
 
 
 //============
 void test_8() {
+    /* 
+        Line following with intersection detection. Counts anomalies, stops
+        when intersection, sends percentages via bluetooth.
+    */
+    
+    digitalWrite(led_signal, HIGH);  
+    coex->calibration();
+    digitalWrite(led_signal, LOW);  
+    delay(10000);
+    Sensors* sensors = coex->getSensors();
+    coex->newLine(6, false);
+    FrequencyState *f_speed_ctrl = new FrequencyState(10);
+    FrequencyState *f_sensors = new FrequencyState(100);
+    Anomalies* anom = new Anomalies();
+
+    bool detection = false;
+    int my_counter_left = 0, my_counter_right = 0, start_counter = 0, counter = 0;
+    while (true) {
+        byte ret;
+        if (detection) ret = coex->forward();
+        else ret = coex->followLine();
+        if (ret == 1) {
+            coex->stop();
+            break;
+        } 
+        if (f_sensors->isNewState()) {
+            sensors->qtraRead();
+            if (first_detection && (sensors->isRoadLeft() || 
+                                    sensors->isRoadRight())) {
+                anom->start(dist);
+                detection = true;
+                coex->newForward(6);
+            }
+            if (detection) {
+                anom->newLeft(sensors->isRoadLeft(), dist);
+                anom->newCenter(sensors->isRoadCenter(), dist);
+                anom->newRight(sensors->isRoadRight(), dist);
+                if (anom->isFinished()) {
+                    if (anom->isIntersection()) {
+                        coex->stop();
+                        coex->sendMsg(anom->getSummary());
+                        break;
+                    }
+                    anom->reset();
+                    detection = false;
+                    coex->newLine(6, false);
+                }
+            }
+        }
+        delay(5);
+    }
+    delay(5000);
+}
+
+
+
+//============
+void test_9() {
     /* 
         Line following with intersection detection + forward until aligned for
         manoeuver. Send results via bleutooth.
@@ -321,7 +525,7 @@ void test_8() {
 
 
 //============
-void test_9() {
+void test_10() {
     /* 
         Follows line. detect at intersection. classifies intersection. determines
         direction with LHR. turns in the determined direction with alignment.
@@ -329,3 +533,16 @@ void test_9() {
     */
     ;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

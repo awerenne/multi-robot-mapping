@@ -15,25 +15,24 @@ void flicker_led(byte led, unsigned int n, unsigned int delay_) {
 
 
 //============
-float turn_to_speed(float target_speed) {
+float turn_to_speed(float target_speed, bool clockwise) {
     Sensors* sensors = coex->getSensors();
     Actuators* actuators = coex->getActuators();
     pid_speed->reset();
     pid_forward->reset();
     sensors->encodersReset();
     float progress_speed;
-    Accelerator* acc = new Accelerator(0.1);
-    acc->start(progress_speed, target_speed, 1.5);
-    bool clockwise = true;
+    Accelerator* acc = new Accelerator(0.2);
+    acc->start(progress_speed, target_speed, 2.5);
     FrequencyState *f_speed_ctrl = new FrequencyState(10);
-    FrequencyState *f_dir_fwd_ctrl = new FrequencyState(50);
-    FrequencyState *f_acc = new FrequencyState(10);
+    FrequencyState *f_turn_ctrl = new FrequencyState(50);
+    FrequencyState *f_acc = new FrequencyState(20);
     float alpha = 0, beta = 0, pwm_left = 0, pwm_right = 0;
     while (true) {
-        if (f_dir_fwd_ctrl->isNewState()) {
+        if (f_turn_ctrl->isNewState()) {
             sensors->encodersRead();
             alpha = pid_forward->correction(sensors->getSpeedRight() - sensors->getSpeedLeft());
-            if (f_speed_ctrl->isNewState()) beta = pid_speed->correction(target_speed - sensors->getSpeed());
+            if (f_speed_ctrl->isNewState()) beta = pid_speed->correction(progress_speed - sensors->getSpeed());
             pwm_left = beta + alpha;
             pwm_left = clockwise ? pwm_left : -pwm_left;
             pwm_right = beta - alpha;
@@ -48,6 +47,20 @@ float turn_to_speed(float target_speed) {
 }
 
 
-float f(float x, float e, float a) {
-    return a*(x-e)*(x-e) + 2.5;
+//============
+float f(float x, float e, float a, float v_min) {
+    return a*(x-e)*(x-e) + v_min;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

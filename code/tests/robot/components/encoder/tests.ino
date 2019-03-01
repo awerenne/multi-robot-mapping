@@ -12,6 +12,9 @@ void test(byte test_id) {
         case 2:
             test_2();
             break;
+        case 3:
+            test_3();
+            break;
     }
 }
 
@@ -33,8 +36,8 @@ void test_1() {
     int delay_ = 50, T = 4000;
     int pwm_left = 75, pwm_right = 75;
     float rev_left = 0, rev_right = 0;
-    encoder_left->resetCounter();
-    encoder_right->resetCounter();
+    encoder_left->reset();
+    encoder_right->reset();
 
     encoder_left->newTimeStep();
     encoder_right->newTimeStep();
@@ -67,8 +70,8 @@ void test_2() {
     
     int delay_ = 200;
     Serial.println("pwm;speed_left;speed_right");
-    encoder_left->resetCounter();
-    encoder_right->resetCounter();
+    encoder_left->reset();
+    encoder_right->reset();
 
     actuators->updatePWM(-255, -255);
     delay(3000);
@@ -86,5 +89,34 @@ void test_2() {
         float v_right = angular_velocity(encoder_right->deltaCounter(), t_right);
         Serial.println(String(pwm) + ";" + String(v_left) + ";" + String(v_right));
     }
+    actuators->stop();
+}
+
+
+
+//============
+void test_3() {
+    /* 
+        Apply robot on straight line. Stop it after 10 seconds. Display mean speed. And by checking the travelled distance, check
+        if there is an error.
+    */ 
+    
+    int delay_ = 50;
+    encoder_left->reset();
+    encoder_right->reset();
+
+    actuators->updatePWM(65, 75);  // Approx straight line
+    delay(5000);
+    actuators->stop();
+    
+    encoder_left->newTimeStep();
+    encoder_right->newTimeStep();
+     
+    float t_left = encoder_left->deltaTime();
+    float t_right = encoder_right->deltaTime();  
+    float v_left = angular_velocity(encoder_left->deltaCounter(), t_left);
+    float v_right = angular_velocity(encoder_right->deltaCounter(), t_right);
+    float v = (v_left+v_right)/2;
+    bluetooth->println(String(v) + "-" + String((t_left+t_right)/2));
     actuators->stop();
 }

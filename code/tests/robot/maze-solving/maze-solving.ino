@@ -4,7 +4,7 @@
 #include <Accelerator.h>
 #include <Coex.h>
 #include <PidController.h>
-#include "Anomalies.h"
+#include <Anomalies.h>
 
 
 const byte pins_messenger[2] = {10, 11}; 
@@ -20,10 +20,7 @@ const unsigned int parameters_qta[3] = {pin_emitter, n_sensors, n_samples};
 
 Coex* coex = new Coex(pins_messenger, pins_actuators, pins_qta, pin_sharp,
             baud_rate, parameters_qta);
-bool dynamic_state = false;
 byte instruction; 
-float target_speed = 6;
-
 PIDController* pid_speed = new PIDController(12, 0, 0.022);
 PIDController* pid_forward = new PIDController(15, 0.07, 0.065);
 
@@ -43,7 +40,7 @@ void setup() {
 
 //============
 void loop() {
-    test(2);
+    test(5);
     exit(0);
 }
 

@@ -54,7 +54,7 @@ void test_1() {
 //============
 void test_2() {
     /*
-        Test random data to visualize on interactive subplots.
+        Test random data to visualize on realtime subplots.
     */
 
     int delay_ = 50;
@@ -88,14 +88,14 @@ void test_3() {
     FrequencyState* freq_obstacle = new FrequencyState(5);
     FrequencyState* freq_wave = new FrequencyState(0.1);
     FrequencyState* freq_speed_control = new FrequencyState(10);
-    FrequencyState* freq_acceleration = new FrequencyState(5);
+    FrequencyState* freq_acceleration = new FrequencyState(20);
 
     int pwm = 0;
     float progress_speed = 0, target_speed = 6, measured_speed = 0;
     float alpha = 0, beta = 0;
     
-    Accelerator* acc = new Accelerator(0.2);
-    acc->start(progress_speed, target_speed, 3);
+    Accelerator* acc = new Accelerator(0.15);
+    acc->start(progress_speed, target_speed, 1.5);
     for (int seq_nb = 0; true; delay(delay_)) {
         if (freq_receiver->isNewState()) receive_msg_pid();   
         if (freq_obstacle->isNewState() && sensors->isObstacle()) break;
@@ -148,15 +148,15 @@ void test_4() {
     FrequencyState* freq_sender = new FrequencyState(20);
     FrequencyState* freq_obstacle = new FrequencyState(10);
     FrequencyState* freq_wave = new FrequencyState(0.1);
-    FrequencyState* freq_speed_control = new FrequencyState(5);
-    FrequencyState* freq_direction_control = new FrequencyState(25);
-    FrequencyState* freq_acceleration = new FrequencyState(5);
+    FrequencyState* freq_speed_control = new FrequencyState(10);
+    FrequencyState* freq_direction_control = new FrequencyState(50);
+    FrequencyState* freq_acceleration = new FrequencyState(20);
 
     float alpha = 0, beta = 0, progress_speed = 0, target_speed = 6;
     int pwm_left = 0, pwm_right = 0;
 
-    Accelerator* acc = new Accelerator(0.1);
-    acc->start(progress_speed,target_speed,6);
+    Accelerator* acc = new Accelerator(0.25);
+    acc->start(progress_speed,target_speed, 1.5);
     for (int seq_nb = 0; true; delay(delay_)) {
         if (freq_receiver->isNewState()) receive_msg_pid();
         if (freq_obstacle->isNewState() && sensors->isObstacle()) break;

@@ -41,14 +41,14 @@ void setup() {
     Serial.begin(9600);
     flicker_led(led_signal, 10, 200);
     digitalWrite(led_signal, LOW); 
-    while(!Serial) continue; // Wait for init
+    while(!Serial) continue; 
     digitalWrite(led_signal, LOW);   
 }
 
 
 //============
 void loop() {
-    test(9);
+    test(4);
     exit(0);
 }
 
