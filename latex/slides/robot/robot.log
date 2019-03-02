@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.18)  1 MAR 2019 23:24
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.18)  2 MAR 2019 04:44
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -683,6 +683,10 @@ Package: booktabs 2016/04/27 v1.618033 publication quality tables
 \@lastruleclass=\count158
 \@thisrulewidth=\dimen258
 )
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\\' on input line 88.
+
 (./robot.aux)
 \openout1 = `robot.aux'.
 
@@ -876,47 +880,103 @@ t.toc) [2
 
 ] [7
 
+] [8
+
 ]
-LaTeX Font Info:    Try loading font information for U+msa on input line 222.
+[9
+
+] [10
+
+] [11
+
+] [12
+
+]
+LaTeX Font Info:    Try loading font information for U+msa on input line 240.
 
 (/usr/local/texlive/2018/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 222.
+LaTeX Font Info:    Try loading font information for U+msb on input line 240.
 
 (/usr/local/texlive/2018/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Try loading font information for OT1+mathkerncmss on input 
-line 222.
+line 240.
 
 (/usr/local/texlive/2018/texmf-dist/tex/latex/sansmathaccent/ot1mathkerncmss.fd
 File: ot1mathkerncmss.fd 2013/03/27 Fontinst v1.933 font definitions for OT1/ma
 thkerncmss.
-) [8
-
-] [9
-
-] [10
-
-]
-\openout4 = `robot.vrb'.
-
- (./robot.vrb) [11
-
-] [12
-
-]
-\openout4 = `robot.vrb'.
-
- (./robot.vrb) [13
+) [13
 
 ] [14
 
- </usr/local/texlive/2018/texmf-dist/tex/latex/beamer/beamericonarticle.pdf>] [
-15
+] [15
+
+] [16
+
+] [17
+
+] [18
+
+] [19
+
+] [20
+
+] [21
+
+] [22
+
+] [23
+
+] [24
 
 ]
+<figures/differential-system.jpg, id=698, 229.85875pt x 217.81375pt>
+File: figures/differential-system.jpg Graphic file (type jpg)
+<use figures/differential-system.jpg>
+Package pdftex.def Info: figures/differential-system.jpg  used on input line 40
+4.
+(pdftex.def)             Requested size: 114.92908pt x 108.9066pt.
+ [25
+
+ <./figures/differential-system.jpg>] [26
+
+] [27
+
+] [28
+
+] [29
+
+] [30
+
+] [31
+
+] [32
+
+] [33
+
+] [34
+
+] [35
+
+]
+[36
+
+] [37
+
+] [38
+
+]
+<figures/bye-bye.jpeg, id=1065, 1927.2pt x 2186.1675pt>
+File: figures/bye-bye.jpeg Graphic file (type jpg)
+<use figures/bye-bye.jpeg>
+Package pdftex.def Info: figures/bye-bye.jpeg  used on input line 548.
+(pdftex.def)             Requested size: 192.7313pt x 218.62955pt.
+ [39
+
+ <./figures/bye-bye.jpeg>]
 \tf@nav=\write6
 \openout6 = `robot.nav'.
 
@@ -926,35 +986,36 @@ thkerncmss.
 \tf@snm=\write8
 \openout8 = `robot.snm'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 308.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 308.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 552.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 552.
  (./robot.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 308.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 308.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 552.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 552.
 Package rerunfilecheck Info: File `robot.out' has not changed.
-(rerunfilecheck)             Checksum: DE994579C3F35DB255AFFE749E60F202;272.
+(rerunfilecheck)             Checksum: 8902C0F88D07437A9A9434209B62D104;227.
  ) 
 Here is how much of TeX's memory you used:
- 17260 strings out of 492649
- 331707 string characters out of 6129622
- 407343 words of memory out of 5000000
- 20705 multiletter control sequences out of 15000+600000
- 12789 words of font info for 46 fonts, out of 8000000 for 9000
+ 17246 strings out of 492649
+ 329415 string characters out of 6129622
+ 401522 words of memory out of 5000000
+ 20650 multiletter control sequences out of 15000+600000
+ 11001 words of font info for 40 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 56i,16n,69p,772b,812s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb
-></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss12.pfb>
-</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss17.pfb><
-/usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></u
-sr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pfb></usr
-/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></us
-r/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi10.pfb></us
-r/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi9.pfb></usr
-/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on robot.pdf (15 pages, 132284 bytes).
+ 56i,16n,61p,772b,584s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb
+></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb>
+</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb><
+/usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss12.pfb></
+usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></us
+r/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pfb></usr/
+local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi10.pfb></usr/
+local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi8.pfb></usr/l
+ocal/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/lo
+cal/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb>
+Output written on robot.pdf (39 pages, 445023 bytes).
 PDF statistics:
- 515 PDF objects out of 1000 (max. 8388607)
- 467 compressed objects within 5 object streams
- 38 named destinations out of 1000 (max. 500000)
- 133 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1147 PDF objects out of 1200 (max. 8388607)
+ 1071 compressed objects within 11 object streams
+ 84 named destinations out of 1000 (max. 500000)
+ 123 words of extra memory for PDF output out of 10000 (max. 10000000)
 
