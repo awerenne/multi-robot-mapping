@@ -237,15 +237,12 @@ void test_6() {
     /*
         Follows a complex curved line at constant speed and stops at obstacle with continuation.
 
-        Kp = 0.06, Kd = 0.00015, Ki = 0.00022 (f = 75)
-        Kp = 0.070, Kd = 0.0005, Ki = 0.00010 (f = 50) ! 
-    
+        Kp = 0.025, Kd = 0.00025, Ki = 0 (f = 50) 
     */
 
     flicker_led(led_signal, 10, 300);
     digitalWrite(led_signal, HIGH); 
     sensors->manualCalibration();
-    //test_10();
     digitalWrite(led_signal, LOW); 
 
     pid_speed->reset();
@@ -258,11 +255,11 @@ void test_6() {
     int delay_ = 5;
     FrequencyState* freq_receiver = new FrequencyState(10);
     FrequencyState* freq_obstacle = new FrequencyState(10);
-    FrequencyState* freq_speed_control = new FrequencyState(10);
+    FrequencyState* freq_speed_control = new FrequencyState(20);
     FrequencyState* freq_direction_control = new FrequencyState(50);
-    FrequencyState* freq_acceleration = new FrequencyState(10);
+    FrequencyState* freq_acceleration = new FrequencyState(20);
 
-    float alpha = 0, beta = 0, progress_speed = 2;
+    float alpha = 0, beta = 0, progress_speed = 0;
     int pwm_left = 0, pwm_right = 0;
 
     Accelerator* acc = new Accelerator(0.2);
@@ -270,20 +267,17 @@ void test_6() {
     for (;true;delay(delay_)) {
         if (freq_obstacle->isNewState() && sensors->isObstacle()) {
             actuators->stop();
-            delay(2000);
-            pid_speed->reset();
-            pid_line->reset();
-            sensors->encodersReset();
-            continue;
+            break;
         }
         if (freq_receiver->isNewState()) receive_msg_line();
         if (instruction != 1) {
-            progress_speed = 2;
             acc->stop(progress_speed);
             actuators->stop();
+            pid_speed->reset();
+            pid_line->reset();
             continue;
         }
-        if (instruction == 1 && !acc->isRunning()) acc->start(progress_speed, 6, 2);
+        if (instruction == 1 && !acc->isRunning()) acc->start(progress_speed, 6, 1.5);
         if (freq_direction_control->isNewState()) {
             sensors->qtraRead();
             alpha = line_control();
@@ -291,11 +285,11 @@ void test_6() {
                 sensors->encodersRead();
                 beta = speed_control(progress_speed);
             }
+            pwm_left = beta + alpha;
+            pwm_right = beta - alpha;
+            actuators->updatePWM(pwm_left, pwm_right);
         }
-        pwm_left = beta + alpha;
-        pwm_right = beta - alpha;
-        actuators->updatePWM(pwm_left, pwm_right);
-        if (freq_acceleration->isNewState()) acc->accelerate(progress_speed);
+        if (acc->isRunning() && freq_acceleration->isNewState()) acc->accelerate(progress_speed);
     }
     actuators->stop();
 }

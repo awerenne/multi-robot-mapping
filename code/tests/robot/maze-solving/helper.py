@@ -6,7 +6,7 @@
 import serial
 import time
 
-SERIAL_PORT = '/dev/cu.DSDTECHHC-06-DevB';
+SERIAL_PORT = '/dev/cu.HC-05-DevB';
 BAUD_RATE = 9600; 
 
 

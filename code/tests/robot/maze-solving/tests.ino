@@ -39,14 +39,13 @@ void test_1() {
     delay(10000);
     Sensors* sensors = coex->getSensors();
     coex->newLine(6, false);
-    FrequencyState *f_speed_ctrl = new FrequencyState(10);
+    FrequencyState *f_speed_ctrl = new FrequencyState(20);
     FrequencyState *f_dir_ctrl = new FrequencyState(50);
     
     unsigned long prev_t = millis();
     float i = 1, dist = 0, mse = 0;
     while (true) {
         if (coex->followLine() == 1) {
-            coex->stop();
             coex->sendMsg(String(dist) + "-" + String(sqrt(mse)));
             break;
         }
@@ -80,14 +79,13 @@ void test_2() {
     digitalWrite(led_signal, LOW);  
     delay(10000);
     Sensors* sensors = coex->getSensors();
-    coex->newForward(6);
+    coex->newForward(5);
     FrequencyState *f_speed_ctrl = new FrequencyState(10);
     FrequencyState *f_sensors = new FrequencyState(100);
 
     int my_counter_left = 0, my_counter_right = 0, start_counter = 0, counter = 0;
     while (true) {
         if (coex->forward() == 1) {
-            coex->stop();
             coex->sendMsg(String(counter) + "-" + String(start_counter) + "-"\
                 + String(my_counter_left) + "-" + String(my_counter_right));
             break;
@@ -114,17 +112,18 @@ void test_3() {
 
     Sensors* sensors = coex->getSensors();
     Actuators* actuators = coex->getActuators();
-    PIDController* pid_responsive = new PIDController(10, 15, 0);
+    PIDController* pid_responsive = new PIDController(2, 2, 0);
     FrequencyState *f_ctrl = new FrequencyState(100);
 
     bool clockwise = false;
-    float beta = turn_to_speed(6, clockwise);
+    float beta = turn_to_speed(3, clockwise);
 
     unsigned long prev_t = millis(), current_t = millis();
-    float xinit = 2.25, e = 0.25, L = 10, v_min = 1.5, x;
+    float xinit = 2.25, e = 0.15, L = 10, v_min = 1.2, x;
     if (clockwise) {
         xinit *= -1;
         e *= -1;
+        pid_responsive->setParameters(1,1,0);
     }
     float a = (sensors->getSpeed() - v_min)/((xinit-e)*(xinit-e));
     x = xinit;
@@ -135,21 +134,24 @@ void test_3() {
             float alpha = pid_forward->correction(sensors->getSpeedRight() -\
                     sensors->getSpeedLeft());
             float v = sensors->getSpeed();
+            if (v < v_min) break;
 
             current_t = millis();
             float delta_t = (float) (current_t-prev_t);
             float delta_theta = 2 * v * delta_t/(1000*9.3);
             if (clockwise) x += L*delta_theta;
-            else x += L*delta_theta;
+            else x -= L*delta_theta;
             prev_t = current_t;
             
             float gamma = pid_responsive->correction(f(x,a,e,v_min) - v);
             beta += gamma;
             float pwm_left = beta + alpha;
             pwm_left = pwm_left < 0 ? 0 : pwm_left;
+            pwm_left = pwm_left > 255 ? 255 : pwm_left;
             pwm_left = clockwise ? pwm_left : -pwm_left;
             float pwm_right = beta - alpha;
             pwm_right = pwm_right < 0 ? 0 : pwm_right;
+            pwm_right = pwm_right > 255 ? 255 : pwm_right;
             pwm_right = clockwise ? -pwm_right : pwm_right;
             actuators->updatePWM(pwm_left, pwm_right);
 
@@ -232,18 +234,19 @@ void test_5() {
     PIDController* pid_responsive = new PIDController(10, 15, 0);
     sensors->encodersReset();
     float progress_speed;
-    Accelerator* acc = new Accelerator(0.1);
-    acc->start(progress_speed, 5, 1.5);
+    Accelerator* acc = new Accelerator(0.2);
+    acc->start(progress_speed, 3, 1);
     FrequencyState *f_ctrl = new FrequencyState(100);
     FrequencyState *f_acc = new FrequencyState(20);
     FrequencyState *f_speed_ctrl = new FrequencyState(20);
 
-    float xinit = 2.25, e = 0.25, L = 10, v_min = 1.5, a = 0, x;
+    float xinit = 2.25, e = 0.15, L = 10, v_min = 1.25, a = 0, x;
     float alpha = 0, beta = 0, pwm_left = 0, pwm_right = 0;
-    bool clockwise = false, signal_ = false;
+    bool clockwise = true, signal_ = false;
     if (clockwise) {
         xinit *= -1;
         e *= -1;
+        pid_responsive->setParameters(0.8,0.8,0);
     }
     x = xinit;
     while (true) {
@@ -295,21 +298,22 @@ void test_6() {
     Actuators* actuators = coex->getActuators();
     pid_speed->reset();
     pid_forward->reset();
-    PIDController* pid_responsive = new PIDController(10, 15, 0);
+    PIDController* pid_responsive = new PIDController(2, 2, 0);
     sensors->encodersReset();
     float progress_speed;
     Accelerator* acc = new Accelerator(0.1);
-    acc->start(progress_speed, 5, 1.5);
+    acc->start(progress_speed, 3, 1);
     FrequencyState *f_ctrl = new FrequencyState(100);
     FrequencyState *f_acc = new FrequencyState(20);
     FrequencyState *f_speed_ctrl = new FrequencyState(20);
 
-    float xinit = 2.25, e = 0.25, L = 10, v_min = 1.5, a = 0, x;
+    float xinit = 2.25, e = 0.05, L = 10, v_min = 2, a = 0, x;
     float alpha = 0, beta = 0, pwm_left = 0, pwm_right = 0;
-    bool clockwise = false, signal_ = false;
+    bool clockwise = true, signal_ = false;
     if (clockwise) {
         xinit *= -1;
         e *= -1;
+        pid_responsive->setParameters(1,1,0);
     }
     x = xinit;
     while (true) {
@@ -328,14 +332,17 @@ void test_6() {
             if (signal_) {
                 alpha = pid_forward->correction(sensors->getSpeedRight() - sensors->getSpeedLeft());
                 float v = sensors->getSpeed();
+                if (v < 0.5) break;
                 x = ((float) sensors->getError())/1250.;
                 float gamma = pid_responsive->correction(f(x,a,e,v_min) - v);
                 beta += gamma;
                 pwm_left = beta + alpha;
                 pwm_left = pwm_left < 0 ? 0 : pwm_left;
+                pwm_left = pwm_left > 255 ? 255 : pwm_left;
                 pwm_left = clockwise ? pwm_left : -pwm_left;
                 pwm_right = beta - alpha;
                 pwm_right = pwm_right < 0 ? 0 : pwm_right;
+                pwm_right = pwm_right > 255 ? 255 : pwm_right;
                 pwm_right = clockwise ? -pwm_right : pwm_right;
                 actuators->updatePWM(pwm_left, pwm_right);
             }
@@ -349,9 +356,10 @@ void test_6() {
                 actuators->updatePWM(pwm_left, pwm_right);
             }
         }
-        if (!signal && f_acc->isNewState()) acc->accelerate(progress_speed);
+        if (!signal_ && f_acc->isNewState()) acc->accelerate(progress_speed);
         delay(5);
     }
+    actuators->stop();
     delay(5000);
 }
 
@@ -371,21 +379,22 @@ void test_7() {
     Actuators* actuators = coex->getActuators();
     pid_speed->reset();
     pid_forward->reset();
-    PIDController* pid_responsive = new PIDController(10, 15, 0);
+    PIDController* pid_responsive = new PIDController(2, 2, 0);
     sensors->encodersReset();
     float progress_speed;
     Accelerator* acc = new Accelerator(0.1);
-    acc->start(progress_speed, 5, 1.5);
+    acc->start(progress_speed, 3, 1);
     FrequencyState *f_ctrl = new FrequencyState(100);
     FrequencyState *f_acc = new FrequencyState(20);
     FrequencyState *f_speed_ctrl = new FrequencyState(20);
 
-    float xinit = 2.25, e = 0.25, L = 10, v_min = 1.5, a = 0, x;
+    float xinit = 2.25, e = 0.05, L = 10, v_min = 2, a = 0, x;
     float alpha = 0, beta = 0, pwm_left = 0, pwm_right = 0;
-    bool clockwise = false, signal_ = false, second_pass = true;
+    bool clockwise = true, signal_ = false, second_pass = true;
     if (clockwise) {
         xinit *= -1;
         e *= -1;
+        pid_responsive->setParameters(1,1,0);
     }
     x = xinit;
     while (true) {
@@ -398,27 +407,31 @@ void test_7() {
             else signal_ = signal_ || sensors->isRoadLeft();
             if (change != signal_) {
                 if (second_pass) {
-                    unsigned long prev_t = millis(), current_t = millis();
-                    float theta = 0;
-                    while (theta < 3.1415/10) {
-                        if (f_ctrl->isNewState()) {
-                            sensors->encodersRead();
-                            alpha = pid_forward->correction(sensors->getSpeedRight() - sensors->getSpeedLeft());
-                            if (f_speed_ctrl->isNewState()) beta = pid_speed->correction(progress_speed - sensors->getSpeed());
-                            pwm_left = beta + alpha;
-                            pwm_left = clockwise ? pwm_left : -pwm_left;
-                            pwm_right = beta - alpha;
-                            pwm_right = clockwise ? -pwm_right : pwm_right;
-                            actuators->updatePWM(pwm_left, pwm_right);
-                            current_t = millis();
-
-                            float delta_t = (float) (current_t-prev_t);
-                            theta += 2 * sensors->getSpeed() * delta_t/1000/9.3;
-                            prev_t = current_t;
-                        }
-                        if (f_acc->isNewState()) acc->accelerate(progress_speed);
-                        delay(5);
-                    }
+                    second_pass = false;
+                    signal_ = change;
+                    delay(200);
+                    continue;
+//                    unsigned long prev_t = millis(), current_t = millis();
+//                    float theta = 0;
+//                    while (theta < 3.1415/10) {
+//                        if (f_ctrl->isNewState()) {
+//                            sensors->encodersRead();
+//                            alpha = pid_forward->correction(sensors->getSpeedRight() - sensors->getSpeedLeft());
+//                            if (f_speed_ctrl->isNewState()) beta = pid_speed->correction(progress_speed - sensors->getSpeed());
+//                            pwm_left = beta + alpha;
+//                            pwm_left = clockwise ? pwm_left : -pwm_left;
+//                            pwm_right = beta - alpha;
+//                            pwm_right = clockwise ? -pwm_right : pwm_right;
+//                            actuators->updatePWM(pwm_left, pwm_right);
+//                            current_t = millis();
+//
+//                            float delta_t = (float) (current_t-prev_t);
+//                            theta += 2 * sensors->getSpeed() * delta_t/1000/9.3;
+//                            prev_t = current_t;
+//                        }
+//                        if (f_acc->isNewState()) acc->accelerate(progress_speed);
+//                        delay(5);
+//                    }
                 }
                 x = xinit;
                 a = (sensors->getSpeed() - v_min)/((xinit-e)*(xinit-e));
@@ -427,14 +440,17 @@ void test_7() {
             if (signal_) {
                 alpha = pid_forward->correction(sensors->getSpeedRight() - sensors->getSpeedLeft());
                 float v = sensors->getSpeed();
+                if (v < 0.5) break;
                 x = ((float) sensors->getError())/1250.;
                 float gamma = pid_responsive->correction(f(x,a,e,v_min) - v);
                 beta += gamma;
                 pwm_left = beta + alpha;
                 pwm_left = pwm_left < 0 ? 0 : pwm_left;
+                pwm_left = pwm_left > 255 ? 255 : pwm_left;
                 pwm_left = clockwise ? pwm_left : -pwm_left;
                 pwm_right = beta - alpha;
                 pwm_right = pwm_right < 0 ? 0 : pwm_right;
+                pwm_right = pwm_right > 255 ? 255 : pwm_right;
                 pwm_right = clockwise ? -pwm_right : pwm_right;
                 actuators->updatePWM(pwm_left, pwm_right);
             }
@@ -448,9 +464,10 @@ void test_7() {
                 actuators->updatePWM(pwm_left, pwm_right);
             }
         }
-        if (!signal && f_acc->isNewState()) acc->accelerate(progress_speed);
+        if (!signal_ && f_acc->isNewState()) acc->accelerate(progress_speed);
         delay(5);
     }
+    actuators->stop();
     delay(5000);
 }
 
@@ -469,10 +486,12 @@ void test_8() {
     delay(10000);
     Sensors* sensors = coex->getSensors();
     coex->newLine(6, false);
-    FrequencyState *f_speed_ctrl = new FrequencyState(10);
+    FrequencyState *f_speed_ctrl = new FrequencyState(20);
     FrequencyState *f_sensors = new FrequencyState(100);
     Anomalies* anom = new Anomalies();
-
+   
+    float dist = 0;
+    unsigned long prev_t = millis();
     bool detection = false;
     int my_counter_left = 0, my_counter_right = 0, start_counter = 0, counter = 0;
     while (true) {
@@ -485,7 +504,7 @@ void test_8() {
         } 
         if (f_sensors->isNewState()) {
             sensors->qtraRead();
-            if (first_detection && (sensors->isRoadLeft() || 
+            if (!detection && (sensors->isRoadLeft() || 
                                     sensors->isRoadRight())) {
                 anom->start(dist);
                 detection = true;
@@ -506,6 +525,12 @@ void test_8() {
                     coex->newLine(6, false);
                 }
             }
+        }
+        if (f_speed_ctrl->isNewState()) {
+            float v = sensors->getSpeed();
+            float delta_t = sensors->getCounterDeltaTime();
+            dist += v * delta_t / 1000;
+            prev_t += delta_t;
         }
         delay(5);
     }
@@ -533,16 +558,3 @@ void test_10() {
     */
     ;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

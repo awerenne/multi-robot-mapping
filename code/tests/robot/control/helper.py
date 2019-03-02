@@ -11,7 +11,7 @@ import matplotlib.animation as animation
 plt.style.use('seaborn-whitegrid')
 
 
-SERIAL_PORT = '/dev/cu.DSDTECHHC-06-DevB';
+SERIAL_PORT = '/dev/cu.HC-05-DevB';
 BAUD_RATE = 9600; 
 
 
