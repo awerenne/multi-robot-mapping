@@ -11,8 +11,7 @@ Coex::Coex(const byte* pins_messenger, const byte* pins_actuators,
     
     pid_speed = new PIDController(12, 0, 0.022);
     pid_forward = new PIDController(15, 0.07, 0.065);
-    // pid_line = new PIDController(0.062, 0.00017, 0.00022);
-    pid_line = new PIDController(0, 0, 0);
+    pid_line = new PIDController(0.025, 0.00025, 0);
     pid_speed->setMin(0);
     pid_speed->setMax(255);
     pid_forward->setMin(-255);
@@ -20,7 +19,7 @@ Coex::Coex(const byte* pins_messenger, const byte* pins_actuators,
     pid_line->setMin(-255);
     pid_line->setMax(255);
 
-    acc_normal = new Accelerator(0.15);
+    acc_normal = new Accelerator(0.2);
     acc_rotation = new Accelerator(0.05);
    
     f_msg = new FrequencyState(20);
@@ -69,7 +68,7 @@ void Coex::newLine(const float& target_speed, const bool& with_distance) {
     pid_speed->reset();
     pid_line->reset();
     this->with_distance = with_distance;
-    if (with_distance) sensors->encodersReset();
+    sensors->encodersReset();
     setTargetSpeed(target_speed);
     alpha = 0;
     beta = 0;
@@ -96,13 +95,13 @@ void Coex::setTargetSpeed(const float& target_speed) {
 
 //============
 float Coex::errorLine() {
-    return sensors->getError();
+    return -sensors->getError();
 }
 
 
 //============
 float Coex::errorSpeed() {
-    return target_speed - sensors->getSpeed();
+    return progress_speed - sensors->getSpeed();
 }
 
 
@@ -114,8 +113,10 @@ float Coex::errorForward() {
 
 //============
 byte Coex::followLine() {
-    float pwm_left = 0, pwm_right = 0;
-    if (f_obstacle->isNewState() && sensors->isObstacle()) return 1;
+    if (f_obstacle->isNewState() && sensors->isObstacle()) {
+        stop();
+        return 1;
+    }
     if (f_dir_line_ctrl->isNewState()) {
         sensors->qtraRead();
         alpha = pid_line->correction(errorLine());
@@ -123,8 +124,8 @@ byte Coex::followLine() {
             sensors->encodersRead();
             beta = pid_speed->correction(errorSpeed());
         }
-        pwm_left = beta + alpha;
-        pwm_right = beta - alpha;
+        float pwm_left = beta + alpha;
+        float pwm_right = beta - alpha;
         actuators->updatePWM(pwm_left, pwm_right);
     }
     if (f_acc->isNewState()) acc_normal->accelerate(progress_speed);
@@ -135,11 +136,15 @@ byte Coex::followLine() {
 
 //============
 byte Coex::forward() {
-    if (f_obstacle->isNewState() && sensors->isObstacle()) return 1;
+    if (f_obstacle->isNewState() && sensors->isObstacle()) {
+        stop();
+        return 1;
+    }    
     if (f_dir_fwd_ctrl->isNewState()) {
         sensors->encodersRead();
-        alpha = pid_forward->correction(errorForward());
-        if (f_speed_ctrl->isNewState()) beta = pid_speed->correction(errorSpeed());
+        alpha = pid_forward->correction(errorForward()); 
+        if (f_speed_ctrl->isNewState()) 
+            beta = pid_speed->correction(errorSpeed());
         float pwm_left = beta + alpha;
         float pwm_right = beta - alpha;
         actuators->updatePWM(pwm_left, pwm_right);
@@ -194,6 +199,7 @@ byte Coex::turnTheta(const float& Theta, const bool& clockwise) {
         
         actuators->updatePWM(pwm_left, pwm_right);
         if (f_acc->isNewState()) acc_rotation->accelerate(progress_speed);
+        delay(delay_);
     }       
     acc_rotation->stop(progress_speed);
     actuators->stop();

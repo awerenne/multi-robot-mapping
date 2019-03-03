@@ -40,8 +40,9 @@ bool Messenger::receiveMessage() {
         received_char = bluetooth->read();
         if (reception_in_progress == true) {
             if (received_char != end_marker) {
-                received_chars[index++] = received_char;
+                received_chars[index] = received_char;
                 if (index >= num_chars) index = num_chars - 1;
+                index++;
             }
             else {
                 received_chars[index] = '\0';  // terminate 

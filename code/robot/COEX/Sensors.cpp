@@ -64,22 +64,21 @@ void Sensors::qtraRead() {
 
 //============
 bool Sensors::isRoadLeft() {  
-    return sensor_values[num_sensors-1] > 600;
+    return sensor_values[num_sensors-1] > 650;
 }
 
 
 //============
 bool Sensors::isRoadRight() {  
-    return sensor_values[0] > 600;
+    return sensor_values[0] > 650;
 }
 
 
 //============
 bool Sensors::isRoadCenter() {  
-    float mean = 0;
-    for (int i = 1; i < num_sensors-1; i++) mean += sensor_values[i];
-    mean /= (num_sensors-2); 
-    return (mean > 600);
+    for (int i = 1; i < num_sensors-1; i++) 
+        if (sensor_values[i] > 400) return true;
+    return false;
 }
 
 
@@ -185,6 +184,12 @@ float Sensors::getSpeedRight() {
     float delta_counter = encoder_right->deltaCounter();
     float delta_time = encoder_right->deltaTime();
     return linearVelocity(delta_counter, delta_time);
+}
+
+
+//============
+float Sensors::getCounterDeltaTime() {
+    return (encoder_left->deltaTime() + encoder_right->deltaTime())/2; 
 }
 
 

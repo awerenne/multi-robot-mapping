@@ -47,7 +47,7 @@ double PIDController::antiWindup(double output) {
 
 //============
 double PIDController::antiDerivativeKick(double Dout) {
-    if (millis() < start_t + 500) return 0;
+    if (millis() < start_t + 1000) return 0;
     return Dout;
 }
 

@@ -37,6 +37,7 @@ class Coex {
         byte typeIntersection();
 
         Sensors* getSensors() { return this->sensors; }
+        Actuators* getActuators() { return this->actuators; }
 
     private:
         Sensors* sensors;

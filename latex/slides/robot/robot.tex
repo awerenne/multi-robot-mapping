@@ -168,26 +168,22 @@ Photos (2 per slides, 4-5 slides)
 
 \begin{frame}
 \frametitle{Components}
-\framesubtitle{Sharp sensor (1/2)}
-Explain flow test.\\~\\
-Plot.\\~\\
-Conclusion.
+\framesubtitle{Sharp sensor}
+Explain flow test. Conclusion.
+\begin{figure}[hbtp]
+\centering
+\includegraphics[scale=0.4]{figures/sharp-flow.png}
+\caption{Obstacle movement (alternating between in and out of reach of sensor)}
+\end{figure}
 \end{frame}
 
-%------------------------------------------------
-
-\begin{frame}
-\frametitle{Components}
-\framesubtitle{Sharp sensor (2/2)}
-Bypass capacitor.
-\end{frame}
 
 %------------------------------------------------
 
 \begin{frame}
 \frametitle{Components}
 \framesubtitle{Reflectance sensor array (line sensor)}
-Explain flow test.\\~\\
+Explain flow test. Explain err line.\\~\\
 Plot.\\~\\
 Conclusion.
 \end{frame}
@@ -217,7 +213,23 @@ Conclusion.
 \begin{frame}
 \frametitle{Components}
 \framesubtitle{Bluetooth module (2/2)}
-Voltage divider.
+Logic level Arduino is 0 5 and HC 05 module is 0 3.3 V..
+\begin{columns}[c]
+
+\column{.35\textwidth}
+\begin{align*} 
+V_{arduino} &=  \frac{R_2}{R_1+R_2}V_{blt} \\[0.4cm]
+ &=  \frac{2.2}{3.2}V_{blt}
+\end{align*}
+
+\column{.65\textwidth}
+\begin{figure}[hbtp]
+\centering
+\includegraphics[scale=0.5]{figures/voltage-divider.png}
+\caption{Voltage divider}
+\end{figure}
+
+\end{columns}
 \end{frame}
 
 %------------------------------------------------
@@ -228,7 +240,7 @@ Voltage divider.
 $$ 
 w_L = 2\pi f_L
 \qquad\text{with}\qquad	
-f_L = \frac{n_L}{\frac{N G_b}{2} \, \Delta{t} }
+f_L = \frac{n_L}{N' \, G_b \, \Delta{t} }
 $$
 $$ 
 v = \frac{v_L + v_R}{2} = \frac{R(w_L + w_R)}{2}
@@ -251,18 +263,16 @@ Remark why divide by 2 for counting. because only 2 pin interrupts.
 
 \begin{frame}
 \frametitle{Components}
-\framesubtitle{Motors (1/2)}
-Plot.\\~\\
-Conclusion. hysterisis. need for regulation.
+\framesubtitle{Motors}
+Conclusion. Need for regulation. Two more curves on same plot but with full/empty battery.
+\begin{figure}[hbtp]
+\centering
+\includegraphics[scale=0.4]{figures/motors.png}
+\caption{Relationship between PWM (input) and measured speed (output)}
+\end{figure}
+
 \end{frame}
 
-%------------------------------------------------
-
-\begin{frame}
-\frametitle{Components}
-\framesubtitle{Motors (2/2)}
-Instabilities, fixed by software however + ceramic capacitor.
-\end{frame}
 
 %------------------------------------------------
 \section{Control} 

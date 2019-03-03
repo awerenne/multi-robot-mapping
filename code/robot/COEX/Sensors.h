@@ -19,6 +19,7 @@ class Sensors {
         void automaticCalibration();
         void qtraRead();
         int getError();
+        unsigned int* getValues() { return sensor_values; }
         bool isRoadLeft();
         bool isRoadRight();
         bool isRoadCenter();
@@ -28,6 +29,7 @@ class Sensors {
         float getSpeedLeft();
         float getSpeedRight();
         float getDistance();
+        float getCounterDeltaTime();
         void encodersReset();
         void incrementLeft();
         void incrementRight();

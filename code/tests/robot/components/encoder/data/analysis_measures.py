@@ -7,10 +7,11 @@ data = pd.read_csv("measures.csv", sep=';')
 df = pd.DataFrame(data=data)
 
 
-plt.plot(df['pwm'], df['speed_left'], c='blue',  label='left')
-plt.plot(df['pwm'], df['speed_right'], c='red', label='right')
+plt.plot(df['pwm'], df['speed_left'], c='blue',  label='left motor')
+plt.plot(df['pwm'], df['speed_right'], c='red', label='right motor')
 
 plt.xlabel('PWM')
-plt.ylabel('Speed (cm/s)')
+plt.ylabel('Linear velocity (cm/s)')
 plt.legend()
+plt.savefig('motors.png')
 plt.show()

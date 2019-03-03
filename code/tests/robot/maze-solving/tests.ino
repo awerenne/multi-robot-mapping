@@ -492,6 +492,7 @@ void test_8() {
    
     float dist = 0;
     unsigned long prev_t = millis();
+    float time = 0;
     bool detection = false;
     int my_counter_left = 0, my_counter_right = 0, start_counter = 0, counter = 0;
     while (true) {
@@ -504,22 +505,27 @@ void test_8() {
         } 
         if (f_sensors->isNewState()) {
             sensors->qtraRead();
-            if (!detection && (sensors->isRoadLeft() || 
+            if (!detection && (sensors->isRoadLeft() || !sensors->isRoadCenter() ||
                                     sensors->isRoadRight())) {
                 anom->start(dist);
                 detection = true;
+                float v = sensors->getSpeed();
                 coex->newForward(6);
+                prev_t = millis();
+                time = 0.8/v*1000;
             }
             if (detection) {
-                anom->newLeft(sensors->isRoadLeft(), dist);
-                anom->newCenter(sensors->isRoadCenter(), dist);
-                anom->newRight(sensors->isRoadRight(), dist);
+                anom->new_(dist);
+                anom->newLeft(sensors->isRoadLeft());
+                anom->newCenter(sensors->isRoadCenter());
+                anom->newRight(sensors->isRoadRight());
                 if (anom->isFinished()) {
                     if (anom->isIntersection()) {
                         coex->stop();
                         coex->sendMsg(anom->getSummary());
-                        break;
+                        return;
                     }
+                    coex->sendMsg(anom->getSummary());
                     anom->reset();
                     detection = false;
                     coex->newLine(6, false);
@@ -534,6 +540,7 @@ void test_8() {
         }
         delay(5);
     }
+    coex->stop();
     delay(5000);
 }
 
@@ -545,7 +552,73 @@ void test_9() {
         Line following with intersection detection + forward until aligned for
         manoeuver. Send results via bleutooth.
     */
-    ;
+
+    digitalWrite(led_signal, HIGH);  
+    coex->calibration();
+    digitalWrite(led_signal, LOW);  
+    delay(10000);
+    Sensors* sensors = coex->getSensors();
+    coex->newLine(6, false);
+    FrequencyState *f_speed_ctrl = new FrequencyState(20);
+    FrequencyState *f_sensors = new FrequencyState(100);
+    Anomalies* anom = new Anomalies();
+   
+    float dist = 0;
+    bool detection = false;
+    while (true) {
+        byte ret;
+        if (detection) ret = coex->forward();
+        else ret = coex->followLine();
+        if (ret == 1) {
+            coex->stop();
+            break;
+        } 
+        if (f_sensors->isNewState()) {
+            sensors->qtraRead();
+            if (!detection && (sensors->isRoadLeft() || !sensors->isRoadCenter() ||
+                                    sensors->isRoadRight())) {
+                anom->start(dist);
+                detection = true;
+                float v = sensors->getSpeed();
+                coex->newForward(6);
+            }
+            if (detection) {
+                anom->new_(dist);
+                anom->newLeft(sensors->isRoadLeft());
+                anom->newCenter(sensors->isRoadCenter());
+                anom->newRight(sensors->isRoadRight());
+                if (anom->isFinished()) {
+                    if (anom->isIntersection()) {
+                        coex->sendMsg(anom->getSummary());
+                        unsigned int t = millis();
+                        float d = 0;
+                        while(d < 1.8) {
+                            coex->forward();
+                            if (f_speed_ctrl->isNewState()) {
+                                float v = sensors->getSpeed();
+                                float delta_t = sensors->getCounterDeltaTime();
+                                d += v * delta_t / 1000;
+                            }
+                        }
+                        coex->stop();
+                        return;
+                    }
+                    coex->sendMsg(anom->getSummary());
+                    anom->reset();
+                    detection = false;
+                    coex->newLine(6, false);
+                }
+            }
+        }
+        if (f_speed_ctrl->isNewState()) {
+            float v = sensors->getSpeed();
+            float delta_t = sensors->getCounterDeltaTime();
+            dist += v * delta_t / 1000;
+        }
+        delay(5);
+    }
+    coex->stop();
+    delay(5000);
 }
 
 
