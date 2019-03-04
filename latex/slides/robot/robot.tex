@@ -312,15 +312,16 @@ $$
 $$ 
 \left\{
     \begin{array}{ll}
-		\alpha = o_{direction}(e(\frac{v_L - v_R}{2})) \\[0.3cm]
-		\beta = o_{speed}(e(\frac{v_L + v_R}{2}))
+		\alpha = o(e_{direction}) \\[0.3cm]
+		\beta = o(e_{speed}) \\[0.3cm]
+		\gamma = o(e_{align})
 	\end{array}
 \right.
 \Rightarrow
 \left\{
     \begin{array}{ll}
-		{pwm}_L =  \beta + \alpha \\
-		{pwm}_R = \beta - \alpha
+		{pwm}_L =  (\beta -\gamma) + \alpha \\
+		{pwm}_R = (\beta - \gamma) - \alpha
 	\end{array}
 \right.
 $$
@@ -333,7 +334,7 @@ $$
 \framesubtitle{Line-following control}
 Recall plot of sensor. 
 $$ 
-e(\frac{v_L - v_R}{2})=err_{line} \in [-2500;2500]
+e_{direction} =err_{line} \in [-2500;2500]
 $$
 Explain perturbation plot.\\~\\
 Perturbation plot.\\~\\
@@ -344,7 +345,7 @@ Conclusion. break out angle. Agressive enough such that not seen as intersection
 
 \begin{frame}
 \frametitle{Control}
-\framesubtitle{Smooth acceleration (1/3)}
+\framesubtitle{Speed control (1/4)}
 Reason. Target and progress speed.
 $$
 v_{n+1} \leftarrow v_n + A \, \Delta t_{n:n+1}
@@ -355,7 +356,7 @@ $$
 \end{align*}
 We introduce the parameter $\psi = \frac{d}{T}$ such that
 $$
-B = \frac{A}{1-\psi} 
+\boxed{B = \frac{A}{1-\psi}} 
 $$
 \end{frame}
 
@@ -363,7 +364,7 @@ $$
 
 \begin{frame}
 \frametitle{Control}
-\framesubtitle{Smooth acceleration (2/3)}
+\framesubtitle{Speed control(2/4)}
 $$
 v_{n+1} \leftarrow v_n + \int_{n}^{n+1}a'(t) = v_n + \int_{0}^{n+1}a'(t) - \int_{0}^{n}a'(t)
 $$
@@ -374,7 +375,7 @@ Diagrams.
 
 \begin{frame}
 \frametitle{Control}
-\framesubtitle{Smooth acceleration (3/3)}
+\framesubtitle{Speed control (3/4)}
 Reason.\\~\\
 Target and progress speed.\\~\\
 Equations.\\~\\
@@ -385,7 +386,7 @@ Diagrams.
 
 \begin{frame}
 \frametitle{Control}
-\framesubtitle{Speed control}
+\framesubtitle{Speed control (4/4)}
 Explain plot.\\~\\
 PID plot.\\~\\
 Conclusion. Room for fine-tuning.
@@ -396,8 +397,14 @@ Conclusion. Room for fine-tuning.
 \begin{frame}
 \frametitle{Control}
 \framesubtitle{Forward}
-Explain forward.\\~\\
-equation
+Explain forward. Explain improvement would be to consider theta instead.\\~\\
+$$
+e_{direction} = v_R - v_L
+$$
+We verify that if
+$$
+v_{R;n} > v_{L;n} \Rightarrow e_n > 0  \Rightarrow \alpha_n > 0  \Rightarrow v_{R;n+1}\uparrow \, , v_{L;n+1}\downarrow
+$$
 \end{frame}
 
 %------------------------------------------------
@@ -405,8 +412,12 @@ equation
 \begin{frame}
 \frametitle{Control}
 \framesubtitle{Turning (1/2)}
-Modelize.\\~\\
-Source of image
+From Fig. we can easily deduce the model below by integrating the angular velocity .
+$$
+\theta(t) = \frac{2vt}{b} + \theta_0
+\qquad\text{because}\qquad	
+v_R = -v_L
+$$
 \begin{figure}[hbtp]
 \centering
 \includegraphics[scale=0.5]{figures/differential-system.jpg}
@@ -418,7 +429,9 @@ Source of image
 \begin{frame}
 \frametitle{Control}
 \framesubtitle{Turning (2/2)}
-Turning $\theta$ equation.\\~\\
+$$
+\theta_{n+1} \leftarrow \frac{2\, v_n\, \Delta_{n:n+1}}{b}
+$$
 PID. 
 \end{frame}
 
@@ -497,7 +510,13 @@ Map.
 \frametitle{Exploration \& Mapping}
 \framesubtitle{Intersection detection}
 Explain problem of naive approach.\\~\\
-Solution: majority vote system.\\~\\
+$$
+y = \underset{x \in  \{0,1\}}{\operatorname{argmax}} \operatorname{mode}(x)
+$$
+Boolean value for intersection based on decision rule as follows
+$$
+(y_C = 0) \lor (y_L = 1) \lor (y_R = 1) \lor (y_F = 0) 
+$$
 \end{frame}
 
 %------------------------------------------------
