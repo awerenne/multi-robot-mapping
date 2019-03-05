@@ -87,6 +87,10 @@ void test_2() {
         float t_right = encoder_right->deltaTime();  
         float v_left = angular_velocity(encoder_left->deltaCounter(), t_left);
         float v_right = angular_velocity(encoder_right->deltaCounter(), t_right);
+        if (pwm < 0) {
+            v_left *= -1;
+            v_right *= -1;
+        }
         Serial.println(String(pwm) + ";" + String(v_left) + ";" + String(v_right));
     }
     actuators->stop();
@@ -120,3 +124,20 @@ void test_3() {
     bluetooth->println(String(v) + "-" + String((t_left+t_right)/2));
     actuators->stop();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

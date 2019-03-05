@@ -1,43 +1,42 @@
-/*
-    Test reception/sending of messages from/to master.
-*/
-
-
 
 //============
 void test(byte test_id) {
     switch (test_id) {
-        case 0:
-            test_0();
-            break;
-        case 1:
-            test_1();
-            break;
-        case 2:
-            test_2();
-            break;
+        case 1: test_1(); break;
+        case 2: test_2(); break;
+        case 3: test_3(); break;
+        case 4: test_4(); break;
     }
 }
 
-
-//============
-void test_0() {
-    Serial.println("Start test");
-    while (true) {
-        Serial.println(Bluetooth.available());
-    }
-}
 
 
 //============
 void test_1() {
-    Serial.println("Send data in this format <ID_SENDER, SEQ_NUMBER_SENDER, INSTRUCTION>  ");
+    /* 
+        Check if bleutooth module is working
+    */
+
+    Serial.println("Start test");
+    while (true) {
+        delay(500);
+        if (Bluetooth.available()) Serial.println("Message");
+        else Serial.println("No message");
+    }
+}
+
+
+//============
+void test_2() {
+    /*
+        Simple reception test
+    */
+
+    Serial.println("Send data in this format <ID_SENDER, SEQ_NUMBER_SENDER, INSTRUCTION>");
     init_time = millis();
     while (millis() <= init_time + T) {
-        recv_msg();  // Non-blocking reception
+        recv_msg();  
         if (newData == true) {
-            // Temporary copy, because it is necessary to protect the original data
-            // since strtok() used in parseData() replaces the commas with \0
             strcpy(tempChars, receivedChars);
             parse_instruction();
             show_msg_instruction();
@@ -51,11 +50,15 @@ void test_1() {
 
 
 //============
-void test_2() {
-    unsigned int f = 500;  // frequency
+void test_3() {
+    /*
+        Simple sending test
+    */
+
+    unsigned int f = 50;  
     int delay_ = 1000/f;  
     init_time = millis();
-    while (init_time<= T + millis()) {
+    while (init_time <= T + millis()) {
         send_msg(String(3.05));
         delay(delay_);
     }
@@ -64,5 +67,51 @@ void test_2() {
 }
 
 
-// Test frequency limit (higher than that receiving frequency data will be lost
-// due to the fact it can not process fast enough)
+//============
+void test_4() {
+    /*
+        Sinus test
+    */
+
+    while (true) {
+        recv_msg();  
+        if (newData == true) {
+            strcpy(tempChars, receivedChars);
+            parse_instruction();
+            send_msg(instruction);
+            newData = false;
+        }
+    }
+    delay(5000);  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

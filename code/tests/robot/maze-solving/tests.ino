@@ -411,27 +411,6 @@ void test_7() {
                     signal_ = change;
                     delay(200);
                     continue;
-//                    unsigned long prev_t = millis(), current_t = millis();
-//                    float theta = 0;
-//                    while (theta < 3.1415/10) {
-//                        if (f_ctrl->isNewState()) {
-//                            sensors->encodersRead();
-//                            alpha = pid_forward->correction(sensors->getSpeedRight() - sensors->getSpeedLeft());
-//                            if (f_speed_ctrl->isNewState()) beta = pid_speed->correction(progress_speed - sensors->getSpeed());
-//                            pwm_left = beta + alpha;
-//                            pwm_left = clockwise ? pwm_left : -pwm_left;
-//                            pwm_right = beta - alpha;
-//                            pwm_right = clockwise ? -pwm_right : pwm_right;
-//                            actuators->updatePWM(pwm_left, pwm_right);
-//                            current_t = millis();
-//
-//                            float delta_t = (float) (current_t-prev_t);
-//                            theta += 2 * sensors->getSpeed() * delta_t/1000/9.3;
-//                            prev_t = current_t;
-//                        }
-//                        if (f_acc->isNewState()) acc->accelerate(progress_speed);
-//                        delay(5);
-//                    }
                 }
                 x = xinit;
                 a = (sensors->getSpeed() - v_min)/((xinit-e)*(xinit-e));
@@ -629,5 +608,140 @@ void test_10() {
         direction with LHR. turns in the determined direction with alignment.
         Loops. (all of this without stopping in a fluent motion)
     */
-    ;
+    
+        digitalWrite(led_signal, HIGH);  
+    coex->calibration();
+    digitalWrite(led_signal, LOW);  
+    delay(10000);
+    Sensors* sensors = coex->getSensors();
+    coex->newLine(6, false);
+    FrequencyState *f_speed_ctrl = new FrequencyState(20);
+    FrequencyState *f_sensors = new FrequencyState(100);
+    Anomalies* anom = new Anomalies();
+   
+    float dist = 0;
+    bool detection = false;
+    while (true) {
+        byte ret;
+        if (detection) ret = coex->forward();
+        else ret = coex->followLine();
+        if (ret == 1) {
+            coex->stop();
+            break;
+        } 
+        if (f_sensors->isNewState()) {
+            sensors->qtraRead();
+            if (!detection && (sensors->isRoadLeft() || !sensors->isRoadCenter() ||
+                                    sensors->isRoadRight())) {
+                anom->start(dist);
+                detection = true;
+                float v = sensors->getSpeed();
+                coex->newForward(6);
+            }
+            if (detection) {
+                anom->new_(dist);
+                anom->newLeft(sensors->isRoadLeft());
+                anom->newCenter(sensors->isRoadCenter());
+                anom->newRight(sensors->isRoadRight());
+                if (anom->isFinished()) {
+                    if (anom->isIntersection()) {
+                        coex->sendMsg(anom->getSummary());
+                        unsigned int t = millis();
+                        float d = 0;
+                        while(d < 1.8) {
+                            coex->forward();
+                            if (f_speed_ctrl->isNewState()) {
+                                float v = sensors->getSpeed();
+                                float delta_t = sensors->getCounterDeltaTime();
+                                d += v * delta_t / 1000;
+                            }
+                        }
+                        coex->stop();
+                        delay(100);
+                        byte type_intersection = anom->typeIntersection();
+                        byte instruction = lhr(type_intersection);
+                        turn_align(instruction, type_intersection, sensors, coex->getActuators());
+                        coex->sendMsg("Type: " + String(type_intersection));
+                    }
+                    coex->sendMsg("Err");
+                    anom->reset();
+                    detection = false;
+                    coex->newLine(6, false);
+                }
+            }
+        }
+        if (f_speed_ctrl->isNewState()) {
+            float v = sensors->getSpeed();
+            float delta_t = sensors->getCounterDeltaTime();
+            dist += v * delta_t / 1000;
+        }
+        delay(5);
+    }
+    coex->stop();
+    delay(5000);
 }
+
+
+
+
+
+//============
+void test_11() {
+    /* 
+        Distance test. Same as first test however with loop, so no need to recalibrate each time.
+    */
+
+    digitalWrite(led_signal, HIGH);  
+    coex->calibration();
+    digitalWrite(led_signal, LOW);  
+    delay(10000);
+    Sensors* sensors = coex->getSensors();
+    coex->newLine(6, false);
+    FrequencyState *f_speed_ctrl = new FrequencyState(20);
+    FrequencyState *f_dir_ctrl = new FrequencyState(50);
+
+    float ground_truth = 7.5;
+    
+    int sample_idx = 0;
+    float i = 1, dist = 0, mse = 0;
+    while (true) {
+        if (coex->followLine() == 1) {
+            coex->sendMsg(String(sample_idx) + ";" + String(ground_truth) + ";" + String(dist) + ";" + String(sqrt(mse)));
+            delay(10000);
+            dist = 0;
+            mse = 0;
+            i = 1;
+            sample_idx++;
+            coex->newLine(6, false);
+            continue;
+        }
+        if (f_speed_ctrl->isNewState()) {
+            float v = sensors->getSpeed();
+            float delta_t = sensors->getCounterDeltaTime();
+            dist += v * delta_t / 1000;
+        }
+        if (f_dir_ctrl->isNewState()) {
+            float se = sensors->getError();
+            se *= se;  // Squared error
+            mse = (i-1)/i*mse + se/i;  // Rolling average mean
+            i++;
+        }
+        delay(5);
+    }
+    delay(5000);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

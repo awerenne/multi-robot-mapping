@@ -22,7 +22,7 @@ int mode = -1;
 float kp = 0;
 float kd = 0; 
 float ki = 0;
-const byte numChars = 32;
+const byte numChars = 64;
 char receivedChars[numChars];
 char tempChars[numChars];  // temporary array for use when parsing
 boolean newData = false;
@@ -41,6 +41,6 @@ void setup() {
 
 //============
 void loop() {
-    test(0);
+    test(4);
     exit(0);
 }

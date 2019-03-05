@@ -50,14 +50,14 @@ void parse_instruction() {      // split the data into its parts
 
     char * strtokIndx; // this is used by strtok() as an index
 
-    strtokIndx = strtok(tempChars,",");      // get the first part - the string
+    strtokIndx = strtok(tempChars,"/");      // get the first part - the string
     id_master = atoi(strtokIndx);     // convert this part to an integer
  
-    strtokIndx = strtok(NULL, ","); // this continues where the previous call left off
+    strtokIndx = strtok(NULL, "/"); // this continues where the previous call left off
     seq_number_master = atoi(strtokIndx);     // convert this part to an integer
 
-    strtokIndx = strtok(NULL, ",");
-    instruction = atoi(strtokIndx);     // convert this part to an integer
+    strtokIndx = strtok(NULL, "/");
+    data = atof(strtokIndx);     // convert this part to an integer
 
 }
 
@@ -70,7 +70,7 @@ void show_msg_instruction() {
     Serial.print("Sequence #: ");
     Serial.println(seq_number_master);
     Serial.print("Instruction: ");
-    Serial.println(instruction);
+    Serial.println(data);
 }
 
 
@@ -112,7 +112,7 @@ void show_msg_pid_tuning() {
 
 //============
 void send_msg(String msg) {
-    String msg_with_header = "<" + String(id_slave) + "," + String(seq_number_slave) + "," + msg + ">\n";
+    String msg_with_header = "<" + String(id_slave) + "/" + String(seq_number_slave) + "/" + msg + ">\n";
     Bluetooth.println(msg_with_header);
     seq_number_slave += 1;
 }
