@@ -5,17 +5,14 @@ plt.style.use('seaborn-whitegrid')
 
 data = pd.read_csv("measures.csv", sep=';')
 df = pd.DataFrame(data=data)
-df['err'] = 2500-df['position']
-dff['err'] = df['err']/1250
+df['error'] = df['error']/1250
 df['t'] = df['t']/1000
-
+df.loc[df['t'] < 1.5, 'error'] = -2500/1250
 
 # ------------
-df.loc[df['num_samples_avg'] == 1].plot(x='t', y='err', label="size_sample=1, f=100Hz")
-df.loc[df['num_samples_avg'] == 6].plot(x='t', y='err', label="size_sample=6, f=100Hz")
-df.loc[df['num_samples_avg'] == 12].plot(x='t', y='err', label="size_sample=12, f=100Hz")
+df.loc[df['num_samples_avg'] == 6].plot(x='t', y='error', legend=False)
 plt.xlabel('Time [seconds]')
-plt.ylabel('Error line to center [cm]')
+plt.ylabel('Error line [cm]')
 plt.savefig('qtr-flow.png')
 plt.show()
 

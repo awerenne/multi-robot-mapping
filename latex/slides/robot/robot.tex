@@ -148,8 +148,36 @@ The main features of the robots are:
 
 \begin{frame}
 \frametitle{General}
-\framesubtitle{Structure}
-Photos (2 per slides, 4-5 slides)
+\framesubtitle{Structure (1/3)}
+\begin{figure}[hbtp]
+\centering
+\includegraphics[scale=0.05]{figures/img_front.JPG}
+\caption{Front view of COEX-1}
+\end{figure}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{General}
+\framesubtitle{Structure (2/3)}
+\begin{figure}[hbtp]
+\centering
+\includegraphics[scale=0.05]{figures/img_side.JPG}
+\caption{Side view of COEX-1}
+\end{figure}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{General}
+\framesubtitle{Structure (3/3)}
+\begin{figure}[hbtp]
+\centering
+\includegraphics[scale=0.05]{figures/img_bottom.JPG}
+\caption{Bottom view of COEX-1}
+\end{figure}
 \end{frame}
 
 %------------------------------------------------
@@ -183,9 +211,12 @@ Explain flow test. Conclusion.
 \begin{frame}
 \frametitle{Components}
 \framesubtitle{Reflectance sensor array (line sensor)}
-Explain flow test. Explain err line.\\~\\
-Plot.\\~\\
-Conclusion.
+Explain flow test. Explain err line.Conclusion.
+\begin{figure}[hbtp]
+\centering
+\includegraphics[scale=0.4]{figures/qtr-flow.png}
+\caption{Obstacle movement (alternating between in and out of reach of sensor)}
+\end{figure}
 \end{frame}
 
 %------------------------------------------------
@@ -194,8 +225,7 @@ Conclusion.
 \frametitle{Components}
 \framesubtitle{Shield}
 The line sensors are fixed vertically well above the given recommendations, such that the robot has place to climb hills. This decision made the line sensor 
-particularly sensitive to ambient light interferences. Thus a shield had to be constructed. \\~\\
-Photo.
+particularly sensitive to ambient light interferences. Thus a shield had to be constructed. Explain after wheel. \\~\\
 \end{frame}
 
 %------------------------------------------------
@@ -245,10 +275,6 @@ $$
 $$ 
 v = \frac{v_L + v_R}{2} = \frac{R(w_L + w_R)}{2}
 $$
-%$$\vec{p} = \gamma\,m\vec{v}
-%	\qquad\text{avec}\qquad
-%	\gamma = \frac{1}{\sqrt{1 - \frac{v^2}{c^2}}}
-%$$
 \end{frame}
 
 %------------------------------------------------
@@ -267,7 +293,7 @@ Remark why divide by 2 for counting. because only 2 pin interrupts.
 Conclusion. Need for regulation. Two more curves on same plot but with full/empty battery.
 \begin{figure}[hbtp]
 \centering
-\includegraphics[scale=0.4]{figures/motors.png}
+\includegraphics[scale=0.4]{figures/motors_merged.png}
 \caption{Relationship between PWM (input) and measured speed (output)}
 \end{figure}
 

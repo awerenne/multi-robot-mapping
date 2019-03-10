@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.18)  4 MAR 2019 17:24
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.18)  10 MAR 2019 15:50
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -874,67 +874,91 @@ t.toc) [2
 
 ] [4
 
-] [5
-
-] [6
-
 ]
-<figures/sharp-flow.png, id=216, 462.528pt x 346.896pt>
-File: figures/sharp-flow.png Graphic file (type png)
-<use figures/sharp-flow.png>
-Package pdftex.def Info: figures/sharp-flow.png  used on input line 178.
-(pdftex.def)             Requested size: 185.0079pt x 138.75594pt.
+<figures/img_front.JPG, id=166, 5203.44pt x 3468.96pt>
+File: figures/img_front.JPG Graphic file (type jpg)
+<use figures/img_front.JPG>
+Package pdftex.def Info: figures/img_front.JPG  used on input line 157.
+(pdftex.def)             Requested size: 260.18724pt x 173.45816pt.
+ [5
+
+ <./figures/img_front.JPG>]
+<figures/img_side.JPG, id=193, 5203.44pt x 3468.96pt>
+File: figures/img_side.JPG Graphic file (type jpg)
+<use figures/img_side.JPG>
+Package pdftex.def Info: figures/img_side.JPG  used on input line 169.
+(pdftex.def)             Requested size: 260.18724pt x 173.45816pt.
+ [6
+
+ <./figures/img_side.JPG>]
+<figures/img_bottom.JPG, id=220, 5203.44pt x 3468.96pt>
+File: figures/img_bottom.JPG Graphic file (type jpg)
+<use figures/img_bottom.JPG>
+Package pdftex.def Info: figures/img_bottom.JPG  used on input line 181.
+(pdftex.def)             Requested size: 260.18724pt x 173.45816pt.
  [7
 
- <./figures/sharp-flow.png>] [8
-
-] [9
-
-] [10
+ <./figures/img_bottom.JPG>] [8
 
 ]
-LaTeX Font Info:    Try loading font information for U+msa on input line 233.
+<figures/sharp-flow.png, id=273, 462.528pt x 346.896pt>
+File: figures/sharp-flow.png Graphic file (type png)
+<use figures/sharp-flow.png>
+Package pdftex.def Info: figures/sharp-flow.png  used on input line 206.
+(pdftex.def)             Requested size: 185.0079pt x 138.75594pt.
+
+[9
+
+ <./figures/sharp-flow.png>]
+<figures/qtr-flow.png, id=303, 462.528pt x 346.896pt>
+File: figures/qtr-flow.png Graphic file (type png)
+<use figures/qtr-flow.png>
+Package pdftex.def Info: figures/qtr-flow.png  used on input line 220.
+(pdftex.def)             Requested size: 185.0079pt x 138.75594pt.
+ [10
+
+ <./figures/qtr-flow.png>] [11
+
+] [12
+
+]
+LaTeX Font Info:    Try loading font information for U+msa on input line 263.
 
 (/usr/local/texlive/2018/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 233.
+LaTeX Font Info:    Try loading font information for U+msb on input line 263.
 
 (/usr/local/texlive/2018/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Try loading font information for OT1+mathkerncmss on input 
-line 233.
+line 263.
 
 (/usr/local/texlive/2018/texmf-dist/tex/latex/sansmathaccent/ot1mathkerncmss.fd
 File: ot1mathkerncmss.fd 2013/03/27 Fontinst v1.933 font definitions for OT1/ma
 thkerncmss.
 )
-<figures/voltage-divider.png, id=326, 380.36842pt x 232.65869pt>
+<figures/voltage-divider.png, id=384, 380.36842pt x 232.65869pt>
 File: figures/voltage-divider.png Graphic file (type png)
 <use figures/voltage-divider.png>
-Package pdftex.def Info: figures/voltage-divider.png  used on input line 233.
+Package pdftex.def Info: figures/voltage-divider.png  used on input line 263.
 (pdftex.def)             Requested size: 190.18373pt x 116.32906pt.
- [11
+ [13
 
- <./figures/voltage-divider.png>] [12
+ <./figures/voltage-divider.png>] [14
 
-] [13
+] [15
 
 ]
-<figures/motors.png, id=410, 462.528pt x 346.896pt>
-File: figures/motors.png Graphic file (type png)
-<use figures/motors.png>
-Package pdftex.def Info: figures/motors.png  used on input line 274.
+<figures/motors_merged.png, id=467, 462.528pt x 346.896pt>
+File: figures/motors_merged.png Graphic file (type png)
+<use figures/motors_merged.png>
+Package pdftex.def Info: figures/motors_merged.png  used on input line 300.
 (pdftex.def)             Requested size: 185.0079pt x 138.75594pt.
- [14
+ [16
 
- <./figures/motors.png>]
-[15
-
-] [16
-
-] [17
+ <./figures/motors_merged.png>] [17
 
 ] [18
 
@@ -946,20 +970,20 @@ Package pdftex.def Info: figures/motors.png  used on input line 274.
 
 ] [22
 
+] [23
+
+] [24
+
 ]
-<figures/differential-system.jpg, id=651, 229.85875pt x 217.81375pt>
+<figures/differential-system.jpg, id=709, 229.85875pt x 217.81375pt>
 File: figures/differential-system.jpg Graphic file (type jpg)
 <use figures/differential-system.jpg>
-Package pdftex.def Info: figures/differential-system.jpg  used on input line 42
-5.
+Package pdftex.def Info: figures/differential-system.jpg  used on input line 45
+1.
 (pdftex.def)             Requested size: 114.92908pt x 108.9066pt.
- [23
+ [25
 
- <./figures/differential-system.jpg>] [24
-
-] [25
-
-] [26
+ <./figures/differential-system.jpg>] [26
 
 ] [27
 
@@ -981,13 +1005,18 @@ Package pdftex.def Info: figures/differential-system.jpg  used on input line 42
 
 ] [36
 
+] [37
+
+] [38
+
 ]
-<figures/bye-bye.jpeg, id=1019, 1927.2pt x 2186.1675pt>
+<figures/bye-bye.jpeg, id=1077, 1927.2pt x 2186.1675pt>
 File: figures/bye-bye.jpeg Graphic file (type jpg)
 <use figures/bye-bye.jpeg>
-Package pdftex.def Info: figures/bye-bye.jpeg  used on input line 578.
+Package pdftex.def Info: figures/bye-bye.jpeg  used on input line 604.
 (pdftex.def)             Requested size: 192.7313pt x 218.62955pt.
- [37
+
+[39
 
  <./figures/bye-bye.jpeg>]
 \tf@nav=\write6
@@ -999,19 +1028,19 @@ Package pdftex.def Info: figures/bye-bye.jpeg  used on input line 578.
 \tf@snm=\write8
 \openout8 = `robot.snm'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 582.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 582.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 608.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 608.
  (./robot.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 582.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 582.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 608.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 608.
 Package rerunfilecheck Info: File `robot.out' has not changed.
 (rerunfilecheck)             Checksum: 8902C0F88D07437A9A9434209B62D104;227.
  ) 
 Here is how much of TeX's memory you used:
- 17275 strings out of 492649
- 330207 string characters out of 6129622
+ 17304 strings out of 492649
+ 330775 string characters out of 6129622
  401523 words of memory out of 5000000
- 20679 multiletter control sequences out of 15000+600000
+ 20699 multiletter control sequences out of 15000+600000
  11001 words of font info for 40 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  56i,16n,61p,772b,631s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1026,10 +1055,10 @@ cal/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi10.pfb></usr/lo
 cal/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi8.pfb></usr/loc
 al/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/loca
 l/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb>
-Output written on robot.pdf (37 pages, 516072 bytes).
+Output written on robot.pdf (39 pages, 23214180 bytes).
 PDF statistics:
- 1105 PDF objects out of 1200 (max. 8388607)
- 1025 compressed objects within 11 object streams
- 80 named destinations out of 1000 (max. 500000)
- 138 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1162 PDF objects out of 1200 (max. 8388607)
+ 1075 compressed objects within 11 object streams
+ 84 named destinations out of 1000 (max. 500000)
+ 158 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -54,7 +54,7 @@ def sinus_test():
 
 # ------------
 def sinus_sending():
-    write_to_file_path = "./sending.csv";
+    write_to_file_path = "data/sending.csv";
     output_file = open(write_to_file_path, "w+");
     output_file.write("t;f")
     delay = 0.001 
@@ -75,7 +75,7 @@ def sinus_sending():
 
 # ------------
 def sinus_receiving():
-    write_to_file_path = "./reception.csv";
+    write_to_file_path = "data/reception.csv";
     output_file = open(write_to_file_path, "w+");
     output_file.write("t;f")
     delay = 0.001 

@@ -3,7 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 plt.style.use('seaborn-whitegrid')
-sns.set()
 
 data = pd.read_csv("measures.csv", sep=';')
 df = pd.DataFrame(data=data)

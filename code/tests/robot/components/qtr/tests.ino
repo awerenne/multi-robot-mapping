@@ -33,7 +33,9 @@ void test_1() {
     Serial.println(header);
     String mode = "manual";
     int time_step = 1000/f;
-    for (unsigned int t = 0; t < T; t += time_step) {
+    unsigned long prev_t = millis();
+    float delta_t = 0;
+    for (unsigned int t = 0; t < T; t += delta_t) {
         QTRARead();
         String measure = mode + ";" ;
         measure += String(num_samples_per_sensor) + ";" ;
@@ -44,9 +46,11 @@ void test_1() {
           measure += String(sensor_values[i]);
           if (i+1 < num_sensors) measure += ";" ;
         }
-    
+        
         Serial.println(measure);
         delay(time_step);
+        delta_t = ((float) millis() - prev_t)/1000.;
+        prev_t = delta_t;
     }
     delay(5000);  
 }
