@@ -78,6 +78,8 @@
 
 \usepackage{graphicx} % Allows including images
 \usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{subfloat}
+%\usepackage{subcaption}
 
 %----------------------------------------------------------------------------------------
 %	TITLE PAGE
@@ -232,17 +234,48 @@ particularly sensitive to ambient light interferences. Thus a shield had to be c
 
 \begin{frame}
 \frametitle{Components}
-\framesubtitle{Bluetooth module (1/2)}
-Explain sender-receiver distortion.\\~\\
-Plots.\\~\\
-Conclusion.
+\framesubtitle{Bluetooth module (1/4)}
+Explain sender-receiver distortion.Conclusion.
+\begin{figure}[hbtp]
+\centering
+\includegraphics[scale=0.4]{figures/sin-sending-merged-5hz.png}
+\caption{Sinus test at 5Hz}
+\end{figure}
+
 \end{frame}
 
 %------------------------------------------------
 
 \begin{frame}
 \frametitle{Components}
-\framesubtitle{Bluetooth module (2/2)}
+\framesubtitle{Bluetooth module (2/4)}
+Explain sender-receiver distortion.Conclusion.
+\begin{figure}[hbtp]
+\centering
+\includegraphics[scale=0.4]{figures/sin-sending-merged-25hz.png}
+\caption{Sinus test at 25Hz}
+\end{figure}
+
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Components}
+\framesubtitle{Bluetooth module (3/4)}
+Explain sender-receiver distortion.Conclusion.
+\begin{figure}[hbtp]
+\centering
+\includegraphics[scale=0.4]{figures/sin-sending-merged-40hz.png}
+\caption{Sinus test at 40Hz}
+\end{figure}
+
+\end{frame}
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Components}
+\framesubtitle{Bluetooth module (4/4)}
 Logic level Arduino is 0 5 and HC 05 module is 0 3.3 V..
 \begin{columns}[c]
 
@@ -334,7 +367,7 @@ $$
 
 \begin{frame}
 \frametitle{Control}
-\framesubtitle{Speed \& direction}
+\framesubtitle{Speed \& direction (1/3)}
 $$ 
 \left\{
     \begin{array}{ll}
@@ -351,6 +384,31 @@ $$
 	\end{array}
 \right.
 $$
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Control}
+\framesubtitle{Speed \& direction (2/3)}
+\begin{figure}[hbtp]
+\centering
+\includegraphics[scale=0.4]{figures/pid_speed_normal.png}
+\caption{Full view}
+\end{figure}
+
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Control}
+\framesubtitle{Speed \& direction (3/3)}
+\begin{figure}[hbtp]
+\centering
+\includegraphics[scale=0.4]{figures/pid_speed_shaded.png}
+\caption{+- 2 standard error with mean}
+\end{figure}
 \end{frame}
 
 %------------------------------------------------

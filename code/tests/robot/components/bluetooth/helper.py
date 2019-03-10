@@ -6,11 +6,11 @@
 import serial
 import time
 import threading 
+import numpy as np
 
 serial_port = '/dev/cu.HC-05-DevB';
 baud_rate = 9600; 
-ser = serial.Serial(serial_port, baud_rate)
-
+ser = serial.Serial(serial_port, baud_rate, timeout=1)
 start_t = time.time()
 
 # ------------
@@ -56,16 +56,17 @@ def sinus_test():
 def sinus_sending():
     write_to_file_path = "data/sending.csv";
     output_file = open(write_to_file_path, "w+");
-    output_file.write("t;f")
-    delay = 0.001 
-    T = 2
+    output_file.write("t;f\n")
+    delay = 0.04
+    T = 4.
     id_master = 0
     seq_number = 0
     start_t = time.time()
-    while t <= T:
+    t = 0
+    while t <= 2*T:
         t = time.time() - start_t
-        f = 10 * np.sin(3.1415*t)
-        output_file.write(str(t)+";"+str(f))
+        f = 10 * np.sin(2.*3.1415/T*t)
+        output_file.write(str(t)+";"+str(f)+"\n")
         msg = "<" + str(id_master) + "/" + str(seq_number) + \
             "/" + str(f) + ">"
         seq_number += 1
@@ -76,19 +77,20 @@ def sinus_sending():
 # ------------
 def sinus_receiving():
     write_to_file_path = "data/reception.csv";
-    output_file = open(write_to_file_path, "w+");
-    output_file.write("t;f")
-    delay = 0.001 
-    while True:
-        raw_msg = ser.readline().decode("utf-8");        
-        raw_msg = raw_msg.rstrip()  
+    reception_file = open(write_to_file_path, "w+");
+    reception_file.write("t;f\n")
+    delay = 0.04
+    T = 4
+    while (time.time() - start_t) < 2*T + 20:
+        raw_msg = ser.readline().decode("utf-8");   
+        raw_msg = raw_msg.rstrip() 
         if (len(raw_msg) < 1 or raw_msg[0] != '<' or raw_msg[-1] != '>' ): continue
         t = time.time() - start_t
         parsed_msg = raw_msg[1:-1]  
         parsed_msg = parsed_msg.split('/')
-        if len(parsed_msg != 3): continue
+        if len(parsed_msg) != 3: continue
         f = parsed_msg[-1]
-        output_file.write(str(t)+";"+str(f))
+        reception_file.write(str(t)+";"+str(f)+"\n")
         time.sleep(delay)
 
 

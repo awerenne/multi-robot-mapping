@@ -66,10 +66,15 @@ def plot_measures():
 
 # ------------
 def sub_plot_measures():
-    # serial_port = '/dev/cu.wchusbserial1d1120';
-    serial_port = '/dev/cu.wchusbserial14120';
+    serial_port = '/dev/cu.wchusbserial1d1120';
+    # serial_port = '/dev/cu.wchusbserial14120';
     seq_number = 0
     ser = serial.Serial(serial_port, BAUD_RATE, timeout=0.1)
+
+    write_to_file_path = "data/pid-speed.csv";
+    output_file = open(write_to_file_path, "w+");
+    output_file.write("seq_number;progress_speed;measured_speed\n")
+
     last_lower_interval = seq_number
     size_interval = 600
     fig,ax = plt.subplots(2,1)
@@ -90,12 +95,14 @@ def sub_plot_measures():
         ax[0].scatter(seq_number, measures[2], color='blue', label='v_measured')
         ax[1].scatter(seq_number, measures[3], color='green', label='v_left')
         ax[1].scatter(seq_number, measures[4], color='orange', label='v_right')
+        output_file.write(str(seq_number)+";"+str(measures[1])+";"+str(measures[2])+"\n")
         plt.pause(0.001)
         if seq_number > (last_lower_interval+size_interval-10): 
             last_lower_interval += size_interval
             x1,x2,y1,y2 = ax[0].axis()
             ax[0].axis([last_lower_interval, last_lower_interval+size_interval, y1, y2])
             ax[1].axis([last_lower_interval, last_lower_interval+size_interval, y1, y2])
+            output_file.flush()
     plt.show()
 
 

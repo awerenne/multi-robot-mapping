@@ -78,40 +78,9 @@ void test_4() {
         if (newData == true) {
             strcpy(tempChars, receivedChars);
             parse_instruction();
-            send_msg(instruction);
+            send_msg(String(data));
             newData = false;
         }
     }
     delay(5000);  
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

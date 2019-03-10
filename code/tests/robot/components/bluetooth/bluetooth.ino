@@ -17,7 +17,7 @@ unsigned long seq_number_master = 0;
 unsigned int id_slave = 0;
 unsigned long seq_number_slave = 0;
 
-int instruction = -1;
+float data = -1;
 int mode = -1;
 float kp = 0;
 float kd = 0; 

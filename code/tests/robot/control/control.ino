@@ -48,7 +48,7 @@ void setup() {
 
 //============
 void loop() {
-    test(6);
+    test(4);
     exit(0);
 }
 

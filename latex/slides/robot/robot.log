@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.18)  10 MAR 2019 15:50
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.18)  10 MAR 2019 21:17
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -683,27 +683,41 @@ Package: booktabs 2016/04/27 v1.618033 publication quality tables
 \@lastruleclass=\count158
 \@thisrulewidth=\dimen258
 )
+(/usr/local/texlive/2018/texmf-dist/tex/latex/subfloat/subfloat.sty
+Package: subfloat 2003/08/21 version 2.14
+
+Package `subfloat', Version 2.14 of 2003/08/21.
+
+Package subfloat Warning: Numbers of floats not counted:
+(subfloat)                If you use one of the counters subfloatfiguremax or
+(subfloat)                subfloattablemax you will get strange error messages
+(subfloat)                containing \c@subfloatfiguremax or
+(subfloat)                \c@subfloattablemax:
+(subfloat)                Please switch on countmax or remove the code using
+(subfloat)                the counter then..
+
+)
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\\' on input line 88.
+(hyperref)                removing `\\' on input line 90.
 
 (./robot.aux)
 \openout1 = `robot.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 96.
-LaTeX Font Info:    ... okay on input line 96.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 96.
-LaTeX Font Info:    ... okay on input line 96.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 96.
-LaTeX Font Info:    ... okay on input line 96.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 96.
-LaTeX Font Info:    ... okay on input line 96.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 96.
-LaTeX Font Info:    ... okay on input line 96.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 96.
-LaTeX Font Info:    ... okay on input line 96.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 96.
-LaTeX Font Info:    ... okay on input line 96.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 98.
+LaTeX Font Info:    ... okay on input line 98.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 98.
+LaTeX Font Info:    ... okay on input line 98.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 98.
+LaTeX Font Info:    ... okay on input line 98.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 98.
+LaTeX Font Info:    ... okay on input line 98.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 98.
+LaTeX Font Info:    ... okay on input line 98.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 98.
+LaTeX Font Info:    ... okay on input line 98.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 98.
+LaTeX Font Info:    ... okay on input line 98.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -771,7 +785,7 @@ e
 ))
 ABD: EveryShipout initializing macros
 \AtBeginShipoutBox=\box54
-Package hyperref Info: Link coloring OFF on input line 96.
+Package hyperref Info: Link coloring OFF on input line 98.
 
 (/usr/local/texlive/2018/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
@@ -781,66 +795,66 @@ Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 )
 \c@section@level=\count165
 )
-LaTeX Info: Redefining \ref on input line 96.
-LaTeX Info: Redefining \pageref on input line 96.
-LaTeX Info: Redefining \nameref on input line 96.
+LaTeX Info: Redefining \ref on input line 98.
+LaTeX Info: Redefining \pageref on input line 98.
+LaTeX Info: Redefining \nameref on input line 98.
 
 (./robot.out) (./robot.out)
 \@outlinefile=\write5
 \openout5 = `robot.out'.
 
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/cmr/m/n --> OT1/cmss/m/n on input line 96.
+(Font)                  OT1/cmr/m/n --> OT1/cmss/m/n on input line 98.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 96.
+(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 98.
 \symnumbers=\mathgroup6
 \sympureletters=\mathgroup7
 LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `normal'
-(Font)                  OT1/cmss/m/n --> OT1/cmr/m/n on input line 96.
-LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 96.
+(Font)                  OT1/cmss/m/n --> OT1/cmr/m/n on input line 98.
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
-(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 96.
+(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
-(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 96.
-LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 96.
+(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 98.
+LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
-(Font)                  OT1/cmss/m/n --> OT1/cmss/m/n on input line 96.
+(Font)                  OT1/cmss/m/n --> OT1/cmss/m/n on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/bx/n --> OT1/cmss/m/n on input line 96.
-LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 96.
+(Font)                  OT1/cmss/bx/n --> OT1/cmss/m/n on input line 98.
+LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
-(Font)                  OT1/cmr/m/it --> OT1/cmss/m/it on input line 96.
+(Font)                  OT1/cmr/m/it --> OT1/cmss/m/it on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/cmr/bx/it --> OT1/cmss/m/it on input line 96.
-LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 96.
+(Font)                  OT1/cmr/bx/it --> OT1/cmss/m/it on input line 98.
+LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
-(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 96.
+(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 96.
+(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 98.
 LaTeX Font Info:    Overwriting symbol font `numbers' in version `bold'
-(Font)                  OT1/cmss/m/n --> OT1/cmss/bx/n on input line 96.
+(Font)                  OT1/cmss/m/n --> OT1/cmss/bx/n on input line 98.
 LaTeX Font Info:    Overwriting symbol font `pureletters' in version `bold'
-(Font)                  OT1/cmss/m/it --> OT1/cmss/bx/it on input line 96.
+(Font)                  OT1/cmss/m/it --> OT1/cmss/bx/it on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `bold'
-(Font)                  OT1/cmss/bx/n --> OT1/cmr/bx/n on input line 96.
+(Font)                  OT1/cmss/bx/n --> OT1/cmr/bx/n on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
-(Font)                  OT1/cmss/bx/n --> OT1/cmss/bx/n on input line 96.
+(Font)                  OT1/cmss/bx/n --> OT1/cmss/bx/n on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/m/n --> OT1/cmss/bx/n on input line 96.
+(Font)                  OT1/cmss/m/n --> OT1/cmss/bx/n on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/cmss/m/it --> OT1/cmss/bx/it on input line 96.
+(Font)                  OT1/cmss/m/it --> OT1/cmss/bx/it on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/cmtt/m/n --> OT1/cmtt/bx/n on input line 96.
-LaTeX Font Info:    Redeclaring symbol font `pureletters' on input line 96.
+(Font)                  OT1/cmtt/m/n --> OT1/cmtt/bx/n on input line 98.
+LaTeX Font Info:    Redeclaring symbol font `pureletters' on input line 98.
 LaTeX Font Info:    Overwriting symbol font `pureletters' in version `normal'
 (Font)                  OT1/cmss/m/it --> OT1/mathkerncmss/m/sl on input line 9
-6.
+8.
 LaTeX Font Info:    Overwriting symbol font `pureletters' in version `bold'
 (Font)                  OT1/cmss/bx/it --> OT1/mathkerncmss/m/sl on input line 
-96.
+98.
 LaTeX Font Info:    Overwriting symbol font `pureletters' in version `bold'
 (Font)                  OT1/mathkerncmss/m/sl --> OT1/mathkerncmss/bx/sl on inp
-ut line 96.
+ut line 98.
 
 (/usr/local/texlive/2018/texmf-dist/tex/latex/translator/translator-basic-dicti
 onary-English.dict
@@ -878,7 +892,7 @@ t.toc) [2
 <figures/img_front.JPG, id=166, 5203.44pt x 3468.96pt>
 File: figures/img_front.JPG Graphic file (type jpg)
 <use figures/img_front.JPG>
-Package pdftex.def Info: figures/img_front.JPG  used on input line 157.
+Package pdftex.def Info: figures/img_front.JPG  used on input line 159.
 (pdftex.def)             Requested size: 260.18724pt x 173.45816pt.
  [5
 
@@ -886,7 +900,7 @@ Package pdftex.def Info: figures/img_front.JPG  used on input line 157.
 <figures/img_side.JPG, id=193, 5203.44pt x 3468.96pt>
 File: figures/img_side.JPG Graphic file (type jpg)
 <use figures/img_side.JPG>
-Package pdftex.def Info: figures/img_side.JPG  used on input line 169.
+Package pdftex.def Info: figures/img_side.JPG  used on input line 171.
 (pdftex.def)             Requested size: 260.18724pt x 173.45816pt.
  [6
 
@@ -894,7 +908,7 @@ Package pdftex.def Info: figures/img_side.JPG  used on input line 169.
 <figures/img_bottom.JPG, id=220, 5203.44pt x 3468.96pt>
 File: figures/img_bottom.JPG Graphic file (type jpg)
 <use figures/img_bottom.JPG>
-Package pdftex.def Info: figures/img_bottom.JPG  used on input line 181.
+Package pdftex.def Info: figures/img_bottom.JPG  used on input line 183.
 (pdftex.def)             Requested size: 260.18724pt x 173.45816pt.
  [7
 
@@ -904,7 +918,7 @@ Package pdftex.def Info: figures/img_bottom.JPG  used on input line 181.
 <figures/sharp-flow.png, id=273, 462.528pt x 346.896pt>
 File: figures/sharp-flow.png Graphic file (type png)
 <use figures/sharp-flow.png>
-Package pdftex.def Info: figures/sharp-flow.png  used on input line 206.
+Package pdftex.def Info: figures/sharp-flow.png  used on input line 208.
 (pdftex.def)             Requested size: 185.0079pt x 138.75594pt.
 
 [9
@@ -913,85 +927,119 @@ Package pdftex.def Info: figures/sharp-flow.png  used on input line 206.
 <figures/qtr-flow.png, id=303, 462.528pt x 346.896pt>
 File: figures/qtr-flow.png Graphic file (type png)
 <use figures/qtr-flow.png>
-Package pdftex.def Info: figures/qtr-flow.png  used on input line 220.
+Package pdftex.def Info: figures/qtr-flow.png  used on input line 222.
 (pdftex.def)             Requested size: 185.0079pt x 138.75594pt.
  [10
 
  <./figures/qtr-flow.png>] [11
 
-] [12
-
 ]
-LaTeX Font Info:    Try loading font information for U+msa on input line 263.
+<figures/sin-sending-merged-5hz.png, id=357, 462.528pt x 346.896pt>
+File: figures/sin-sending-merged-5hz.png Graphic file (type png)
+<use figures/sin-sending-merged-5hz.png>
+Package pdftex.def Info: figures/sin-sending-merged-5hz.png  used on input line
+ 245.
+(pdftex.def)             Requested size: 185.0079pt x 138.75594pt.
+ [12
+
+ <./figures/sin-sending-merged-5hz.png>]
+<figures/sin-sending-merged-25hz.png, id=386, 462.528pt x 346.896pt>
+File: figures/sin-sending-merged-25hz.png Graphic file (type png)
+<use figures/sin-sending-merged-25hz.png>
+Package pdftex.def Info: figures/sin-sending-merged-25hz.png  used on input lin
+e 259.
+(pdftex.def)             Requested size: 185.0079pt x 138.75594pt.
+ [13
+
+ <./figures/sin-sending-merged-25hz.png>]
+<figures/sin-sending-merged-40hz.png, id=415, 462.528pt x 346.896pt>
+File: figures/sin-sending-merged-40hz.png Graphic file (type png)
+<use figures/sin-sending-merged-40hz.png>
+Package pdftex.def Info: figures/sin-sending-merged-40hz.png  used on input lin
+e 273.
+(pdftex.def)             Requested size: 185.0079pt x 138.75594pt.
+
+[14
+
+ <./figures/sin-sending-merged-40hz.png>]
+LaTeX Font Info:    Try loading font information for U+msa on input line 296.
 
 (/usr/local/texlive/2018/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 263.
+LaTeX Font Info:    Try loading font information for U+msb on input line 296.
 
 (/usr/local/texlive/2018/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Try loading font information for OT1+mathkerncmss on input 
-line 263.
+line 296.
 
 (/usr/local/texlive/2018/texmf-dist/tex/latex/sansmathaccent/ot1mathkerncmss.fd
 File: ot1mathkerncmss.fd 2013/03/27 Fontinst v1.933 font definitions for OT1/ma
 thkerncmss.
 )
-<figures/voltage-divider.png, id=384, 380.36842pt x 232.65869pt>
+<figures/voltage-divider.png, id=443, 380.36842pt x 232.65869pt>
 File: figures/voltage-divider.png Graphic file (type png)
 <use figures/voltage-divider.png>
-Package pdftex.def Info: figures/voltage-divider.png  used on input line 263.
+Package pdftex.def Info: figures/voltage-divider.png  used on input line 296.
 (pdftex.def)             Requested size: 190.18373pt x 116.32906pt.
- [13
+ [15
 
- <./figures/voltage-divider.png>] [14
+ <./figures/voltage-divider.png>] [16
 
-] [15
+] [17
 
 ]
-<figures/motors_merged.png, id=467, 462.528pt x 346.896pt>
+<figures/motors_merged.png, id=526, 462.528pt x 346.896pt>
 File: figures/motors_merged.png Graphic file (type png)
 <use figures/motors_merged.png>
-Package pdftex.def Info: figures/motors_merged.png  used on input line 300.
+Package pdftex.def Info: figures/motors_merged.png  used on input line 333.
 (pdftex.def)             Requested size: 185.0079pt x 138.75594pt.
- [16
+ [18
 
- <./figures/motors_merged.png>] [17
-
-] [18
-
-] [19
+ <./figures/motors_merged.png>] [19
 
 ] [20
 
-] [21
+]
+<figures/pid_speed_normal.png, id=610, 462.528pt x 346.896pt>
+File: figures/pid_speed_normal.png Graphic file (type png)
+<use figures/pid_speed_normal.png>
+Package pdftex.def Info: figures/pid_speed_normal.png  used on input line 400.
+(pdftex.def)             Requested size: 185.0079pt x 138.75594pt.
+ [21
 
-] [22
+ <./figures/pid_speed_normal.png>]
+<figures/pid_speed_shaded.png, id=638, 462.528pt x 346.896pt>
+File: figures/pid_speed_shaded.png Graphic file (type png)
+<use figures/pid_speed_shaded.png>
+Package pdftex.def Info: figures/pid_speed_shaded.png  used on input line 412.
+(pdftex.def)             Requested size: 185.0079pt x 138.75594pt.
+ [22
 
-] [23
+ <./figures/pid_speed_shaded.png>] [23
 
 ] [24
 
-]
-<figures/differential-system.jpg, id=709, 229.85875pt x 217.81375pt>
-File: figures/differential-system.jpg Graphic file (type jpg)
-<use figures/differential-system.jpg>
-Package pdftex.def Info: figures/differential-system.jpg  used on input line 45
-1.
-(pdftex.def)             Requested size: 114.92908pt x 108.9066pt.
- [25
+] [25
 
- <./figures/differential-system.jpg>] [26
+] [26
 
 ] [27
 
 ] [28
 
-] [29
+]
+<figures/differential-system.jpg, id=823, 229.85875pt x 217.81375pt>
+File: figures/differential-system.jpg Graphic file (type jpg)
+<use figures/differential-system.jpg>
+Package pdftex.def Info: figures/differential-system.jpg  used on input line 50
+9.
+(pdftex.def)             Requested size: 114.92908pt x 108.9066pt.
+ [29
 
-] [30
+ <./figures/differential-system.jpg>] [30
 
 ] [31
 
@@ -1009,14 +1057,21 @@ Package pdftex.def Info: figures/differential-system.jpg  used on input line 45
 
 ] [38
 
+] [39
+
+] [40
+
+] [41
+
+] [42
+
 ]
-<figures/bye-bye.jpeg, id=1077, 1927.2pt x 2186.1675pt>
+<figures/bye-bye.jpeg, id=1191, 1927.2pt x 2186.1675pt>
 File: figures/bye-bye.jpeg Graphic file (type jpg)
 <use figures/bye-bye.jpeg>
-Package pdftex.def Info: figures/bye-bye.jpeg  used on input line 604.
+Package pdftex.def Info: figures/bye-bye.jpeg  used on input line 662.
 (pdftex.def)             Requested size: 192.7313pt x 218.62955pt.
-
-[39
+ [43
 
  <./figures/bye-bye.jpeg>]
 \tf@nav=\write6
@@ -1028,19 +1083,19 @@ Package pdftex.def Info: figures/bye-bye.jpeg  used on input line 604.
 \tf@snm=\write8
 \openout8 = `robot.snm'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 608.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 608.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 666.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 666.
  (./robot.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 608.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 608.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 666.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 666.
 Package rerunfilecheck Info: File `robot.out' has not changed.
 (rerunfilecheck)             Checksum: 8902C0F88D07437A9A9434209B62D104;227.
  ) 
 Here is how much of TeX's memory you used:
- 17304 strings out of 492649
- 330775 string characters out of 6129622
- 401523 words of memory out of 5000000
- 20699 multiletter control sequences out of 15000+600000
+ 17387 strings out of 492649
+ 332570 string characters out of 6129622
+ 402909 words of memory out of 5000000
+ 20765 multiletter control sequences out of 15000+600000
  11001 words of font info for 40 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  56i,16n,61p,772b,631s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1055,10 +1110,10 @@ cal/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi10.pfb></usr/lo
 cal/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi8.pfb></usr/loc
 al/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/loca
 l/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb>
-Output written on robot.pdf (39 pages, 23214180 bytes).
+Output written on robot.pdf (43 pages, 23359340 bytes).
 PDF statistics:
- 1162 PDF objects out of 1200 (max. 8388607)
- 1075 compressed objects within 11 object streams
- 84 named destinations out of 1000 (max. 500000)
- 158 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1280 PDF objects out of 1440 (max. 8388607)
+ 1178 compressed objects within 12 object streams
+ 92 named destinations out of 1000 (max. 500000)
+ 183 words of extra memory for PDF output out of 10000 (max. 10000000)
 
