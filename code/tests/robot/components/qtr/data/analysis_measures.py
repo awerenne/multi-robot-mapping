@@ -11,8 +11,9 @@ df.loc[df['t'] < 1.5, 'error'] = -2500/1250
 
 # ------------
 df.loc[df['num_samples_avg'] == 6].plot(x='t', y='error', legend=False)
-plt.xlabel('Time [seconds]')
-plt.ylabel('Error line [cm]')
+plt.xlabel('Time [seconds]', fontsize=13)
+plt.ylabel('Error line [cm]', fontsize=13)
+plt.tick_params(axis='both', which='major', labelsize=11)
 plt.savefig('qtr-flow.png')
 plt.show()
 

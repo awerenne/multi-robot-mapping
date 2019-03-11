@@ -10,8 +10,9 @@ df['t'] = df['t']/1000
 df['voltage'] = df['voltage']*5
 df.plot(x='t', y='voltage', legend=False)
 plt.axhline(y=2, linewidth=2, color='r', linestyle='--')
-plt.xlabel('Time [seconds]')
-plt.ylabel('Voltage [V]')
+plt.xlabel('Time [seconds]', fontsize=13)
+plt.ylabel('Voltage [V]', fontsize=13)
+plt.tick_params(axis='both', which='major', labelsize=11)
 plt.savefig('sharp-flow.png')
 plt.show()
 

@@ -39,8 +39,9 @@ plt.plot(df['pwm'], df['speed_right_full'], c='red', label='right motor (fully c
 plt.plot(df['pwm'], df['speed_left_empty'], '--', c='blue',  label='left motor (50% charge)')
 plt.plot(df['pwm'], df['speed_right_empty'], '--', c='red', label='right motor (50% charge)')
 
-plt.xlabel('PWM')
-plt.ylabel('Linear velocity (cm/s)')
-plt.legend()
+plt.xlabel('PWM', fontsize=13)
+plt.ylabel('Linear velocity (cm/s)', fontsize=13)
+plt.legend(fontsize=12)
+plt.tick_params(axis='both', which='major', labelsize=11)
 plt.savefig('motors_merged.png')
 plt.show()
