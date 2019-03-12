@@ -81,6 +81,7 @@
 \usepackage{hyperref}
 \usepackage{tikz}
 \usepackage{algpseudocode}
+\usepackage{multicol}
 \setbeamerfont{frametitle}{size=\large}
 \setbeamerfont{framesubtitle}{size=\small}
 
@@ -304,11 +305,19 @@ Sinus test with diagram. Why sinus, fitting etc. Conclusion.
 \begin{frame}
 \frametitle{Components}
 \framesubtitle{Bluetooth module (2/5)}
-\begin{figure}[hbtp]
+\begin{multicols}{2}
+\begin{figure}
 \centering
-\includegraphics[scale=0.45]{figures/sin-sending-merged-5hz.png}
+\includegraphics[scale=0.4]{figures/sending-5hz.png}
 \caption{Sinus test at 5Hz}
 \end{figure}
+\columnbreak
+\begin{figure}
+\centering
+\includegraphics[scale=0.4]{figures/reception-5hz.png}
+\caption{Sinus test at 5Hz}
+\end{figure}
+\end{multicols}
 \end{frame}
 
 %------------------------------------------------
@@ -316,13 +325,19 @@ Sinus test with diagram. Why sinus, fitting etc. Conclusion.
 \begin{frame}
 \frametitle{Components}
 \framesubtitle{Bluetooth module (3/5)}
-Explain sender-receiver distortion.Conclusion.
-\begin{figure}[hbtp]
+\begin{multicols}{2}
+\begin{figure}
 \centering
-\includegraphics[scale=0.45]{figures/sin-sending-merged-25hz.png}
+\includegraphics[scale=0.4]{figures/sending-25hz.png}
 \caption{Sinus test at 25Hz}
 \end{figure}
-
+\columnbreak
+\begin{figure}
+\centering
+\includegraphics[scale=0.4]{figures/reception-25hz.png}
+\caption{Sinus test at 25Hz}
+\end{figure}
+\end{multicols}
 \end{frame}
 
 %------------------------------------------------
@@ -330,13 +345,19 @@ Explain sender-receiver distortion.Conclusion.
 \begin{frame}
 \frametitle{Components}
 \framesubtitle{Bluetooth module (4/5)}
-Explain sender-receiver distortion.Conclusion.
-\begin{figure}[hbtp]
+\begin{multicols}{2}
+\begin{figure}
 \centering
-\includegraphics[scale=0.45]{figures/sin-sending-merged-40hz.png}
+\includegraphics[scale=0.4]{figures/sending-40hz.png}
 \caption{Sinus test at 40Hz}
 \end{figure}
-
+\columnbreak
+\begin{figure}
+\centering
+\includegraphics[scale=0.4]{figures/reception-40hz.png}
+\caption{Sinus test at 40Hz}
+\end{figure}
+\end{multicols}
 \end{frame}
 %------------------------------------------------
 
@@ -700,17 +721,29 @@ We use the values computed during intersection detection, and we make the robot 
 \begin{frame}
 \frametitle{Exploration \& Mapping}
 \framesubtitle{Turning \& alignment (1/2)}
-Problem with naive approach.\\~\\
-Solution + plot + equation.
+Compute quadratic interpolation to fi points $(\pm2,v_{init})$ and $(\pm\epsilon,v_{min})$.
+$$
+v(x;a,b) = a(x-\epsilon)^2+b 
+$$
+with initial conditions $v(x_{init}) = v_{init}$ and $v(\epsilon) = v_{min}$. Thus
+$$
+a = \frac{v_{init}-v_{min}}{(2-\epsilon)^2}
+\qquad\text{with}\qquad
+b = v_{init}
+$$
 \end{frame}
-
+%\begin{multicols}{2}
 %------------------------------------------------
 
 \begin{frame}
 \frametitle{Exploration \& Mapping}
 \framesubtitle{Turning \& alignment (2/2)}
-Explain plot.\\~\\
-Plot to verify results.\\~\\
+\begin{figure}[hbtp]
+\centering
+\label{fig:type-intersection}
+\includegraphics[scale=0.07]{figures/turn-align}
+\caption{The 7 types of intersections}
+\end{figure}
 Explain why not such a good idea.
 \end{frame}
 

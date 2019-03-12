@@ -32,15 +32,25 @@ import pandas as pd
 import matplotlib.pyplot as plt
 plt.style.use('seaborn-whitegrid')
 
-data = pd.read_csv("sending-40hz.csv", sep=';')
-df_rec = pd.DataFrame(data=data)
 data = pd.read_csv("reception-40hz.csv", sep=';')
+df_rec = pd.DataFrame(data=data)
+data = pd.read_csv("sending-40hz.csv", sep=';')
 df_send = pd.DataFrame(data=data)
 
 # ------------
-plt.scatter(df_send['t'], df_send['f'], c='blue',  label='send')
-plt.scatter(df_rec['t'], df_rec['f'], c='red', label='receive')
-plt.xlabel('Time [seconds]')
-plt.ylabel('F')
-plt.savefig('sin-sending-merged-40hz.png')
+plt.plot(df_send['t'], df_send['f'], c='blue',  label='F')
+plt.scatter(df_send['t'], df_send['f'], c='blue',  label='f')
+plt.xlabel('Time [seconds]', fontsize=13)
+plt.legend(fontsize=12)
+plt.tick_params(axis='both', which='major', labelsize=11)
+plt.savefig('sending-40hz.png')
+plt.show()
+
+# ------------
+plt.plot(df_send['t'], df_send['f'], c='blue',  label='F')
+plt.scatter(df_rec['t'], df_rec['f'], c='red', label='f')
+plt.xlabel('Time [seconds]', fontsize=13)
+plt.legend(fontsize=12)
+plt.tick_params(axis='both', which='major', labelsize=11)
+plt.savefig('reception-40hz.png')
 plt.show()

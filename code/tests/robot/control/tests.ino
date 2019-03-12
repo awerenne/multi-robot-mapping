@@ -237,7 +237,7 @@ void test_6() {
     /*
         Follows a complex curved line at constant speed and stops at obstacle with continuation.
 
-        Kp = 0.025, Kd = 0.00025, Ki = 0 (f = 50) 
+        Kp = -0.025, Kd = -0.00055, Ki = 0 (f = 100) 
     */
 
     flicker_led(led_signal, 10, 300);
@@ -256,7 +256,7 @@ void test_6() {
     FrequencyState* freq_receiver = new FrequencyState(10);
     FrequencyState* freq_obstacle = new FrequencyState(10);
     FrequencyState* freq_speed_control = new FrequencyState(20);
-    FrequencyState* freq_direction_control = new FrequencyState(50);
+    FrequencyState* freq_direction_control = new FrequencyState(100);
     FrequencyState* freq_acceleration = new FrequencyState(20);
 
     float alpha = 0, beta = 0, progress_speed = 0;
@@ -540,10 +540,10 @@ void test_11() {
     sensors->encodersReset();
 
     pid_speed->setParameters(12,0,0.022);
-    pid_line->setParameters(0.025,0.00025,0);
+    pid_line->setParameters(-0.025,-0.00055,0);
 
     int delay_ = 5;
-    FrequencyState* freq_sending = new FrequencyState(50);
+    FrequencyState* freq_sending = new FrequencyState(3);
     FrequencyState* freq_receiver = new FrequencyState(10);
     FrequencyState* freq_obstacle = new FrequencyState(10);
     FrequencyState* freq_speed_control = new FrequencyState(20);
@@ -560,21 +560,12 @@ void test_11() {
     messenger->sendMessage(String(test_number)+";"+String(0)+";"+String(sensors->getError()));
 
     Accelerator* acc = new Accelerator(0.2);
-    instruction = 1;
+    acc->start(progress_speed, 6, 1.5);
     for (;true;delay(delay_)) {
         if (freq_obstacle->isNewState() && sensors->isObstacle()) {
             actuators->stop();
             break;
         }
-        if (freq_receiver->isNewState()) receive_msg_line();
-        if (instruction != 1) {
-            acc->stop(progress_speed);
-            actuators->stop();
-            pid_speed->reset();
-            pid_line->reset();
-            continue;
-        }
-        if (instruction == 1 && !acc->isRunning()) acc->start(progress_speed, 6, 1.5);
         if (freq_direction_control->isNewState()) {
             sensors->qtraRead();
             alpha = line_control();
@@ -600,26 +591,3 @@ void test_11() {
 void test_12() {
     ;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

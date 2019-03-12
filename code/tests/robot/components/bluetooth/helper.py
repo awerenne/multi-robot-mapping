@@ -48,8 +48,8 @@ def simple_reception():
 
 # ------------
 def sinus_test():
-    t1=threading.Thread(target=sinus_receiving).start()
     t2=threading.Thread(target=sinus_sending).start()
+    t1=threading.Thread(target=sinus_receiving).start()
 
 
 # ------------
