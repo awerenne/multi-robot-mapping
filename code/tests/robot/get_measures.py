@@ -35,14 +35,15 @@ def read_via_bleutooth():
             msg = msg[1:-1]
             msg = msg.split('/')
         except: continue
-        
         if len(msg) != 3: continue
+        print(msg)
         if seq_number >= int(msg[1]): continue
         seq_number = int(msg[1])
         msg = msg[2].split(';')
         if len(msg) != 3: continue
         print(msg[0]+";"+msg[1]+";"+msg[2]);
         output_file.write(msg[0]+";"+msg[1]+";"+msg[2]+"\n");
+        output_file.flush()
 
 if __name__ == '__main__':
     if len(sys.argv) <= 1: read_data()

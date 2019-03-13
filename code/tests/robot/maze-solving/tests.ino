@@ -17,6 +17,7 @@ void test(byte test_id) {
         case 8: test_8(); break;
         case 9: test_9(); break;
         case 10: test_10(); break;
+        case 11: test_11(); break;
     }
 }
 
@@ -692,56 +693,41 @@ void test_11() {
     */
 
     digitalWrite(led_signal, HIGH);  
-    coex->calibration();
+    //coex->calibration();
     digitalWrite(led_signal, LOW);  
-    delay(10000);
+    //delay(6000);
     Sensors* sensors = coex->getSensors();
     coex->newLine(6, false);
     FrequencyState *f_speed_ctrl = new FrequencyState(20);
     FrequencyState *f_dir_ctrl = new FrequencyState(50);
 
     float ground_truth = 7.5;
-    
-    int sample_idx = 0;
+
     float i = 1, dist = 0, mse = 0;
+    bool wait = false;
     while (true) {
         if (coex->followLine() == 1) {
-            coex->sendMsg(String(sample_idx) + ";" + String(ground_truth) + ";" + String(dist) + ";" + String(sqrt(mse)));
-            delay(10000);
+            coex->sendMsg(String(ground_truth) + ";" + String(dist) + ";" + String(sqrt(mse)));
+            delay(5000);
             dist = 0;
             mse = 0;
             i = 1;
-            sample_idx++;
             coex->newLine(6, false);
-            continue;
+            wait = true;
         }
-        if (f_speed_ctrl->isNewState()) {
+        if (f_speed_ctrl->isNewState() && !wait) {
             float v = sensors->getSpeed();
             float delta_t = sensors->getCounterDeltaTime();
             dist += v * delta_t / 1000;
         }
-        if (f_dir_ctrl->isNewState()) {
+        if (f_dir_ctrl->isNewState() && !wait) {
             float se = sensors->getError();
             se *= se;  // Squared error
             mse = (i-1)/i*mse + se/i;  // Rolling average mean
             i++;
         }
+        wait = false;
         delay(5);
     }
     delay(5000);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
