@@ -64,13 +64,52 @@ void Anomalies::newRight(bool new_anomaly) {
 
 //============
 bool Anomalies::isFinished() {
-    return x > 1.6;  // To change to 2.4 when factor 2 fixed
+    return x > 8;  
 }
 
 
 //============
 bool Anomalies::isIntersection() {
-    return (p_left > 0.5 || p_center < 0.5 || p_right > 0.5 || p_front < 0.5);
+    return (isBlackLeft() || isBlackRight() || !isBlackCenter() || !isBlackFront());
+}
+
+
+//============
+byte Anomalies::typeIntersection() {
+    bool bl = isBlackLeft(), br = isBlackRight(), bc = isBlackCenter(),
+        bf = isBlackFront();
+    if (bl && bc && br && bf) return 0;
+    if (bl && bc && !br && bf) return 1;
+    if (!bl && bc && br && bf) return 2;
+    if (bl && bc && br && !bf) return 3;
+    if (bl && bc && !br && !bf) return 4;
+    if (!bl && bc && br && !bf) return 5;
+    if (!bl && !bc && !br && !bf) return 6;
+    return 6;
+}
+
+
+//============
+bool Anomalies::isBlackLeft() {
+    return p_left > 0.5;
+}
+
+
+//============
+bool Anomalies::isBlackRight() {
+    return p_right > 0.5;
+}
+
+
+//============
+bool Anomalies::isBlackCenter() {
+    return p_center > 0.5;
+}
+
+
+//============
+bool Anomalies::isBlackFront() {
+    return p_front > 0.5;
 }
 
 

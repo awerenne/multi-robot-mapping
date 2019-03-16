@@ -583,7 +583,7 @@ To capture the general tendency, an average over all the cycles of Fig.\ref{fig:
 
 \begin{frame}[label={frame:control-direction}]
 \frametitle{Control}
-\framesubtitle{Direction control (1/3)}
+\framesubtitle{Direction control (1/4)}
 We define three types of direction controls,
 \begin{itemize}
 \item \textit{forward control}: moving in a straight direction ($v_L = v_R \Rightarrow e_{direction} = v_R - v_L$).
@@ -596,12 +596,12 @@ We define three types of direction controls,
 
 \begin{frame}
 \frametitle{Control}
-\framesubtitle{Direction control (2/3)}
+\framesubtitle{Direction control (2/4)}
 I inspired from setpoint weighting developped variable error weighting. It solves the problem: at initial when $v=0$, if error line than takes too much importance compared to speed control. Z can be seen as 
 a regularizer to control the relative imporatnce direction speed ($\beta, \alpha$) correction term. Hyperbolic tangent.
 \begin{columns}[c]
 
-\column{.45\textwidth}
+\column{.35\textwidth}
 $$
 \begin{aligned}
 &Z(i) = \tanh(\zeta i)  \\
@@ -609,11 +609,12 @@ $$
 \end{aligned}
 $$
 
-\column{.50\textwidth}
+\column{.55\textwidth}
 \begin{figure}[hbtp]
 \centering
-\label{fig:smooth-acc}
-\includegraphics[scale=0.07]{figures/smooth-acc}
+\label{fig:zeta}
+\includegraphics[scale=0.4]{figures/zeta.png}
+\vspace*{-2mm}
 \caption{Tanh function with different zeta}
 \end{figure}
 \end{columns}
@@ -623,14 +624,42 @@ $$
 
 \begin{frame}
 \frametitle{Control}
-\framesubtitle{Direction control (3/3)}
+\framesubtitle{Direction control (3/4)}
 On Fig.\ref{fig:perturbation}, different trajectories of line-following on a straight line with initial disalignments are plotted.
-\begin{figure}[hbtp]
+\begin{multicols}{2}
+\begin{figure}
 \centering
-\label{fig:perturbation}
-\includegraphics[scale=0.45]{figures/perturbation}
-\caption{Profile of uniform acceleration}
+\includegraphics[scale=0.4]{figures/small-perturbation-left.png}
+\caption{Sinus test at 5Hz, input signal}
 \end{figure}
+\columnbreak
+\begin{figure}
+\centering
+\includegraphics[scale=0.4]{figures/small-perturbation-right.png}
+\caption{Sinus test at 5Hz, output signal}
+\end{figure}
+\end{multicols}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Control}
+\framesubtitle{Direction control (4/4)}
+On Fig.\ref{fig:perturbation}, different trajectories of line-following on a straight line with initial disalignments are plotted.
+\begin{multicols}{2}
+\begin{figure}
+\centering
+\includegraphics[scale=0.4]{figures/big-perturbation-left.png}
+\caption{Sinus test at 5Hz, input signal}
+\end{figure}
+\columnbreak
+\begin{figure}
+\centering
+\includegraphics[scale=0.4]{figures/big-perturbation-right.png}
+\caption{Sinus test at 5Hz, output signal}
+\end{figure}
+\end{multicols}
 \end{frame}
 
 %------------------------------------------------
@@ -700,7 +729,7 @@ To explore an unknown environment structured as a maze it needs to be able to:
 
 \begin{frame}
 \frametitle{Exploration \& Mapping}
-\framesubtitle{Distance (1/5)}
+\framesubtitle{Distance (1/3)}
 Here under is a plot of the computed distance ($v\Delta t$) versus ground truth. Mean on training set.
 \begin{figure}[hbtp]
 \centering
@@ -715,39 +744,7 @@ A second method deduced from the Fig above is to remove a term blabla. These two
 
 \begin{frame}
 \frametitle{Exploration \& Mapping}
-\framesubtitle{Distance (2/5)}
-Plot comparison with error bars of two methods on test set.\\~\\
-\begin{figure}[hbtp]
-\centering
-\label{fig:architecture}
-\includegraphics[scale=0.45]{figures/hist-distance.png}
-\caption{Architecture of the code}
-\end{figure}
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}
-\frametitle{Exploration \& Mapping}
-\framesubtitle{Distance (3/5)}
-We could try to go further by quantifying uncertainty. For example if we analyze MSE see eq.
-$$
-	MSE = \sum_{i=0}^N err_{line}^2
-$$
-obtained iteratively by rolling mean method. We can see a clear trend.
-\begin{figure}[hbtp]
-\centering
-\label{fig:architecture}
-\includegraphics[scale=0.45]{figures/err-mse.png}
-\caption{Architecture of the code}
-\end{figure}
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}
-\frametitle{Exploration \& Mapping}
-\framesubtitle{Distance (4/5)}
+\framesubtitle{Distance (2/3)}
 However a simpler choice is to discretize the result of the second. Moreover having separate distributions with no overlapping, the method seems to be sufficient.
 If we fix the length 7.5 12.5 etc.
 Plot discretization on test set.
@@ -763,7 +760,7 @@ Plot discretization on test set.
 
 \begin{frame}
 \frametitle{Exploration \& Mapping}
-\framesubtitle{Distance (5/5)}
+\framesubtitle{Distance (3/3)}
 Map + caption: describing second method is applied + discretization.
 \end{frame}
 

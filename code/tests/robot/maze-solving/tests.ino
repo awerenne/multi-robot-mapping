@@ -705,7 +705,7 @@ void test_11() {
     FrequencyState *f_speed_ctrl = new FrequencyState(20);
     FrequencyState *f_dir_ctrl = new FrequencyState(50);
 
-    float ground_truth = 7.5;
+    float ground_truth = 37.5;
 
     float i = 1, dist = 0, mse = 0;
     bool wait = false;

@@ -64,13 +64,13 @@ void Sensors::qtraRead() {
 
 //============
 bool Sensors::isRoadLeft() {  
-    return sensor_values[num_sensors-1] > 650;
+    return sensor_values[0] > 650;
 }
 
 
 //============
 bool Sensors::isRoadRight() {  
-    return sensor_values[0] > 650;
+    return sensor_values[num_sensors-1] > 650;
 }
 
 
@@ -92,8 +92,8 @@ bool Sensors::isAligned() {
 int Sensors::getError() {
     /*
         Return x:
-            x > 0 if line is left of center
-            x < 0 if line is right of center
+            x < 0 if line is left of center
+            x > 0 if line is right of center
     */ 
     int center = (num_sensors-1)*1000/2;
     return (position-center);

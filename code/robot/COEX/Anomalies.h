@@ -17,11 +17,17 @@ class Anomalies {
         void newRight(bool new_anomaly);
         bool isFinished();
         bool isIntersection();
+        byte typeIntersection();
         String getSummary();
 
     private:
         unsigned long counter, counter_left, counter_center, counter_right;
         float start_distance, x, p_left, p_center, p_front, p_right;
+
+        bool isBlackLeft();
+        bool isBlackRight();
+        bool isBlackCenter();
+        bool isBlackFront();
 };
 
 

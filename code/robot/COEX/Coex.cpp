@@ -11,23 +11,24 @@ Coex::Coex(const byte* pins_messenger, const byte* pins_actuators,
     
     pid_speed = new PIDController(12, 0, 0.022);
     pid_forward = new PIDController(15, 0.07, 0.065);
-    pid_line = new PIDController(0.025, 0.00025, 0);
+    pid_line = new PIDController(50, 0.025, 0.15);
     pid_speed->setMin(0);
     pid_speed->setMax(255);
     pid_forward->setMin(-255);
     pid_forward->setMax(255);
     pid_line->setMin(-255);
     pid_line->setMax(255);
+    pid_line->setZeta(3.1415/2);
 
-    acc_normal = new Accelerator(0.2);
-    acc_rotation = new Accelerator(0.05);
+    acc_normal = new Accelerator(0.1);
+    acc_rotation = new Accelerator(0.1);
    
     f_msg = new FrequencyState(20);
     f_obstacle = new FrequencyState(10);
     f_speed_ctrl = new FrequencyState(10);
     f_dir_fwd_ctrl = new FrequencyState(50);
     f_dir_line_ctrl = new FrequencyState(50);
-    f_acc = new FrequencyState(10);
+    f_acc = new FrequencyState(20);
 
     with_distance = false;
     delay_ = 5;
@@ -95,7 +96,8 @@ void Coex::setTargetSpeed(const float& target_speed) {
 
 //============
 float Coex::errorLine() {
-    return -sensors->getError();
+    float err = sensors->getError();
+    return floorf((err/1250.)*100)/100; 
 }
 
 

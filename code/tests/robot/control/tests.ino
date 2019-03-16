@@ -553,7 +553,8 @@ void test_11() {
     pid_line->reset();
     sensors->encodersReset();
     pid_speed->setParameters(12,0,0.022);
-    pid_line->setParameters(0.025,0.0008,0.00008);
+    pid_line->setZeta(3.1415/2.5);
+    pid_line->setParameters(50,0.025,0.15);
 
     int delay_ = 5;
     FrequencyState* freq_sending = new FrequencyState(3);
@@ -566,15 +567,16 @@ void test_11() {
     float alpha = 0, beta = 0, progress_speed = 0;
     int pwm_left = 0, pwm_right = 0;
 
-    int test_number = 1;
+    int test_number = 4;
     unsigned long start_t = millis();
     sensors->qtraRead();
     messenger->sendMessage("test_number;t;err_line");
     messenger->sendMessage(String(test_number)+";"+String(0)+";"+String(sensors->getError()));
     delay(1000);
 
-    Accelerator* acc = new Accelerator(0.2);
+    Accelerator* acc = new Accelerator(0.1);
     acc->start(progress_speed, 6, 1.5);
+    pid_line->reset(); // Zeta init t
     for (;true;delay(delay_)) {
         if (freq_obstacle->isNewState() && sensors->isObstacle()) {
             actuators->stop();

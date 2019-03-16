@@ -1,5 +1,5 @@
 \beamer@sectionintoc {1}{General}{3}{0}{1}
 \beamer@sectionintoc {2}{Components}{10}{0}{2}
 \beamer@sectionintoc {3}{Control}{21}{0}{3}
-\beamer@sectionintoc {4}{Exploration \& Mapping}{34}{0}{4}
-\beamer@sectionintoc {5}{Code}{45}{0}{5}
+\beamer@sectionintoc {4}{Exploration \& Mapping}{35}{0}{4}
+\beamer@sectionintoc {5}{Code}{44}{0}{5}

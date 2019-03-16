@@ -6,8 +6,11 @@ PIDController::PIDController(double Kp, double Kd, double Ki) {
     this->Kp = Kp;
     this->Kd = Kd;
     this->Ki = Ki;
-    min_ = 0;
-    max_ = 0;
+    min_ = -255;
+    max_ = 255;
+    Imin = -255;
+    Imax = 255;
+    zeta = 0;
     this->reset();
 }
 
@@ -25,23 +28,40 @@ void PIDController::setParameters(double Kp, double Kd, double Ki) {
 double PIDController::correction(double error) {
     unsigned long t = millis();
     double delta_t = (double) (t - prev_t);
+    error = errorWeighting(error, t);
     acc_error += error * delta_t;
 
     double Pout = Kp * error;
-    double Dout = antiDerivativeKick((error-prev_error)/delta_t);
-    double Iout = Ki * acc_error;
+    double Dout = (error-prev_error)/delta_t;
+    double Iout = antiWindup(Ki * acc_error);
     
     prev_error = error;
     prev_t = t;
-    return antiWindup(Pout + Dout + Iout);
+    return limitOutput(Pout + Dout + Iout);
 }
 
 
 //============
-double PIDController::antiWindup(double output) {
-    if (max_ != 0 && output > max_) return max_;
-    if (min_ != 0 && output < min_) return min_;
+double PIDController::errorWeighting(double err, unsigned long t) {
+    if (zeta == 0) return err;
+    float x = (float) (t - start_t);
+    return tanh(zeta * x / 1000.) * err;
+}
+
+
+//============
+double PIDController::limitOutput(double output) {
+    if (output > max_) return max_;
+    if (output < min_) return min_;
     return output; 
+}
+
+
+//============
+double PIDController::antiWindup(double Iout) {
+    if (Iout > Imax) return Imax;
+    if (Iout < Imin) return Imin;
+    return Iout; 
 }
 
 

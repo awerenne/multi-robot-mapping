@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.18)  16 MAR 2019 12:38
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.18)  16 MAR 2019 21:55
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -850,12 +850,6 @@ Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
 
 (./robot.aux
 
-LaTeX Warning: Label `fig:smooth-acc' multiply defined.
-
-
-LaTeX Warning: Label `fig:architecture' multiply defined.
-
-
 LaTeX Warning: Label `fig:architecture' multiply defined.
 
 
@@ -1270,158 +1264,180 @@ Package pdftex.def Info: figures/pid_speed_shaded.png  used on input line 580.
  <./figures/pid_speed_shaded.png>]
 [29
 
-]pdfTeX warning (ext4): destination with the same identifier (name{fig:smooth-a
-cc}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.620 \end{frame}
-                 
-File: figures/smooth-acc.png Graphic file (type png)
-<use figures/smooth-acc.png>
-Package pdftex.def Info: figures/smooth-acc.png  used on input line 620.
-(pdftex.def)             Requested size: 120.58276pt x 112.00986pt.
- [30
-
 ]
-<figures/perturbation.png, id=335, 462.528pt x 346.896pt>
-File: figures/perturbation.png Graphic file (type png)
-<use figures/perturbation.png>
-Package pdftex.def Info: figures/perturbation.png  used on input line 634.
-(pdftex.def)             Requested size: 208.13567pt x 156.10175pt.
- [31
+<figures/zeta.png, id=328, 462.528pt x 346.896pt>
+File: figures/zeta.png Graphic file (type png)
+<use figures/zeta.png>
+Package pdftex.def Info: figures/zeta.png  used on input line 621.
+(pdftex.def)             Requested size: 185.0079pt x 138.75594pt.
 
- <./figures/perturbation.png>]
-<figures/differential-system.jpg, id=345, 229.85875pt x 217.81375pt>
+Overfull \vbox (0.49619pt too high) detected at line 621
+ []
+
+[30
+
+ <./figures/zeta.png>]
+
+LaTeX Warning: Reference `fig:perturbation' on page 31 undefined on input line 
+642.
+
+<figures/small-perturbation-left.png, id=338, 462.528pt x 346.896pt>
+File: figures/small-perturbation-left.png Graphic file (type png)
+<use figures/small-perturbation-left.png>
+Package pdftex.def Info: figures/small-perturbation-left.png  used on input lin
+e 642.
+(pdftex.def)             Requested size: 185.0079pt x 138.75594pt.
+
+Overfull \hbox (17.91025pt too wide) in paragraph at lines 642--642
+ [] 
+ []
+
+<figures/small-perturbation-right.png, id=339, 462.528pt x 346.896pt>
+File: figures/small-perturbation-right.png Graphic file (type png)
+<use figures/small-perturbation-right.png>
+Package pdftex.def Info: figures/small-perturbation-right.png  used on input li
+ne 642.
+(pdftex.def)             Requested size: 185.0079pt x 138.75594pt.
+
+Overfull \hbox (17.91025pt too wide) in paragraph at lines 642--642
+ [] 
+ []
+
+[31
+
+ <./figures/small-perturbation-left.png> <./figures/small-perturbation-right.pn
+g>]
+
+LaTeX Warning: Reference `fig:perturbation' on page 32 undefined on input line 
+663.
+
+<figures/big-perturbation-left.png, id=351, 462.528pt x 346.896pt>
+File: figures/big-perturbation-left.png Graphic file (type png)
+<use figures/big-perturbation-left.png>
+Package pdftex.def Info: figures/big-perturbation-left.png  used on input line 
+663.
+(pdftex.def)             Requested size: 185.0079pt x 138.75594pt.
+
+Overfull \hbox (17.91025pt too wide) in paragraph at lines 663--663
+ [] 
+ []
+
+<figures/big-perturbation-right.png, id=352, 462.528pt x 346.896pt>
+File: figures/big-perturbation-right.png Graphic file (type png)
+<use figures/big-perturbation-right.png>
+Package pdftex.def Info: figures/big-perturbation-right.png  used on input line
+ 663.
+(pdftex.def)             Requested size: 185.0079pt x 138.75594pt.
+
+Overfull \hbox (17.91025pt too wide) in paragraph at lines 663--663
+ [] 
+ []
+
+[32
+
+ <./figures/big-perturbation-left.png> <./figures/big-perturbation-right.png>]
+<figures/differential-system.jpg, id=361, 229.85875pt x 217.81375pt>
 File: figures/differential-system.jpg Graphic file (type jpg)
 <use figures/differential-system.jpg>
-Package pdftex.def Info: figures/differential-system.jpg  used on input line 65
-1.
+Package pdftex.def Info: figures/differential-system.jpg  used on input line 68
+0.
 (pdftex.def)             Requested size: 103.43547pt x 98.01527pt.
- [32
+ [33
 
  <./figures/differential-system.jpg>]
 
 LaTeX Font Warning: Font shape `OT1/cmss/m/sc' in size <10> not available
-(Font)              Font shape `OT1/cmr/m/sc' tried instead on input line 675.
+(Font)              Font shape `OT1/cmr/m/sc' tried instead on input line 704.
 
-[33
+[34
 
-] (./robot.toc) [34
+] (./robot.toc) [35
 
-] [35
+] [36
 
 ]
-<figures/hist-distance.png, id=382, 462.528pt x 346.896pt>
+<figures/hist-distance.png, id=398, 462.528pt x 346.896pt>
 File: figures/hist-distance.png Graphic file (type png)
 <use figures/hist-distance.png>
-Package pdftex.def Info: figures/hist-distance.png  used on input line 712.
+Package pdftex.def Info: figures/hist-distance.png  used on input line 741.
 (pdftex.def)             Requested size: 208.13567pt x 156.10175pt.
 
-Overfull \vbox (22.72697pt too high) detected at line 712
+Overfull \vbox (22.72697pt too high) detected at line 741
  []
 
-[36
+[37
 
  <./figures/hist-distance.png>]pdfTeX warning (ext4): destination with the same
  identifier (name{fig:architecture}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.726 \end{frame}
+l.757 \end{frame}
                  
-File: figures/hist-distance.png Graphic file (type png)
-<use figures/hist-distance.png>
-Package pdftex.def Info: figures/hist-distance.png  used on input line 726.
-(pdftex.def)             Requested size: 208.13567pt x 156.10175pt.
- [37
-
-]pdfTeX warning (ext4): destination with the same identifier (name{fig:architec
-ture}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.744 \end{frame}
-                 
-<figures/err-mse.png, id=398, 462.528pt x 346.896pt>
-File: figures/err-mse.png Graphic file (type png)
-<use figures/err-mse.png>
-Package pdftex.def Info: figures/err-mse.png  used on input line 744.
+<figures/distrib.png, id=408, 462.528pt x 346.896pt>
+File: figures/distrib.png Graphic file (type png)
+<use figures/distrib.png>
+Package pdftex.def Info: figures/distrib.png  used on input line 757.
 (pdftex.def)             Requested size: 208.13567pt x 156.10175pt.
 
-Overfull \vbox (43.19061pt too high) detected at line 744
+Overfull \vbox (9.97697pt too high) detected at line 757
  []
 
 [38
 
- <./figures/err-mse.png>]pdfTeX warning (ext4): destination with the same ident
-ifier (name{fig:architecture}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.760 \end{frame}
-                 
-<figures/distrib.png, id=406, 462.528pt x 346.896pt>
-File: figures/distrib.png Graphic file (type png)
-<use figures/distrib.png>
-Package pdftex.def Info: figures/distrib.png  used on input line 760.
-(pdftex.def)             Requested size: 208.13567pt x 156.10175pt.
+ <./figures/distrib.png>] [39
 
-Overfull \vbox (9.97697pt too high) detected at line 760
- []
-
-[39
-
- <./figures/distrib.png>] [40
-
-] [41
+] [40
 
 ]
-<figures/type-intersection.png, id=426, 4771.8275pt x 2460.19125pt>
+<figures/type-intersection.png, id=428, 4771.8275pt x 2460.19125pt>
 File: figures/type-intersection.png Graphic file (type png)
 <use figures/type-intersection.png>
-Package pdftex.def Info: figures/type-intersection.png  used on input line 797.
+Package pdftex.def Info: figures/type-intersection.png  used on input line 794.
 
 (pdftex.def)             Requested size: 286.2973pt x 147.6051pt.
 
-Overfull \vbox (1.48033pt too high) detected at line 797
+Overfull \vbox (1.48033pt too high) detected at line 794
  []
 
-[42
+[41
 
- <./figures/type-intersection.png>] [43
+ <./figures/type-intersection.png>] [42
 
 ]pdfTeX warning (ext4): destination with the same identifier (name{fig:type-int
 ersection}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.829 \end{frame}
+l.826 \end{frame}
                  
 <figures/turn-align.png, id=444, 2102.85625pt x 1621.05624pt>
 File: figures/turn-align.png Graphic file (type png)
 <use figures/turn-align.png>
-Package pdftex.def Info: figures/turn-align.png  used on input line 829.
+Package pdftex.def Info: figures/turn-align.png  used on input line 826.
 (pdftex.def)             Requested size: 147.21498pt x 113.48552pt.
- [44
+ [43
 
- <./figures/turn-align.png>] (./robot.toc) [45
+ <./figures/turn-align.png>] (./robot.toc) [44
 
 ]pdfTeX warning (ext4): destination with the same identifier (name{fig:architec
 ture}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.850 \end{frame}
+l.847 \end{frame}
                  
-<figures/architecture.png, id=462, 760.8425pt x 462.72874pt>
+<figures/architecture.png, id=464, 760.8425pt x 462.72874pt>
 File: figures/architecture.png Graphic file (type png)
 <use figures/architecture.png>
-Package pdftex.def Info: figures/architecture.png  used on input line 850.
+Package pdftex.def Info: figures/architecture.png  used on input line 847.
 (pdftex.def)             Requested size: 289.12315pt x 175.83875pt.
- [46
+ [45
 
  <./figures/architecture.png>]
-<figures/bye-bye.jpeg, id=470, 1927.2pt x 2186.1675pt>
+<figures/bye-bye.jpeg, id=472, 1927.2pt x 2186.1675pt>
 File: figures/bye-bye.jpeg Graphic file (type jpg)
 <use figures/bye-bye.jpeg>
-Package pdftex.def Info: figures/bye-bye.jpeg  used on input line 860.
+Package pdftex.def Info: figures/bye-bye.jpeg  used on input line 857.
 (pdftex.def)             Requested size: 192.7313pt x 218.62955pt.
- [47
+ [46
 
  <./figures/bye-bye.jpeg>]
 \tf@nav=\write6
@@ -1433,11 +1449,11 @@ Package pdftex.def Info: figures/bye-bye.jpeg  used on input line 860.
 \tf@snm=\write8
 \openout8 = `robot.snm'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 864.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 864.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 861.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 861.
  (./robot.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 864.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 864.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 861.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 861.
 Package rerunfilecheck Info: File `robot.out' has not changed.
 (rerunfilecheck)             Checksum: 8902C0F88D07437A9A9434209B62D104;227.
 
@@ -1449,15 +1465,18 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 21278 strings out of 492649
- 416984 string characters out of 6129622
+ 21290 strings out of 492649
+ 417549 string characters out of 6129622
  481999 words of memory out of 5000000
- 24520 multiletter control sequences out of 15000+600000
+ 24531 multiletter control sequences out of 15000+600000
  15142 words of font info for 55 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  56i,18n,62p,772b,776s stack positions out of 5000i,500n,10000p,200000b,80000s
-pdfTeX warning (dest): name{control-turn} has been referenced but does not ex
-ist, replaced by a fixed one
+pdfTeX warning (dest): name{fig:perturbation} has been referenced but does no
+t exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{control-turn} has been referenced but does not exis
+t, replaced by a fixed one
 
 pdfTeX warning (dest): name{todo} has been referenced but does not exist, repla
 ced by a fixed one
@@ -1480,10 +1499,10 @@ l/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi9.pfb></usr/local
 /texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/
 texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/te
 xlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb>
-Output written on robot.pdf (47 pages, 39357546 bytes).
+Output written on robot.pdf (46 pages, 39420701 bytes).
 PDF statistics:
- 557 PDF objects out of 1000 (max. 8388607)
- 428 compressed objects within 5 object streams
- 127 named destinations out of 1000 (max. 500000)
- 249 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 558 PDF objects out of 1000 (max. 8388607)
+ 424 compressed objects within 5 object streams
+ 126 named destinations out of 1000 (max. 500000)
+ 264 words of extra memory for PDF output out of 10000 (max. 10000000)
 
