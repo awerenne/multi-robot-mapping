@@ -237,7 +237,10 @@ void test_6() {
     /*
         Follows a complex curved line at constant speed and stops at obstacle with continuation.
 
-        Kp = -0.025, Kd = -0.00055, Ki = 0 (f = 100) 
+        Kp = 0.025, Kd = 0.0008, Ki = 0.00008 (f = 50) if scale 2500
+        60,0,0.2 (f=50, scale 2 0.01)
+        50,0.025,0.15(f=50,scale 2 0.01 zeta=3.1415/2)
+        
     */
 
     flicker_led(led_signal, 10, 300);
@@ -247,6 +250,7 @@ void test_6() {
 
     pid_speed->reset();
     pid_line->reset();
+    pid_line->setZeta(3.1415/2);
     sensors->encodersReset();
 
     pid_speed->setParameters(12,0,0.022);
@@ -256,29 +260,38 @@ void test_6() {
     FrequencyState* freq_receiver = new FrequencyState(10);
     FrequencyState* freq_obstacle = new FrequencyState(10);
     FrequencyState* freq_speed_control = new FrequencyState(20);
-    FrequencyState* freq_direction_control = new FrequencyState(100);
+    FrequencyState* freq_direction_control = new FrequencyState(50);
     FrequencyState* freq_acceleration = new FrequencyState(20);
 
     float alpha = 0, beta = 0, progress_speed = 0;
     int pwm_left = 0, pwm_right = 0;
 
-    Accelerator* acc = new Accelerator(0.2);
+    Accelerator* acc = new Accelerator(0.1);
     instruction = -1;
+    bool wait = false;
     for (;true;delay(delay_)) {
+        
         if (freq_obstacle->isNewState() && sensors->isObstacle()) {
+            acc->stop(progress_speed);
             actuators->stop();
-            break;
+            pid_speed->reset();
+            pid_line->reset();
+            delay(10000);
+            wait = true;
         }
-        if (freq_receiver->isNewState()) receive_msg_line();
-        if (instruction != 1) {
+        if (freq_receiver->isNewState() && !wait) receive_msg_line();
+        if (instruction != 1 && !wait) {
             acc->stop(progress_speed);
             actuators->stop();
             pid_speed->reset();
             pid_line->reset();
             continue;
         }
-        if (instruction == 1 && !acc->isRunning()) acc->start(progress_speed, 6, 1.5);
-        if (freq_direction_control->isNewState()) {
+        if (instruction == 1 && !acc->isRunning() && !wait) { 
+            pid_line->reset();
+            acc->start(progress_speed, 6, 1.5);
+        }
+        if (freq_direction_control->isNewState() && !wait) {
             sensors->qtraRead();
             alpha = line_control();
             if (freq_speed_control->isNewState()) {
@@ -289,7 +302,8 @@ void test_6() {
             pwm_right = beta - alpha;
             actuators->updatePWM(pwm_left, pwm_right);
         }
-        if (acc->isRunning() && freq_acceleration->isNewState()) acc->accelerate(progress_speed);
+        if (acc->isRunning() && freq_acceleration->isNewState() && !wait) acc->accelerate(progress_speed);
+        wait = false;
     }
     actuators->stop();
 }
@@ -538,9 +552,8 @@ void test_11() {
     pid_speed->reset();
     pid_line->reset();
     sensors->encodersReset();
-
     pid_speed->setParameters(12,0,0.022);
-    pid_line->setParameters(-0.025,-0.00055,0);
+    pid_line->setParameters(0.025,0.0008,0.00008);
 
     int delay_ = 5;
     FrequencyState* freq_sending = new FrequencyState(3);
@@ -553,11 +566,12 @@ void test_11() {
     float alpha = 0, beta = 0, progress_speed = 0;
     int pwm_left = 0, pwm_right = 0;
 
-    int test_number = 0;
+    int test_number = 1;
     unsigned long start_t = millis();
     sensors->qtraRead();
     messenger->sendMessage("test_number;t;err_line");
     messenger->sendMessage(String(test_number)+";"+String(0)+";"+String(sensors->getError()));
+    delay(1000);
 
     Accelerator* acc = new Accelerator(0.2);
     acc->start(progress_speed, 6, 1.5);

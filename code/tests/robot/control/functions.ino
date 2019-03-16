@@ -88,8 +88,8 @@ float forward_control() {
 //============
 float line_control() {
     float error = sensors->getError();
-    Serial.println(error);
-    return pid_line->correction(-error);
+    error = floorf((error/1250.)*100)/100; 
+    return pid_line->correction(error);
 }
 
 
@@ -98,14 +98,3 @@ float turn_control() {
     float error = sensors->getSpeedLeft() + sensors->getSpeedRight();
     return pid_forward->correction(error);
 }
-
-
-
-
-
-
-
-
-
-
-

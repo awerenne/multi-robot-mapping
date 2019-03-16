@@ -17,7 +17,7 @@ void flicker_led(byte led, unsigned int n, unsigned int delay_) {
 
 //============
 void calibrate() {
-    for (int i = 0; i < 600; i++) qtra.calibrate(); 
+    for (int i = 0; i < 500; i++) qtra.calibrate(); 
 }
 
 

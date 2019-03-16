@@ -9,6 +9,7 @@
 #include <PidController.h>
 #include <FrequencyState.h>
 #include <Accelerator.h>
+#include <math.h>
 
 
 const byte pins_messenger[2] = {10, 11}; // RX, TX
@@ -48,7 +49,7 @@ void setup() {
 
 //============
 void loop() {
-    test(11);
+    test(6);
     exit(0);
 }
 

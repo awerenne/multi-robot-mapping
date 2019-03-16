@@ -6,6 +6,7 @@ plt.style.use('seaborn-whitegrid')
 
 data = pd.read_csv("measures_distance.csv", sep=';')
 df = pd.DataFrame(data=data)
+df['d'] /= 2
 df['err'] = abs(df['ground_truth']-df['d'])
 a = df.groupby('ground_truth', as_index='ground_truth')
 b = a.err.mean().values 
@@ -14,21 +15,19 @@ e = a.err.std().values
 b /= c  # normalize
 e /= c
 plt.bar(c, b, yerr=e)
-# plt.hist(df['d'], color='skyblue', label='measured speed')
-# plt.xlabel('Time [seconds]', fontsize=13)
-# plt.ylabel('Linear velocity [cm/s]', fontsize=13)
-# plt.legend(fontsize=12)
-# plt.tick_params(axis='both', which='major', labelsize=11)
 plt.savefig('hist-distance.png')
 plt.show()
 
 
-sns.distplot(df['d'], hist=False, rug=True)
-sns.distplot(df['to_remove'], hist=False, rug=True)
+sns.distplot(df.loc[df['ground_truth'] == 17.5]['d'], hist=False, rug=True)
+sns.distplot(df.loc[df['ground_truth'] == 22.5]['d'], hist=False, rug=True)
+sns.distplot(df.loc[df['ground_truth'] == 27.5]['d'], hist=False, rug=True)
+plt.savefig('distrib.png')
 plt.show()
 
 
 plt.scatter(df['err']/df['ground_truth'], df['mse']/1250)
+plt.savefig('err-mse.png')
 plt.show()
 
 

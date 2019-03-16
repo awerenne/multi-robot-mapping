@@ -278,7 +278,7 @@ Adding a bypass capacitor was necessary to make the Sharp sensor work. On Fig.\r
 \begin{frame}
 \frametitle{Components}
 \framesubtitle{Reflectance sensor array (line sensor)}
-Experimentally, we found it is best to average four readings of the sensor to reduce noise. By doing so, we can observe the detection variying smoothly.
+Experimentally, I found it is best to average four readings of the sensor to reduce noise. By doing so, we can observe the sensor's output varying smoothly.
 \vspace*{-3mm}
 \begin{figure}[hbtp]
 \centering
@@ -294,7 +294,7 @@ Experimentally, we found it is best to average four readings of the sensor to re
 \begin{frame}
 \frametitle{Components}
 \framesubtitle{Shield}
-The robot is designed such that it is able of going up and downhill (moderate inclinations). To do so the reflectance array is fixed relative to the ground well above the recommendations of the manufacturer. \\~\\
+The robot is designed such that it is able of going up and downhill (at moderate inclinations). To do so the reflectance array is fixed relative to the ground well above the recommendations of the manufacturer. \\~\\
 This decision made the sensor particularly sensitive to ambient light interferences. As a solution a shield was constructed around the sensor (Fig.\ref{fig:fig-img-bottom}).
 \end{frame}
 
@@ -303,7 +303,9 @@ This decision made the sensor particularly sensitive to ambient light interferen
 \begin{frame}
 \frametitle{Components}
 \framesubtitle{Bluetooth module (1/5)}
-Sinus test with diagram. Why sinus, fitting etc. Conclusion.
+To evaluate the limits of the Bluetooth module and the communication protocol, a simple test is performed as described in Fig.\ref{todo}.\\~\\
+Te function send $f(t) = A\sin(2\frac{\pi}{T}t)+b$, is of the sinus form because it enable us to easily deduce delay, distortion by regressing. \\~\\
+We conclude that 5Hz works well and is enough for our use case.
 \end{frame}
 
 %------------------------------------------------
@@ -315,13 +317,13 @@ Sinus test with diagram. Why sinus, fitting etc. Conclusion.
 \begin{figure}
 \centering
 \includegraphics[scale=0.4]{figures/sending-5hz.png}
-\caption{Sinus test at 5Hz}
+\caption{Sinus test at 5Hz, input signal}
 \end{figure}
 \columnbreak
 \begin{figure}
 \centering
 \includegraphics[scale=0.4]{figures/reception-5hz.png}
-\caption{Sinus test at 5Hz}
+\caption{Sinus test at 5Hz, output signal}
 \end{figure}
 \end{multicols}
 \end{frame}
@@ -331,17 +333,18 @@ Sinus test with diagram. Why sinus, fitting etc. Conclusion.
 \begin{frame}
 \frametitle{Components}
 \framesubtitle{Bluetooth module (3/5)}
+Some loss is observed at 25Hz.
 \begin{multicols}{2}
 \begin{figure}
 \centering
 \includegraphics[scale=0.4]{figures/sending-25hz.png}
-\caption{Sinus test at 25Hz}
+\caption{Sinus test at 25Hz, input signal}
 \end{figure}
 \columnbreak
 \begin{figure}
 \centering
 \includegraphics[scale=0.4]{figures/reception-25hz.png}
-\caption{Sinus test at 25Hz}
+\caption{Sinus test at 25Hz, output signal}
 \end{figure}
 \end{multicols}
 \end{frame}
@@ -351,17 +354,18 @@ Sinus test with diagram. Why sinus, fitting etc. Conclusion.
 \begin{frame}
 \frametitle{Components}
 \framesubtitle{Bluetooth module (4/5)}
+At 40Hz, our protocol completely breaks down.
 \begin{multicols}{2}
 \begin{figure}
 \centering
 \includegraphics[scale=0.4]{figures/sending-40hz.png}
-\caption{Sinus test at 40Hz}
+\caption{Sinus test at 40Hz, input signal}
 \end{figure}
 \columnbreak
 \begin{figure}
 \centering
 \includegraphics[scale=0.4]{figures/reception-40hz.png}
-\caption{Sinus test at 40Hz}
+\caption{Sinus test at 40Hz, output signal}
 \end{figure}
 \end{multicols}
 \end{frame}
@@ -440,20 +444,13 @@ A self-regulated system is acheived by using several PID controllers. The output
 $$ 
 o_n (e_0...e_n) \leftarrow K_p e_n + K_d\frac{e_n - e_{n-1}}{\Delta t_{n-1:n}} + K_e\sum_{i=0}^{n}{e_i \Delta t_{n-1:n}}
 $$
-with the following two precautions: anti-windup and anti-derivative kick,
+with anti-windup,
 $$
 o_n = \left\{
     \begin{array}{ll}
         max & \mbox{if } o_n > max \\
         min & \mbox{if } o_n < min \\
         o_n & \mbox{otherwise.}
-    \end{array}
-\right.
-\qquad\text{and}\qquad	
-K_d = \left\{
-    \begin{array}{ll}
-        0 & \mbox{if } n < T \\
-       K_d & \mbox{otherwise.}
     \end{array}
 \right.
 $$
@@ -464,7 +461,7 @@ $$
 \begin{frame}
 \frametitle{Control}
 \framesubtitle{General framework (2/2)}
-The three main controllers are used to control the speed, direction and aligning when turning (the latter is explained in more details later).\\~\\
+The three main controllers are used to control the speed, direction and turning (discussed respectively on slides \ref{frame:control-speed}, \ref{frame:control-direction} and \ref{control-turn}) \\~\\
 The pwm value is computed from the three controllers outputs as
 $$ 
 \left\{
@@ -486,34 +483,7 @@ $$
 
 %------------------------------------------------
 
-\begin{frame}
-\frametitle{Control}
-\framesubtitle{Direction control (1/2)}
-We define three types of direction controls,
-\begin{itemize}
-\item \textit{forward control}: moving in a straight direction ($v_L = v_R \Rightarrow e_{direction} = v_R - v_L$).
-\item \textit{line-following control}: adapts direction in order to keep the black line centered ($err_{line} = 0 \Rightarrow e_{direction} = err_{line}$).
-\item \textit{turning control}: pure rotation can be approximated if we satisfy the constraint  $v_L = -v_R$ ($e_{direction} = v_L + v_R$).
-\end{itemize}
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}
-\frametitle{Control}
-\framesubtitle{Direction control (2/2)}
-On Fig.\ref{fig:perturbation}, different trajectories of line-following on a straight line with initial disalignment are plotted.
-\begin{figure}[hbtp]
-\centering
-\label{fig:perturbation}
-\includegraphics[scale=0.45]{figures/perturbation}
-\caption{Profile of uniform acceleration}
-\end{figure}
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}
+\begin{frame}[label={frame:control-speed}]
 \frametitle{Control}
 \framesubtitle{Speed control (1/5)}
 During speed control the systrem objective is to minimize $e_{speed}$, the difference between progress and measured speed. For a unifrom acceleration (shown in Fig.\ref{fig:uniform-acc}) the update rule for the progress speed is Eq.\ref{eq:update-uniform}
@@ -611,7 +581,61 @@ To capture the general tendency, an average over all the cycles of Fig.\ref{fig:
 
 %------------------------------------------------
 
+\begin{frame}[label={frame:control-direction}]
+\frametitle{Control}
+\framesubtitle{Direction control (1/3)}
+We define three types of direction controls,
+\begin{itemize}
+\item \textit{forward control}: moving in a straight direction ($v_L = v_R \Rightarrow e_{direction} = v_R - v_L$).
+\item \textit{line-following control}: adapts direction in order to keep the black line centered ($err_{line} = 0 \Rightarrow e_{direction} = err_{line}$).
+\item \textit{turning control}: pure rotation can be approximated if we satisfy the constraint  $v_L = -v_R$ ($e_{direction} = v_L + v_R$).
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+
 \begin{frame}
+\frametitle{Control}
+\framesubtitle{Direction control (2/3)}
+I inspired from setpoint weighting developped variable error weighting. It solves the problem: at initial when $v=0$, if error line than takes too much importance compared to speed control. Z can be seen as 
+a regularizer to control the relative imporatnce direction speed ($\beta, \alpha$) correction term. Hyperbolic tangent.
+\begin{columns}[c]
+
+\column{.45\textwidth}
+$$
+\begin{aligned}
+&Z(i) = \tanh(\zeta i)  \\
+&e_i = Z(i)e'_i
+\end{aligned}
+$$
+
+\column{.50\textwidth}
+\begin{figure}[hbtp]
+\centering
+\label{fig:smooth-acc}
+\includegraphics[scale=0.07]{figures/smooth-acc}
+\caption{Tanh function with different zeta}
+\end{figure}
+\end{columns}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Control}
+\framesubtitle{Direction control (3/3)}
+On Fig.\ref{fig:perturbation}, different trajectories of line-following on a straight line with initial disalignments are plotted.
+\begin{figure}[hbtp]
+\centering
+\label{fig:perturbation}
+\includegraphics[scale=0.45]{figures/perturbation}
+\caption{Profile of uniform acceleration}
+\end{figure}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}[label={frame:control-turn}]
 \frametitle{Control}
 \framesubtitle{Turning (1/2)}
 The COEX-1 is modelled as a two-wheel robot (see figure below). By integrating the angular velocity under the assumption that $v_R = -v_L$, rotational displacement can be deduced
@@ -677,9 +701,14 @@ To explore an unknown environment structured as a maze it needs to be able to:
 \begin{frame}
 \frametitle{Exploration \& Mapping}
 \framesubtitle{Distance (1/5)}
-First method: Simple equation - explain without mathematics.\\~\\
-Second method: Upperbound of error can be reduced due to relation with distance.\\~\\
-plot relationship
+Here under is a plot of the computed distance ($v\Delta t$) versus ground truth. Mean on training set.
+\begin{figure}[hbtp]
+\centering
+\label{fig:architecture}
+\includegraphics[scale=0.45]{figures/hist-distance.png}
+\caption{Architecture of the code}
+\end{figure}
+A second method deduced from the Fig above is to remove a term blabla. These two methods are compared on the validation set (see next slide).
 \end{frame}
 
 %------------------------------------------------
@@ -688,7 +717,12 @@ plot relationship
 \frametitle{Exploration \& Mapping}
 \framesubtitle{Distance (2/5)}
 Plot comparison with error bars of two methods on test set.\\~\\
-Conclusion.
+\begin{figure}[hbtp]
+\centering
+\label{fig:architecture}
+\includegraphics[scale=0.45]{figures/hist-distance.png}
+\caption{Architecture of the code}
+\end{figure}
 \end{frame}
 
 %------------------------------------------------
@@ -696,12 +730,17 @@ Conclusion.
 \begin{frame}
 \frametitle{Exploration \& Mapping}
 \framesubtitle{Distance (3/5)}
-Explain we could try to quantify uncertainty and above certain threshold not accept it.\\~\\
+We could try to go further by quantifying uncertainty. For example if we analyze MSE see eq.
 $$
 	MSE = \sum_{i=0}^N err_{line}^2
 $$
-obtained iteratively by rolling mean method.
-One plot 
+obtained iteratively by rolling mean method. We can see a clear trend.
+\begin{figure}[hbtp]
+\centering
+\label{fig:architecture}
+\includegraphics[scale=0.45]{figures/err-mse.png}
+\caption{Architecture of the code}
+\end{figure}
 \end{frame}
 
 %------------------------------------------------
@@ -709,9 +748,15 @@ One plot
 \begin{frame}
 \frametitle{Exploration \& Mapping}
 \framesubtitle{Distance (4/5)}
-Explain simpler choice is to discretize from second method discretization.\\~\\
-Remard 7.5-12.5 ....\\~\\
+However a simpler choice is to discretize the result of the second. Moreover having separate distributions with no overlapping, the method seems to be sufficient.
+If we fix the length 7.5 12.5 etc.
 Plot discretization on test set.
+\begin{figure}[hbtp]
+\centering
+\label{fig:architecture}
+\includegraphics[scale=0.45]{figures/distrib.png}
+\caption{Architecture of the code}
+\end{figure}
 \end{frame}
 
 %------------------------------------------------
@@ -719,8 +764,7 @@ Plot discretization on test set.
 \begin{frame}
 \frametitle{Exploration \& Mapping}
 \framesubtitle{Distance (5/5)}
-Example of resulting big map. Explain annotation\\~\\
-Map.
+Map + caption: describing second method is applied + discretization.
 \end{frame}
 
 %------------------------------------------------
@@ -757,6 +801,7 @@ We use the values computed during intersection detection, and we make the robot 
 \begin{frame}[label={frame:align}]
 \frametitle{Exploration \& Mapping}
 \framesubtitle{Turning \& alignment (1/2)}
+Explain simulated for less tedious tuning.
 Compute quadratic interpolation to fi points $(\pm2,v_{init})$ and $(\pm\epsilon,v_{min})$.
 $$
 v(x;a,b) = a(x-\epsilon)^2+b 
@@ -780,7 +825,7 @@ $$
 \includegraphics[scale=0.07]{figures/turn-align}
 \caption{The 7 types of intersections}
 \end{figure}
-Explain why not such a good idea.
+Quadratic is too short time to be applied. Better setpoint would be x instead of v.
 \end{frame}
 
 %------------------------------------------------

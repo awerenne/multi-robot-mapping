@@ -45,23 +45,28 @@ void test_1() {
     
     unsigned long prev_t = millis();
     float i = 1, dist = 0, mse = 0;
+    bool wait = false;
     while (true) {
         if (coex->followLine() == 1) {
             coex->sendMsg(String(dist) + "-" + String(sqrt(mse)));
-            break;
+            delay(10000);
+            dist = 0;
+            coex->newLine(6, false);
+            wait = true;
         }
-        if (f_speed_ctrl->isNewState()) {
+        if (f_speed_ctrl->isNewState() && !wait) {
             float v = sensors->getSpeed();
             float delta_t = sensors->getCounterDeltaTime();
-            dist += v * delta_t / 1000;
+            dist += 2 * v * delta_t / 1000;
             prev_t += delta_t;
         }
-        if (f_dir_ctrl->isNewState()) {
+        if (f_dir_ctrl->isNewState() && !wait) {
             float se = sensors->getError();
             se *= se;  // Squared error
             mse = (i-1)/i*mse + se/i;  // Rolling average mean
             i++;
         }
+        wait = false;
         delay(5);
     }
     delay(5000);
@@ -303,14 +308,14 @@ void test_6() {
     sensors->encodersReset();
     float progress_speed;
     Accelerator* acc = new Accelerator(0.1);
-    acc->start(progress_speed, 3, 1);
+    acc->start(progress_speed, 5, 1);
     FrequencyState *f_ctrl = new FrequencyState(100);
     FrequencyState *f_acc = new FrequencyState(20);
     FrequencyState *f_speed_ctrl = new FrequencyState(20);
 
     float xinit = 2.25, e = 0.05, L = 10, v_min = 2, a = 0, x;
     float alpha = 0, beta = 0, pwm_left = 0, pwm_right = 0;
-    bool clockwise = true, signal_ = false;
+    bool clockwise = false, signal_ = false;
     if (clockwise) {
         xinit *= -1;
         e *= -1;
@@ -328,13 +333,13 @@ void test_6() {
             if (change != signal_) {
                 x = xinit;
                 a = (sensors->getSpeed() - v_min)/((xinit-e)*(xinit-e));
-                Serial.println("Trigger");
             }
             if (signal_) {
                 alpha = pid_forward->correction(sensors->getSpeedRight() - sensors->getSpeedLeft());
                 float v = sensors->getSpeed();
                 if (v < 0.5) break;
-                x = ((float) sensors->getError())/1250.;
+                x = -sensors->getError();
+                x = floorf((x/1250.)*100)/100;
                 float gamma = pid_responsive->correction(f(x,a,e,v_min) - v);
                 beta += gamma;
                 pwm_left = beta + alpha;
@@ -467,7 +472,7 @@ void test_8() {
     Sensors* sensors = coex->getSensors();
     coex->newLine(6, false);
     FrequencyState *f_speed_ctrl = new FrequencyState(20);
-    FrequencyState *f_sensors = new FrequencyState(100);
+    FrequencyState *f_sensors = new FrequencyState(50);
     Anomalies* anom = new Anomalies();
    
     float dist = 0;
@@ -492,7 +497,6 @@ void test_8() {
                 float v = sensors->getSpeed();
                 coex->newForward(6);
                 prev_t = millis();
-                time = 0.8/v*1000;
             }
             if (detection) {
                 anom->new_(dist);
@@ -540,7 +544,7 @@ void test_9() {
     Sensors* sensors = coex->getSensors();
     coex->newLine(6, false);
     FrequencyState *f_speed_ctrl = new FrequencyState(20);
-    FrequencyState *f_sensors = new FrequencyState(100);
+    FrequencyState *f_sensors = new FrequencyState(50);
     Anomalies* anom = new Anomalies();
    
     float dist = 0;
@@ -572,7 +576,7 @@ void test_9() {
                         coex->sendMsg(anom->getSummary());
                         unsigned int t = millis();
                         float d = 0;
-                        while(d < 1.8) {
+                        while(d < 2.8) {
                             coex->forward();
                             if (f_speed_ctrl->isNewState()) {
                                 float v = sensors->getSpeed();
@@ -693,9 +697,9 @@ void test_11() {
     */
 
     digitalWrite(led_signal, HIGH);  
-    //coex->calibration();
+    coex->calibration();
     digitalWrite(led_signal, LOW);  
-    //delay(6000);
+    delay(6000);
     Sensors* sensors = coex->getSensors();
     coex->newLine(6, false);
     FrequencyState *f_speed_ctrl = new FrequencyState(20);
@@ -708,7 +712,7 @@ void test_11() {
     while (true) {
         if (coex->followLine() == 1) {
             coex->sendMsg(String(ground_truth) + ";" + String(dist) + ";" + String(sqrt(mse)));
-            delay(5000);
+            delay(10000);
             dist = 0;
             mse = 0;
             i = 1;

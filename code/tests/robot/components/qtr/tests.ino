@@ -35,6 +35,7 @@ void test_1() {
     int time_step = 1000/f;
     unsigned long prev_t = millis();
     float delta_t = 0;
+    int k = 0;
     for (unsigned int t = 0; t < T; t += delta_t) {
         QTRARead();
         String measure = mode + ";" ;
@@ -46,7 +47,9 @@ void test_1() {
           measure += String(sensor_values[i]);
           if (i+1 < num_sensors) measure += ";" ;
         }
-        
+
+        //k++;
+        //if (k%10) 
         Serial.println(measure);
         delay(time_step);
         delta_t = ((float) millis() - prev_t)/1000.;
