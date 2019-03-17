@@ -31,15 +31,15 @@ void Anomalies::start(float distance) {
 //============
 void Anomalies::new_(float distance) {
     float old_x = x;
-    x += (distance - start_distance);
-    if (old_x <= 0.6 && x > 0.6) counter_center = 0;
+    x = (distance - start_distance);
+    if (old_x <= 0.8 && x > 1.5) counter_center = 0;
 }
 
 
 //============
 void Anomalies::newLeft(bool new_anomaly) {
     float item = new_anomaly ? 1 : 0;
-    if (x <= 0.6)
+    if (x <= 0.8)
         p_left = (item + counter_left*p_left) / (++counter_left);  // Moving average
 }
 
@@ -47,9 +47,9 @@ void Anomalies::newLeft(bool new_anomaly) {
 //============
 void Anomalies::newCenter(bool new_anomaly) {
     float item = new_anomaly ? 1 : 0;
-    if (x <= 0.6)
+    if (x <= 0.8)
         p_center = (item + counter_center*p_center) / (++counter_center);  
-    else if (x >= 1 && x <= 1.6)
+    else if (x > 1.5 && x <= 2.1)
         p_front = (item + counter_center*p_front) / (++counter_center);
 }
 
@@ -57,14 +57,14 @@ void Anomalies::newCenter(bool new_anomaly) {
 //============
 void Anomalies::newRight(bool new_anomaly) {
     float item = new_anomaly ? 1 : 0;
-    if (x <= 0.6)
+    if (x <= 0.8)
         p_right = (item + counter_right*p_right) / (++counter_right);  
 }
 
 
 //============
 bool Anomalies::isFinished() {
-    return x > 8;  
+    return x > 2.1;  
 }
 
 
@@ -91,13 +91,13 @@ byte Anomalies::typeIntersection() {
 
 //============
 bool Anomalies::isBlackLeft() {
-    return p_left > 0.5;
+    return p_left >= 0.4;
 }
 
 
 //============
 bool Anomalies::isBlackRight() {
-    return p_right > 0.5;
+    return p_right >= 0.4;
 }
 
 

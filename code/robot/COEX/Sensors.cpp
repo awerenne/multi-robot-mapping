@@ -77,7 +77,7 @@ bool Sensors::isRoadRight() {
 //============
 bool Sensors::isRoadCenter() {  
     for (int i = 1; i < num_sensors-1; i++) 
-        if (sensor_values[i] > 400) return true;
+        if (sensor_values[i] > 650) return true;
     return false;
 }
 

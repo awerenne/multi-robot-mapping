@@ -9,6 +9,7 @@
 #include <PidController.h>
 #include <FrequencyState.h>
 #include <Accelerator.h>
+#include <Anomalies.h>
 
 
 //============
@@ -24,17 +25,20 @@ class Coex {
         int getMsgInstruction();
         void setTargetSpeed(const float& target_speed);
         void calibration() {sensors->manualCalibration();}
-        void newLine(const float& target_speed, const bool& with_distance);
-        byte followLine();
+        void newLine(const float& target_speed, const bool& with_intersection);
+        float followLine();
         void newForward(const float& target_speed);
-        byte forward();
-        void oneInch(const float& speed);
+        float forward();
+        void forwardAlign(float x);
         byte turn90(const bool& clockwise, const float& target_speed);
         byte turn180(const bool& clockwise, const float& target_speed);
+        byte typeIntersection();
+        bool isAnomaly();
+        bool isIntersection();
         void turnLeft(const float& speed);
         void turnRight(const float& speed);
-        void uturn(const float& speed);
-        byte typeIntersection();
+        void uturn(const float& speed, byte typeIntersection);
+        void turnAlign(const float& speed, byte intersection, byte type_intersection);
 
         Sensors* getSensors() { return this->sensors; }
         Actuators* getActuators() { return this->actuators; }
@@ -43,20 +47,20 @@ class Coex {
         Sensors* sensors;
         Actuators* actuators;
         Messenger* messenger;
-        PIDController *pid_speed, *pid_forward, *pid_line;
+        Anomalies* anom;
+        PIDController *pid_speed, *pid_forward, *pid_line, *pid_responsive;
         FrequencyState *f_obstacle, *f_speed_ctrl, *f_dir_fwd_ctrl,
-                *f_dir_line_ctrl, *f_acc, *f_msg;
+                *f_dir_line_ctrl, *f_acc, *f_msg, *f_rotation;
         Accelerator *acc_normal, *acc_rotation;
-        bool with_distance;
         int delay_;
+        bool with_intersection;
         float progress_speed, target_speed, alpha, beta;
 
-        bool isIntersection();
         byte turnTheta(const float& Theta, const bool& clockwise);
         float errorLine();
         float errorSpeed();
         float errorForward();
-
+        float f(float x, float e, float a, float v_min);
 };   
 
 

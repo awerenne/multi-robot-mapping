@@ -574,7 +574,6 @@ void test_9() {
                 if (anom->isFinished()) {
                     if (anom->isIntersection()) {
                         coex->sendMsg(anom->getSummary());
-                        unsigned int t = millis();
                         float d = 0;
                         while(d < 2) {
                             coex->forward();
