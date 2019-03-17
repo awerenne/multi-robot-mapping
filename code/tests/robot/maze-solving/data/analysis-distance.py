@@ -21,34 +21,40 @@ for target in gt:
         df = df.drop([idx])
 
 
-a = df.groupby('ground_truth', as_index='ground_truth')
-b = a.err.mean().values 
-c = a.ground_truth.mean().values
-e = a.err.std().values
-b /= c  # normalize
-e /= c
-# plt.bar(c, b, yerr=e)
-plt.bar(c, b)
-plt.savefig('hist-distance.png')
-plt.show()
+# a = df.groupby('ground_truth', as_index='ground_truth')
+# b = a.err.mean().values 
+# c = a.ground_truth.mean().values
+# e = a.err.std().values
+# b /= c  # normalize
+# e /= c
+# # plt.bar(c, b, yerr=e)
+# plt.bar(c, b)
+# plt.xlim([15,40])
+# plt.xlabel('Ground truth distance [cm]', fontsize=13)
+# plt.ylabel('Relative error %', fontsize=13)
+# plt.tick_params(axis='both', which='major', labelsize=10)
+# plt.savefig('hist-distance.png')
+# plt.show()
 
-measures = []
-for target in gt:
-    measures.append(df.loc[df['ground_truth'] == target]['d'].mean())
-plt.plot(gt, gt, linestyle='--', marker='*', color='b')
-plt.scatter(gt, measures, color='red')
-plt.savefig('ground-vers-measured.png')
-plt.show()
+# measures = []
+# for target in gt:
+#     measures.append(df.loc[df['ground_truth'] == target]['d'].mean())
+# plt.plot(gt, gt, linestyle='--', marker='*', color='b')
+# plt.scatter(gt, measures, color='red')
+# plt.savefig('ground-vers-measured.png')
+# plt.show()
 
 for target in gt:
     sns.distplot(df.loc[df['ground_truth'] == target]['d'], hist=False, rug=True)
+plt.xlabel('Measured distance [cm]', fontsize=13)
+plt.tick_params(axis='both', which='major', labelsize=10)
 plt.savefig('distrib.png')
 plt.show()
 
 
-plt.scatter(df['err']/df['ground_truth'], df['mse']/1250)
-plt.savefig('err-mse.png')
-plt.show()
+# plt.scatter(df['err']/df['ground_truth'], df['mse']/1250)
+# plt.savefig('err-mse.png')
+# plt.show()
 
 
 
