@@ -576,7 +576,7 @@ void test_9() {
                         coex->sendMsg(anom->getSummary());
                         unsigned int t = millis();
                         float d = 0;
-                        while(d < 2.8) {
+                        while(d < 2) {
                             coex->forward();
                             if (f_speed_ctrl->isNewState()) {
                                 float v = sensors->getSpeed();
@@ -614,7 +614,7 @@ void test_10() {
         Loops. (all of this without stopping in a fluent motion)
     */
     
-        digitalWrite(led_signal, HIGH);  
+    digitalWrite(led_signal, HIGH);  
     coex->calibration();
     digitalWrite(led_signal, LOW);  
     delay(10000);
