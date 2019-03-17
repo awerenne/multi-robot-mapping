@@ -195,7 +195,9 @@ float Sensors::getCounterDeltaTime() {
 
 //============
 float Sensors::getDistance() {
-    return 0; 
+    float v = getSpeed();
+    float delta_t = getCounterDeltaTime();
+    return 2 * v * delta_t / 1000; 
 }
 
 

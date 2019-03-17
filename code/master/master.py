@@ -130,6 +130,8 @@ class Master(Thread, metaclass=ABCMeta):
 
     #--------------- 
     def process_information(self, id_robot, information):
+        if information.type_intersection == -1:
+            return
         if id_robot in self.travels.keys():
             dist = self.travels.pop(id_robot)  # discard if already explored
         else:

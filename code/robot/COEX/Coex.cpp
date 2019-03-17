@@ -126,7 +126,7 @@ float Coex::followLine() {
         sensors->qtraRead();
         alpha = pid_line->correction(errorLine());
         if (with_intersection && isAnomaly()) {
-            if (isIntersection()) return -1;
+            if (isIntersection()) return -2;
             dist += 2.1;
         }
     }
@@ -234,24 +234,29 @@ bool Coex::isAnomaly() {
 bool Coex::isIntersection() {
     newForward(6);
     float x = 0;
-    while (forward() != -1) {
+    sendMsg("-1;3");
+    while (true) {
+        float ret = forward();
+        if (ret == -1) {
+            sendMsg("-1;4");
+            return false;
+        }
+        x += ret;
         if (f_dir_fwd_ctrl->isNewState()) {
             anom->new_(x);
             anom->newLeft(sensors->isRoadLeft());
             anom->newCenter(sensors->isRoadCenter());
             anom->newRight(sensors->isRoadRight());
             if (anom->isFinished()) {
+                // sendMsg("-1;1");
                 if (anom->isIntersection()) {
                     forwardAlign(x);
+                    // sendMsg("-1;2");
                     return true;
                 }
                 newLine(6, true);
                 return false;
             }
-        }
-        if (f_speed_ctrl->isNewState()) {
-            sensors->encodersRead();
-            x += sensors->getDistance();
         }
         delay(5);
     }
@@ -266,14 +271,13 @@ byte Coex::typeIntersection() {
 
 //============
 void Coex::forwardAlign(float x) {
-    while(forward() != -1) {
-        if (f_speed_ctrl->isNewState()) {
-            sensors->encodersRead();
-            x += sensors->getDistance();
-            if (x > 4) {
-                stop();
-                return;
-            }
+    while(true) {
+        float ret = forward();
+        if (ret == -1) return;
+        x += ret;
+        if (x > 7.5) {
+            stop();
+            return;
         }
     }
 }

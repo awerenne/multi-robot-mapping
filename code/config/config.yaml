@@ -1,4 +1,4 @@
-is_simulation: True
+is_simulation: False
 simulation:
     n_robots: 2
     robots: 
@@ -16,7 +16,7 @@ real:
     robots:     
         1: 
             pose: [-55, 40, 2]
-            port: "/dev/cu.DSDTECHHC-05-DevB"
+            port: "/dev/cu.HC-05-DevB"
             baud_rate: 9600
     dimensions: [600, 800]
 gui:

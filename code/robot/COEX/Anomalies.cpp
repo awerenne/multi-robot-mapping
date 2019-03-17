@@ -32,14 +32,15 @@ void Anomalies::start(float distance) {
 void Anomalies::new_(float distance) {
     float old_x = x;
     x = (distance - start_distance);
-    if (old_x <= 0.8 && x > 1.5) counter_center = 0;
+    if (old_x <= 1 && x > 1) counter_center = 0;
+    // if (old_x <= 0.8 && x > 1.5) counter_center = 0;
 }
 
 
 //============
 void Anomalies::newLeft(bool new_anomaly) {
     float item = new_anomaly ? 1 : 0;
-    if (x <= 0.8)
+    if (x <= 1)
         p_left = (item + counter_left*p_left) / (++counter_left);  // Moving average
 }
 
@@ -47,9 +48,9 @@ void Anomalies::newLeft(bool new_anomaly) {
 //============
 void Anomalies::newCenter(bool new_anomaly) {
     float item = new_anomaly ? 1 : 0;
-    if (x <= 0.8)
+    if (x <= 1)
         p_center = (item + counter_center*p_center) / (++counter_center);  
-    else if (x > 1.5 && x <= 2.1)
+    else if (x >= 1.5 && x <= 3)
         p_front = (item + counter_center*p_front) / (++counter_center);
 }
 
@@ -57,14 +58,14 @@ void Anomalies::newCenter(bool new_anomaly) {
 //============
 void Anomalies::newRight(bool new_anomaly) {
     float item = new_anomaly ? 1 : 0;
-    if (x <= 0.8)
+    if (x <= 1)
         p_right = (item + counter_right*p_right) / (++counter_right);  
 }
 
 
 //============
 bool Anomalies::isFinished() {
-    return x > 2.1;  
+    return x > 3;  
 }
 
 
@@ -78,13 +79,12 @@ bool Anomalies::isIntersection() {
 byte Anomalies::typeIntersection() {
     bool bl = isBlackLeft(), br = isBlackRight(), bc = isBlackCenter(),
         bf = isBlackFront();
-    if (bl && bc && br && bf) return 0;
-    if (bl && bc && !br && bf) return 1;
-    if (!bl && bc && br && bf) return 2;
-    if (bl && bc && br && !bf) return 3;
-    if (bl && bc && !br && !bf) return 4;
-    if (!bl && bc && br && !bf) return 5;
-    if (!bl && !bc && !br && !bf) return 6;
+    if (bl && br && bf) return 0;
+    if (bl && !br && bf) return 1;
+    if (!bl && br && bf) return 2;
+    if (bl && br && !bf) return 3;
+    if (bl && !br && !bf) return 4;
+    if (!bl && br && !bf) return 5;
     return 6;
 }
 

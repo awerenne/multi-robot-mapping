@@ -178,6 +178,7 @@ class MessengerReal(Messenger):
 
     #---------------
     def send_msg_to_robot(self, id_robot, msg):
+        print(msg)
         self.robots[id_robot]["serial"].write(msg.encode())
         self.robots[id_robot]["seq_number_sending"] += 1
 
