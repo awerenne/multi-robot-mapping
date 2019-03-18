@@ -242,7 +242,8 @@ bool Coex::isIntersection() {
             return false;
         }
         x += ret;
-        if (f_dir_fwd_ctrl->isNewState()) {
+        if (ret > 0 && f_dir_line_ctrl->isNewState()) {
+            sensors->qtraRead();
             anom->new_(x);
             anom->newLeft(sensors->isRoadLeft());
             anom->newCenter(sensors->isRoadCenter());

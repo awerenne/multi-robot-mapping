@@ -223,8 +223,10 @@ class NaiveMaster(Master):
     def assign_target_to_robot(self, id_robot):
         start_ = self.map.get_robot_position(id_robot)
         remaining_targets = self.get_remaining_targets()
-        if len(remaining_targets) == 0:
+        if len(remaining_targets) == 0 and len(self.map.frontiers) > 0:
             self.targets[id_robot] = self.nearest(start_, self.map.frontiers)
+        if len(self.map.frontiers) == 0:
+            self.targets[id_robot] == start_
         self.targets[id_robot] = self.nearest(start_, remaining_targets)
 
 
@@ -240,8 +242,9 @@ class NaiveMaster(Master):
         start_ = self.map.get_robot_position(id_robot)
         end_ = self.targets[id_robot]
         if start_ == end_:
-            self.remove_target(id_robot)
-            return self.make_decision(id_robot)
+            return "stop"
+            # self.remove_target(id_robot)
+            # return self.make_decision(id_robot)
 
         neighbor = self.map.shortest_path(start_, end_, manhattan_distance)[1]
         

@@ -64,21 +64,27 @@ void Sensors::qtraRead() {
 
 //============
 bool Sensors::isRoadLeft() {  
-    return sensor_values[0] > 650;
+    return sensor_values[0] > 600;
 }
 
 
 //============
 bool Sensors::isRoadRight() {  
-    return sensor_values[num_sensors-1] > 650;
+    return sensor_values[num_sensors-1] > 600;
 }
 
 
 //============
 bool Sensors::isRoadCenter() {  
     for (int i = 1; i < num_sensors-1; i++) 
-        if (sensor_values[i] > 650) return true;
+        if (sensor_values[i] > 600) return true;
     return false;
+}
+
+
+//============
+bool Sensors::isRoadFront() {  
+    return (sensor_values[2] + sensor_values[3])/2 > 600;
 }
 
 

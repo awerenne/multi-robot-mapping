@@ -37,7 +37,7 @@ void loop() {
     digitalWrite(led_signal, HIGH);  
     coex->calibration();
     digitalWrite(led_signal, LOW);  
-    delay(10000);
+    delay(1000);
     float ret = 0, x = 7.5;
     while (!coex->availableMsg()) continue;
     coex->readMsg();

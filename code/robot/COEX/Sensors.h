@@ -23,6 +23,7 @@ class Sensors {
         bool isRoadLeft();
         bool isRoadRight();
         bool isRoadCenter();
+        bool isRoadFront();
         bool isAligned();
         bool isObstacle();
         float getSpeed();

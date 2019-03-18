@@ -5,6 +5,7 @@
 
 import pygame
 import time
+import sys
 from utils import Container, xy2ij, center2xy
 
 # TODO change input target speed with scroll bar input instead
@@ -82,8 +83,8 @@ class GUI():
         self.log = pygame.Rect((50, 200, 200, 150))
 
         pygame.display.set_caption(self.title)
-        self.font_timer = pygame.font.SysFont(self.font_name, 35)
-        self.font_log = pygame.font.SysFont(self.font_name, self.font_size)
+        self.font_timer = pygame.font.Font(None, self.font_size)
+        self.font_log = pygame.font.Font(None, self.font_size)
         
         self.reset_map()
         self.t_start = time.perf_counter()
@@ -112,6 +113,7 @@ class GUI():
             if event.type == pygame.QUIT: 
                 self._close = True
                 pygame.quit()
+                sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 self.handle_click(event.pos)
         return self

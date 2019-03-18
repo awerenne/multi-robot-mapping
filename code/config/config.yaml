@@ -36,7 +36,7 @@ gui:
             font: [255, 255, 255]
     font:
         name: "couriernew"
-        size: 15
+        size: 35
     rect_run: [50, 120, 100, 50]
     rect_stop: [50, 200, 100, 50]
     width_line: 4
