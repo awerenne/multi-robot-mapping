@@ -87,7 +87,7 @@ class GUI():
         self.font_log = pygame.font.Font(None, self.font_size)
         
         self.reset_map()
-        self.t_start = time.perf_counter()
+        self.t_start = None
 
 
     #---------------
@@ -123,6 +123,7 @@ class GUI():
     def handle_click(self, position):
         if self.is_mouse_on_button(position, self.rect_run):
             self.send_user_request_to_master("run")
+            self.t_start = time.perf_counter()
         elif self.is_mouse_on_button(position, self.rect_stop):
             self.send_user_request_to_master("stop")
         elif self.is_mouse_on_button(position, self.rect_increment):
@@ -203,7 +204,8 @@ class GUI():
     def draw_timer(self):
         pygame.draw.rect(self.surface_user, (45,45,45),
                 self.timer)
-        delayed_time = time.perf_counter() - self.t_start
+        if self.t_start == None: delayed_time = 0
+        else: delayed_time = time.perf_counter() - self.t_start
         string_time = self.timer_format(delayed_time)
         text_surf = self.font_timer.render(string_time, True, self.colors.user.font)
         self.surface_user.blit(text_surf, (self.timer.x+15, self.timer.y+5,

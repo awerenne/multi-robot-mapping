@@ -288,6 +288,7 @@ class Robot:
 
     #---------------
     def turn(self, direction):
+        if direction == "stop": return self
         self._orientation = Robot.dir2or(direction, self._orientation)
         return self
 

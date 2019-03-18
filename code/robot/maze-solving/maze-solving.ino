@@ -38,12 +38,12 @@ void loop() {
     coex->calibration();
     digitalWrite(led_signal, LOW);  
     delay(1000);
-    float ret = 0, x = 7.5;
+    float ret = 0, x = 8.5;
     while (!coex->availableMsg()) continue;
     coex->readMsg();
     int instruction = coex->getMsgInstruction();
     if (instruction != 1) exit(0);
-    coex->newLine(6, true);
+    coex->newLine(7, true);
     while (true) {
         ret = coex->followLine();
         if (ret == -1) {
@@ -57,8 +57,8 @@ void loop() {
             coex->readMsg();
             int instruction = coex->getMsgInstruction();
             switch (instruction) {
-                // case 0: coex->stop();
-                //         break;
+                case 0: coex->stop();
+                        exit(0);
                 case 2: coex->turnLeft(6);
                         break;
                 case 3: coex->turnRight(6);
@@ -68,9 +68,9 @@ void loop() {
                 // case 5: coex->stop();
                 //         break;
             }
-            coex->newLine(6,true);
+            coex->newLine(7,true);
             x = -ret;
-            x += 7.5;
+            x += 8.5;
         }
         x += ret;
     }

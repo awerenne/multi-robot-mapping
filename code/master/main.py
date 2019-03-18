@@ -47,7 +47,7 @@ if __name__ == '__main__':
     gui = GUI(params, q.gui, env.ground_truth)
 
     # Start child threads
-    # robots.start()
+    robots.start()
     master.start()
 
     # Main thread

@@ -15,7 +15,7 @@ real:
     n_robots: 1
     robots:     
         1: 
-            pose: [-55, 40, 2]
+            pose: [0, -25, 0]
             port: "/dev/cu.HC-05-DevB"
             baud_rate: 9600
     dimensions: [600, 800]

@@ -92,7 +92,7 @@ void Coex::newForward(const float& target_speed) {
 //============
 void Coex::setTargetSpeed(const float& target_speed) {
     this->target_speed = target_speed;
-    acc_normal->start(progress_speed, target_speed, 1.5);
+    acc_normal->start(progress_speed, target_speed, 0.8);
 }
 
 

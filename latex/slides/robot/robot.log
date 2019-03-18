@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.18)  17 MAR 2019 13:06
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.18)  18 MAR 2019 22:03
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1350,57 +1350,44 @@ Package pdftex.def Info: figures/distrib.png  used on input line 758.
 (pdftex.def)             Requested size: 208.13567pt x 156.10175pt.
  [37
 
- <./figures/distrib.png>]
-File: figures/distrib.png Graphic file (type png)
-<use figures/distrib.png>
-Package pdftex.def Info: figures/distrib.png  used on input line 773.
-(pdftex.def)             Requested size: 208.13567pt x 156.10175pt.
- [38
-
-] [39
+ <./figures/distrib.png>] [38
 
 ]
-<figures/type-intersection.png, id=450, 4771.8275pt x 2460.19125pt>
+<figures/type-intersection.png, id=443, 4771.8275pt x 2460.19125pt>
 File: figures/type-intersection.png Graphic file (type png)
 <use figures/type-intersection.png>
-Package pdftex.def Info: figures/type-intersection.png  used on input line 803.
+Package pdftex.def Info: figures/type-intersection.png  used on input line 788.
 
 (pdftex.def)             Requested size: 286.2973pt x 147.6051pt.
+ [39
 
-[40
-
- <./figures/type-intersection.png>] [41
+ <./figures/type-intersection.png>] [40
 
 ]
-<figures/turn-align.png, id=466, 2102.85625pt x 1621.05624pt>
+<figures/turn-align.png, id=459, 2102.85625pt x 1621.05624pt>
 File: figures/turn-align.png Graphic file (type png)
 <use figures/turn-align.png>
-Package pdftex.def Info: figures/turn-align.png  used on input line 837.
+Package pdftex.def Info: figures/turn-align.png  used on input line 822.
 (pdftex.def)             Requested size: 147.21498pt x 113.48552pt.
-pdfTeX warning (ext4): destination with the same identifier (name{fig:type-inte
-rsection}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.837 \end{frame}
-                  [42
+ [41
 
- <./figures/turn-align.png>] (./robot.toc) [43
+ <./figures/turn-align.png>] (./robot.toc) [42
 
 ]
-<figures/architecture.png, id=485, 760.8425pt x 462.72874pt>
+<figures/architecture.png, id=479, 760.8425pt x 462.72874pt>
 File: figures/architecture.png Graphic file (type png)
 <use figures/architecture.png>
-Package pdftex.def Info: figures/architecture.png  used on input line 858.
+Package pdftex.def Info: figures/architecture.png  used on input line 843.
 (pdftex.def)             Requested size: 289.12315pt x 175.83875pt.
- [44
+ [43
 
  <./figures/architecture.png>]
-<figures/bye-bye.jpeg, id=494, 1927.2pt x 2186.1675pt>
+<figures/bye-bye.jpeg, id=488, 1927.2pt x 2186.1675pt>
 File: figures/bye-bye.jpeg Graphic file (type jpg)
 <use figures/bye-bye.jpeg>
-Package pdftex.def Info: figures/bye-bye.jpeg  used on input line 868.
+Package pdftex.def Info: figures/bye-bye.jpeg  used on input line 853.
 (pdftex.def)             Requested size: 192.7313pt x 218.62955pt.
- [45
+ [44
 
  <./figures/bye-bye.jpeg>]
 \tf@nav=\write6
@@ -1412,11 +1399,12 @@ Package pdftex.def Info: figures/bye-bye.jpeg  used on input line 868.
 \tf@snm=\write8
 \openout8 = `robot.snm'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 872.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 872.
- (./robot.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 872.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 872.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 857.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 857.
+
+(./robot.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 857.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 857.
 Package rerunfilecheck Info: File `robot.out' has not changed.
 (rerunfilecheck)             Checksum: 8902C0F88D07437A9A9434209B62D104;227.
 
@@ -1426,31 +1414,34 @@ LaTeX Warning: There were multiply-defined labels.
  ) 
 Here is how much of TeX's memory you used:
  21334 strings out of 492649
- 418710 string characters out of 6129622
- 482736 words of memory out of 5000000
- 24562 multiletter control sequences out of 15000+600000
+ 418726 string characters out of 6129622
+ 482732 words of memory out of 5000000
+ 24563 multiletter control sequences out of 15000+600000
  15142 words of font info for 55 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  56i,18n,62p,772b,771s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10.pf
-b></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb
-></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb>
-</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></
-usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></u
-sr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss12.pfb></us
-r/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/
-local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pfb></usr/lo
-cal/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr/l
-ocal/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi10.pfb></usr/l
-ocal/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi8.pfb></usr/lo
-cal/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi9.pfb></usr/loc
-al/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/loca
-l/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/
-texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb>
-Output written on robot.pdf (45 pages, 39443940 bytes).
+pdfTeX warning (dest): name{Navigation45} has been referenced but does not ex
+ist, replaced by a fixed one
+
+</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10.pfb>
+</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><
+/usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></
+usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></us
+r/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr
+/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss12.pfb></usr/
+local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/lo
+cal/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pfb></usr/loca
+l/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr/loc
+al/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi10.pfb></usr/loc
+al/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi8.pfb></usr/loca
+l/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi9.pfb></usr/local
+/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/
+texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/te
+xlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb>
+Output written on robot.pdf (44 pages, 39442947 bytes).
 PDF statistics:
- 583 PDF objects out of 1000 (max. 8388607)
- 450 compressed objects within 5 object streams
- 139 named destinations out of 1000 (max. 500000)
+ 577 PDF objects out of 1000 (max. 8388607)
+ 445 compressed objects within 5 object streams
+ 138 named destinations out of 1000 (max. 500000)
  264 words of extra memory for PDF output out of 10000 (max. 10000000)
 

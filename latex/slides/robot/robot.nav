@@ -92,19 +92,17 @@
 \headcommand {\beamer@framepages {40}{40}}
 \headcommand {\slideentry {4}{0}{8}{41/41}{}{0}}
 \headcommand {\beamer@framepages {41}{41}}
-\headcommand {\slideentry {4}{0}{9}{42/42}{}{0}}
+\headcommand {\beamer@sectionpages {34}{41}}
+\headcommand {\beamer@subsectionpages {34}{41}}
+\headcommand {\sectionentry {5}{Code}{42}{Code}{0}}
+\headcommand {\slideentry {5}{0}{1}{42/42}{}{0}}
 \headcommand {\beamer@framepages {42}{42}}
-\headcommand {\beamer@sectionpages {34}{42}}
-\headcommand {\beamer@subsectionpages {34}{42}}
-\headcommand {\sectionentry {5}{Code}{43}{Code}{0}}
-\headcommand {\slideentry {5}{0}{1}{43/43}{}{0}}
+\headcommand {\slideentry {5}{0}{2}{43/43}{}{0}}
 \headcommand {\beamer@framepages {43}{43}}
-\headcommand {\slideentry {5}{0}{2}{44/44}{}{0}}
+\headcommand {\slideentry {5}{0}{3}{44/44}{}{0}}
 \headcommand {\beamer@framepages {44}{44}}
-\headcommand {\slideentry {5}{0}{3}{45/45}{}{0}}
-\headcommand {\beamer@framepages {45}{45}}
-\headcommand {\beamer@partpages {1}{45}}
-\headcommand {\beamer@subsectionpages {43}{45}}
-\headcommand {\beamer@sectionpages {43}{45}}
-\headcommand {\beamer@documentpages {45}}
-\headcommand {\gdef \inserttotalframenumber {45}}
+\headcommand {\beamer@partpages {1}{44}}
+\headcommand {\beamer@subsectionpages {42}{44}}
+\headcommand {\beamer@sectionpages {42}{44}}
+\headcommand {\beamer@documentpages {44}}
+\headcommand {\gdef \inserttotalframenumber {44}}

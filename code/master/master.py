@@ -226,13 +226,15 @@ class NaiveMaster(Master):
         if len(remaining_targets) == 0 and len(self.map.frontiers) > 0:
             self.targets[id_robot] = self.nearest(start_, self.map.frontiers)
         if len(self.map.frontiers) == 0:
-            self.targets[id_robot] == start_
+            self.targets[id_robot] = start_
         self.targets[id_robot] = self.nearest(start_, remaining_targets)
 
 
     #---------------
     def nearest(self, start_, positions):
         distances = [manhattan_distance(start_, x) for x in positions]
+        if len(distances) == 0:
+            return start_
         return positions[distances.index(min(distances))]
 
 
