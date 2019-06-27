@@ -29,6 +29,9 @@ class Master(Thread, metaclass=ABCMeta):
         self.q = queues
         self.id_robots = self.params.robots.keys()
         self.build_messenger().build_map()
+        self.first_cycle = {}
+        for id_ in self.id_robots:
+            self.first_cycle[id_] = True
 
 
     #---------------
@@ -110,9 +113,10 @@ class Master(Thread, metaclass=ABCMeta):
 
     #--------------- 
     def run_robots(self):
-        for id_robot in self.id_robots:
-            self.send_instruction_to_robot(id_robot,
-                    self.direction2instruction("straight"))
+        self.send_instruction_to_robot(1, self.direction2instruction("straight"))
+        # for id_robot in self.id_robots:
+        #     self.send_instruction_to_robot(id_robot,
+        #             self.direction2instruction("straight"))
 
 
     #--------------- 
@@ -136,7 +140,13 @@ class Master(Thread, metaclass=ABCMeta):
             dist = self.travels.pop(id_robot)  # discard if already explored
         else:
             dist = information.distance
-        self.map.update(id_robot, information.type_intersection, dist)
+        if self.first_cycle[id_robot]:  # Discard distance
+            self.map.update(id_robot, information.type_intersection, 20)
+            self.first_cycle[id_robot] = False
+        else:
+            if (id_robot + 1) in self.id_robots and self.first_cycle[id_robot+1]:
+                self.send_instruction_to_robot(id_robot+1, self.direction2instruction("straight"))
+            self.map.update(id_robot, information.type_intersection, dist)
         direction = self.make_decision(id_robot)
         self.map.turn_robot(id_robot, direction)
         instruction = self.direction2instruction(direction)

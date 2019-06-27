@@ -220,7 +220,10 @@ if __name__ == "__main__":
 
     fixing(all_nodes)
     inside_edges, exter_edges = get_edges(all_nodes)
+    print()
     print(inside_edges)
+    print()
+    print(exter_edges)
     print()
 
 

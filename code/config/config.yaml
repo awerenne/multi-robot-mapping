@@ -1,11 +1,11 @@
-is_simulation: False
+is_simulation: True
 simulation:
     n_robots: 2
     robots: 
         1:  
-            pose: [-55, 40, 2]
+            pose: [0,0,0]
         2:  
-            pose: [50, 150, 0]
+            pose: [0,0,0]
     dimensions: [800, 800]
     constants:
         WALL: 0
@@ -39,7 +39,7 @@ gui:
         size: 35
     rect_run: [50, 120, 100, 50]
     rect_stop: [50, 200, 100, 50]
-    width_line: 4
+    width_line: 5
     width_frontier: 10
     radius_robot: 9
     title: "COEX"

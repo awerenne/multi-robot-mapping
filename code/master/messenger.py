@@ -148,12 +148,13 @@ class Messenger(Thread, metaclass=ABCMeta):
     # ------------
     def discretize(self, distance):
         # temp = int(distance/5.) * 5
-        print(distance)
-        temp = distance
-        if temp <= 22.5: return 20
-        if temp <= 33: return 25
-        if temp <= 44: return 40
-        return 50
+        # temp = distance
+        # if temp <= 22.5: return 20
+        # if temp <= 33: return 25
+        # if temp <= 44: return 40
+        # return 50
+        return distance
+
 
 
 

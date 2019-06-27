@@ -37,7 +37,7 @@ class Map:
             robot = Robot(robot_id, robot_pose, map_orientation)
             assert self.is_valid_position(robot.position)
             self._robots[robot_id] = robot
-            self.update(robot_id, 7, 0)   
+            self.update(robot_id, 7, 0)  
 
 
     #---------------
