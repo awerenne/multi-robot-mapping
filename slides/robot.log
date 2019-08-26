@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.18)  18 APR 2019 18:22
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.18)  25 AUG 2019 13:33
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1406,7 +1406,7 @@ Package rerunfilecheck Info: File `robot.out' has not changed.
  ) 
 Here is how much of TeX's memory you used:
  21330 strings out of 492649
- 418687 string characters out of 6129622
+ 418689 string characters out of 6129622
  482693 words of memory out of 5000000
  24560 multiletter control sequences out of 15000+600000
  15142 words of font info for 55 fonts, out of 8000000 for 9000
@@ -1427,7 +1427,7 @@ cal/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi9.pfb></usr/loc
 al/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/loca
 l/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/
 texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb>
-Output written on robot.pdf (44 pages, 39442696 bytes).
+Output written on robot.pdf (44 pages, 39442590 bytes).
 PDF statistics:
  576 PDF objects out of 1000 (max. 8388607)
  444 compressed objects within 5 object streams

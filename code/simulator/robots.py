@@ -25,21 +25,22 @@ class Robot(Thread):
     # -------
     def run(self):
         while True:
+            time.sleep(0.1)
             if len(self.q.messenger2robots.queue) > 0 and \
                 self.next_is_for_me(self.q.messenger2robots):
                     msg = self.q.messenger2robots.get_nowait()
                     if not msg is None:
                         self.execute_instruction(msg)
-                    time.sleep(0.5)  
+                    continue
             if not self.stop:  
                 self.move()
-                self.distance += 10
+                self.distance += 5
                 intersection = self.sensor_read()
                 if not intersection is None:
                     self.send_information(intersection)
-                    self.distance = 0
+                    if intersection != -1:
+                        self.distance = 0
                     self.stop = True
-            time.sleep(0.5)
 
     # -------
     def execute_instruction(self, msg):
@@ -101,6 +102,9 @@ class Robot(Thread):
     # -------
     def sensor_read(self):
         path_left, path_front, path_right = self.environment.sensor_read(self.id_)
+        if path_left == -1 and path_front == -1 and path_right == -1:
+            return -1
+
         if path_left and path_right and path_front: 
             return 0
         if path_left and not path_right and path_front: 

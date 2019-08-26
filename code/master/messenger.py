@@ -54,7 +54,7 @@ class Messenger(Thread, metaclass=ABCMeta):
                 valid_msg = self.check_msg_from_robot(id_robot)
                 if valid_msg != None:
                     self.send_information_to_master(valid_msg)
-            time.sleep(0.5)
+            time.sleep(0.05)
 
 
     #---------------
@@ -87,7 +87,7 @@ class Messenger(Thread, metaclass=ABCMeta):
         if not self.valid_syntax(raw_msg):
             return None
         parsed_msg = self.parse_msg(raw_msg)
-        print("Parsed message:" + str(parsed_msg))
+        # print("Parsed message:" + str(parsed_msg))
         return self.valid_msg(parsed_msg)
 
 
@@ -185,7 +185,7 @@ class MessengerReal(Messenger):
 
     #---------------
     def send_msg_to_robot(self, id_robot, msg):
-        print(msg)
+        # print(msg)
         self.robots[id_robot]["serial"].write(msg.encode())
         self.robots[id_robot]["seq_number_sending"] += 1
 

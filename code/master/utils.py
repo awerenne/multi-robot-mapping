@@ -118,8 +118,11 @@ class Container(dict):
 
 #---------------
 def manhattan_distance(a, b):
-    return abs(a[0]-b[0]) + abs(a[1]-b[1])
+    return float(abs(a[0]-b[0]) + abs(a[1]-b[1]))
 
+#---------------
+def heuristic(robot, frontier, other_robot, lambda_):
+    return manhattan_distance(robot, frontier) + lambda_*manhattan_distance(frontier, other_robot)
 
 #---------------
 def xy2ij(xy, dimension):

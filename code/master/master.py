@@ -6,11 +6,12 @@
 from threading import Thread
 from abc import ABCMeta, abstractmethod
 from queue import Queue
+import time
 
 from map import Map
 from messenger import MessengerSimul, MessengerReal
-from utils import Container, manhattan_distance
-
+# from utils import Container, heuristic
+from utils import *
 
 # TODO: proper thread/general quitting - join (low priority)
 # Write unit testing framework
@@ -22,7 +23,7 @@ class Master(Thread, metaclass=ABCMeta):
     Blabla.
     """
 
-    def __init__(self, params, queues):  
+    def __init__(self, params, queues, lambda_=None):  
         Thread.__init__(self)
         self.travels = {}
         self.params = params
@@ -32,8 +33,17 @@ class Master(Thread, metaclass=ABCMeta):
         self.first_cycle = {}
         for id_ in self.id_robots:
             self.first_cycle[id_] = True
+        self.stopped = {1:True, 2: True}
+
+        self.flag_recovery = False
+        self.meta_recovery = {}
+        self._finished = False
 
 
+    @property
+    def finished(self):
+        return self._finished
+    
     #---------------
     def build_map(self):
         self.map = Map(self.params)  
@@ -94,6 +104,10 @@ class Master(Thread, metaclass=ABCMeta):
             "id_robot": id_robot,
             "instruction": instruction
         }
+        if instruction == 0:
+            self.stopped[id_robot] = True
+        else: 
+            self.stopped[id_robot] = False
         self.q.master2messenger.put(Container(directive))
 
 
@@ -134,14 +148,85 @@ class Master(Thread, metaclass=ABCMeta):
 
     #--------------- 
     def process_information(self, id_robot, information):
+        def onetotwo(id_):
+            if id_ == 1: 
+                return 2
+            return 1
+
+        """ Robot encounter detection """
         if information.type_intersection == -1:
+            self.send_instruction_to_robot(1, self.direction2instruction("stop"))
+            self.send_instruction_to_robot(2, self.direction2instruction("stop"))
+            time.sleep(1)
+            if self._finished:
+                return
+            self.flag_recovery = True
+            last_position = self.map.get_robot_position(id_robot)
+            id_mover = id_robot
+            if self.map.type_intersection(last_position) == 6:
+                id_mover = onetotwo(id_robot)
+            id_stopper = onetotwo(id_mover)      
+            position_to_mask = self.map.get_robot_position(id_mover)
+            self.meta_recovery = {'mover': id_mover, 'stopper': id_stopper, 'step': 0, 'to_mask': position_to_mask}
+            self.map.turn_robot(id_mover, "uturn")
+            self.send_instruction_to_robot(id_mover, self.direction2instruction("uturn"))
+            self.send_summary_to_gui(self.map.summary)
+            self.meta_recovery['step'] += 1
             return
+
+        """ Robot encounter recovery """
+        if self.flag_recovery:
+            id_mover = self.meta_recovery['mover']
+            if id_robot != id_mover:
+                return
+            if self.meta_recovery['step'] == 1:
+                # print("step1")
+                if id_robot in self.travels.keys():
+                    self.travels.pop(id_robot)
+                directions = self.map.explored_directions(id_robot)
+                decision = "uturn"
+                if "left" in directions:
+                    decision = "left"
+                if "straight" in directions:
+                    decision = "straight"
+                if "right" in directions:
+                    decision = "right"
+                self.map.turn_robot(id_robot, decision)
+                self.send_instruction_to_robot(id_robot, self.direction2instruction(decision))
+                self.send_summary_to_gui(self.map.summary)
+                self.meta_recovery['step'] += 1
+                return
+
+            if self.meta_recovery['step'] == 2:
+                # print("step2")
+                if id_robot in self.travels.keys():
+                    dist = self.travels.pop(id_robot)  # discard if already explored
+                else:
+                    dist = information.distance
+                self.map.update(id_robot, information.type_intersection, dist)
+                direction = self.make_decision(id_robot)
+                self.map.turn_robot(id_robot, direction)
+                instruction = self.direction2instruction(direction)
+                self.flag_recovery = False
+                self.send_instruction_to_robot(id_robot, instruction)
+                self.send_instruction_to_robot(self.meta_recovery['stopper'], self.direction2instruction("straight"))
+                self.send_summary_to_gui(self.map.summary)
+                return
+
         if id_robot in self.travels.keys():
             dist = self.travels.pop(id_robot)  # discard if already explored
         else:
             dist = information.distance
         if self.first_cycle[id_robot]:  # Discard distance
-            self.map.update(id_robot, information.type_intersection, 20)
+            if id_robot == 1:  # Turn left
+                self.map.turn_robot(id_robot, "left")
+                self.send_instruction_to_robot(1, self.direction2instruction("left"))
+                self.map.set_robot_pose(1, (0,40), 3)
+                self.send_summary_to_gui(self.map.summary)
+                self.first_cycle[id_robot] = False
+                return
+            else:
+                self.map.update(id_robot, information.type_intersection, 40)
             self.first_cycle[id_robot] = False
         else:
             if (id_robot + 1) in self.id_robots and self.first_cycle[id_robot+1]:
@@ -173,13 +258,19 @@ class NaiveMaster(Master):
     Description.
     """
 
-    def __init__(self, params, queues):
+    def __init__(self, params, queues, lambda_=0):
         super().__init__(params, queues)
         self.targets = {}
+        self.lambda_ = lambda_
 
 
     #---------------
     def make_decision(self, id_robot):
+        for id_, target in self.targets.items():
+            if (id_ != id_robot) and (target != self.map.get_robot_position(id_robot)):
+                del self.targets[id_]
+                break
+
         if self.map.is_robot_at_frontier(id_robot):
             self.remove_target(id_robot)
             directions = self.map.unexplored_directions(id_robot)
@@ -232,21 +323,42 @@ class NaiveMaster(Master):
     #---------------
     def assign_target_to_robot(self, id_robot):
         start_ = self.map.get_robot_position(id_robot)
+        if len(self.id_robots) <= 1:
+            other_robot = start_
+        elif id_robot == 1: 
+            other_robot = self.map.get_robot_position(2)
+        else: 
+            other_robot = self.map.get_robot_position(1)
         remaining_targets = self.get_remaining_targets()
         if len(remaining_targets) == 0 and len(self.map.frontiers) > 0:
-            self.targets[id_robot] = self.nearest(start_, self.map.frontiers)
+            self.targets[id_robot] = self.nearest(start_, self.map.frontiers, other_robot)
+            return
         if len(self.map.frontiers) == 0:
-            self.targets[id_robot] = start_
-        self.targets[id_robot] = self.nearest(start_, remaining_targets)
+            self.targets[id_robot] = (0,0)
+            return
+            # self.targets[id_robot] = start_
+        self.targets[id_robot] = self.nearest(start_, remaining_targets, other_robot)
 
 
     #---------------
-    def nearest(self, start_, positions):
-        distances = [manhattan_distance(start_, x) for x in positions]
-        if len(distances) == 0:
+    def nearest(self, start_, positions, other_robot):
+        costs = [heuristic(start_, x, other_robot, self.lambda_) for x in positions]
+        if len(costs) == 0:
             return start_
-        return positions[distances.index(min(distances))]
+        return positions[costs.index(min(costs))]
 
+    #---------------
+    def get_undesired(self, id_robot):
+        if self.flag_recovery:
+            return self.meta_recovery['to_mask']
+        if self.stopped[id_robot]:
+            return self.map.get_robot_position(id_robot)
+        orien = self.map.get_robot_orientation(id_robot)
+        next_ = self.map.get_next_neighbor(self.map.get_robot_position(id_robot), orien)
+        if next_ is None:
+            return None
+            # return self.map.get_robot_position(id_robot)
+        return next_
 
     #---------------
     def next_direction_to_target(self, id_robot):
@@ -258,8 +370,17 @@ class NaiveMaster(Master):
             # self.remove_target(id_robot)
             # return self.make_decision(id_robot)
 
-        neighbor = self.map.shortest_path(start_, end_, manhattan_distance)[1]
-        
+        if id_robot == 1:
+            undesired = self.get_undesired(2)
+        else: 
+            undesired = self.get_undesired(1)
+        neighbor = self.map.shortest_path(start_, end_, manhattan_distance, undesired)
+        if neighbor is None:
+            return self.left_hand_rule(self.map.explored_directions(id_robot))
+        neighbor = neighbor[1]
+        if neighbor == (0,0):
+            self._finished = True
+
         # TODO: CHANGE and put in map
         sx, sy = start_
         nx, ny = neighbor

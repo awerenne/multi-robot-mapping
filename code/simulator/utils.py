@@ -120,6 +120,10 @@ class Container(dict):
 def manhattan_distance(a, b):
     return abs(a[0]-b[0]) + abs(a[1]-b[1])
 
+#---------------
+def heuristic(robot, frontier, other_robot, theta):
+    return manhattan_distance(robot, frontier) - theta*manhattan_distance(frontier, other_robot)
+
 
 #---------------
 def xy2ij(xy, dimension):

@@ -37,7 +37,8 @@ class Map:
             robot = Robot(robot_id, robot_pose, map_orientation)
             assert self.is_valid_position(robot.position)
             self._robots[robot_id] = robot
-            self.update(robot_id, 7, 0)  
+            # self.update(robot_id, 7, 0) 
+
 
 
     #---------------
@@ -129,6 +130,10 @@ class Map:
             self._frontiers.add(frontier)
         self.update_frontier(frontier)
 
+    #---------------
+    def type_intersection(self, position):
+        assert(self.is_node(position))
+        return self.graph.get_node(position).type_intersection
 
     #---------------
     def update_frontier(self, frontier):
@@ -136,12 +141,19 @@ class Map:
         if (len(node.unexplored_orientations) == 0):
             self._frontiers.remove(frontier)
 
+    #---------------
+    def set_robot_pose(self, id_robot, position, orientation):
+        self._robots[id_robot].set_position(position)
+        self._robots[id_robot].set_orientation(orientation)
 
     #---------------
     def update(self, id_robot, type_intersection, distance):
-        assert self.is_valid_intersection(type_intersection) and distance >= 0
+        assert self.is_valid_intersection(type_intersection) and distance >= 0   
+        if distance == 0 and type_intersection == 0:
+            return        
         robot = self.get_robot(id_robot)
         previous_position = robot.position
+
         robot.travel(distance)
         assert self.is_valid_position(robot.position)
 
@@ -173,10 +185,30 @@ class Map:
         node = self.graph.get_node(position)
         orientation_edges = node.unexplored_orientations
         return [Robot.or2dir(orientation_robot, o) for o in orientation_edges]
-    
 
     #---------------
-    def shortest_path(self, start_, end_, heuristic):  
+    def explored_directions(self, id_robot):
+        robot = self.get_robot(id_robot)
+        position = robot.position
+        orientation_robot = robot.orientation
+        node = self.graph.get_node(position)
+        orientation_edges = node.explored_orientations
+        return [Robot.or2dir(orientation_robot, o) for o in orientation_edges]
+    
+    #---------------
+    def get_next_neighbor(self, position, orien):
+        assert self.is_node(position)
+        node = self.graph.get_node(position)
+        return node.get_neighbor(orien)
+
+    #---------------
+    def is_neighbor(self, position, orien):
+        assert self.is_node(position)
+        node = self.graph.get_node(position)
+        return not node.get_neighbor(orien) is None
+
+    #---------------
+    def shortest_path(self, start_, end_, heuristic, undesired):  
         assert self.is_node(start_) and self.is_node(end_)
         self.graph.reset()
         start_ = self.graph.get_node(start_)
@@ -192,6 +224,8 @@ class Map:
             if current.position == end_.position:
                 break
             for (neighbor, weight) in current.neighbors:
+                if current.position == undesired or neighbor.position == undesired:
+                    weight = 1000 # Mask out to avoid crossing
                 g = current.cost + weight
                 if not neighbor.visited or g <= neighbor.cost:  
                     neighbor.cost = g
@@ -208,8 +242,8 @@ class Map:
             if node == start_: break
             node = node.parent
         path.reverse()
-        # print("Path: " + str(path))
-        assert node == start_
+        if node != start_:
+            return None
         return path
 
 
@@ -271,6 +305,12 @@ class Robot:
     @property
     def orientation(self):
         return self._orientation
+
+    def set_position(self, position):
+        self._x, self._y = position
+
+    def set_orientation(self, orientation):
+        self._orientation = orientation
 
 
     #---------------

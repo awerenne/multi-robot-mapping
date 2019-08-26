@@ -8,3 +8,19 @@ code/simulator/__pycache__/
 *.mp4
 
 *.JPG
+
+report/figs/
+
+*.toc
+
+*.log
+
+*.gz
+
+*.aux
+
+*.bbl
+
+*.blg
+
+*.out

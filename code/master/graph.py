@@ -25,6 +25,10 @@ class Graph():
         self.map_type2edges = map_type2edges
         self._edges = {}
         self.nodes = {}
+
+        self.new_node((0,0), 0, 7)
+        self.new_node((0,40), 0, 0)
+        self.new_edge((0,0), 0, (0,40), 2, 40)
     
 
     #---------------
@@ -97,6 +101,7 @@ class Node():
         self._visited = False
         self._parent = None
         self._cost = float('Inf') 
+        self._type_intersection = type_intersection
         self.edges = {}
         self.map_orientation = map_orientation
         self.map_type2edges = map_type2edges
@@ -125,6 +130,11 @@ class Node():
     @property
     def parent(self):
         return self._parent
+
+    #---------------
+    @property
+    def type_intersection(self):
+        return self._type_intersection
 
 
     #---------------
@@ -174,6 +184,21 @@ class Node():
                 unexplored.append(orientation)
         return unexplored
 
+    #---------------    
+    @property
+    def explored_orientations(self):
+        explored = []
+        for orientation, edge in self.edges.items():
+            if not edge is None:  
+                explored.append(orientation)
+        return explored 
+    #--------------- 
+    def get_neighbor(self, orien):
+        unexplored = []
+        for orientation, edge in self.edges.items():
+            if orien == orientation and (not edge is None) :  
+                return edge.connected_to(self._position)
+        return None
 
     #--------------- 
     def __lt__(self, other):

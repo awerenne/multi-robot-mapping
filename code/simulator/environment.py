@@ -3,6 +3,7 @@
 """
 
 import numpy as np
+from generation.main import generate
 
 
 #---------------
@@ -12,22 +13,12 @@ class Environment():
     """
 
     def __init__(self):
-        self._ground_truth = [((0, 0), (0, 20)),
-                              ((0, 20), (20, 20)),
-                              ((20, 20), (40, 20)),
-                              ((0, 20), (-40, 20)),
-                              ((40, 20), (40, 60)),
-                              ((40, 60), (40, 140)),
-                              ((40, 140), (-40, 140)),
-                              ((-40, 140), (-40, 20)),
-                              ((-40, 20), (0, 20)),
-                              ((20, 20), (20, 40)),
-                              ((20, 40), (0, 40)),
-                              ((0, 40), (0, 60)),
-                              ((0, 60), (40, 60)),
-                              ((0, 60), (-40, 60))]
+        self._ground_truth = [((0, 0), (0, 40))] + generate()
+        if not ((0, 40), (0, 60)) in self._ground_truth:
+            self._ground_truth += [((0, 40), (0, 60))]
+        # self._ground_truth = [((0, 0), (0, 40)),((-40, 80), (-20, 80)), ((-40, 100), (-20, 100)), ((-40, 140), (-20, 140)), ((-20, 40), (-20, 60)), ((-20, 60), (-20, 80)), ((-20, 60), (0, 60)), ((-20, 100), (0, 100)), ((-20, 120), (-20, 140)), ((-20, 120), (0, 120)), ((-20, 140), (0, 140)), ((0, 40), (0, 60)), ((0, 60), (20, 60)), ((0, 80), (0, 100)), ((0, 120), (0, 140)), ((0, 120), (20, 120)), ((0, 140), (0, 160)), ((20, 40), (20, 60)), ((20, 60), (40, 60)), ((20, 80), (20, 100)), ((20, 100), (20, 120)), ((20, 100), (40, 100)), ((20, 140), (20, 160)), ((20, 140), (40, 140)), ((-40, 40), (-40, 60)), ((-40, 40), (-20, 40)), ((-40, 60), (-40, 80)), ((-40, 80), (-40, 100)), ((-40, 100), (-40, 120)), ((-40, 120), (-40, 140)), ((-40, 140), (-40, 160)), ((-40, 160), (-20, 160)), ((-20, 40), (0, 40)), ((-20, 160), (0, 160)), ((0, 40), (20, 40)), ((0, 160), (20, 160)), ((20, 40), (40, 40)), ((20, 160), (40, 160)), ((40, 40), (40, 60)), ((40, 60), (40, 80)), ((40, 80), (40, 100)), ((40, 100), (40, 120)), ((40, 120), (40, 140)), ((40, 140), (40, 160))]
         self.grid = Grid(self.ground_truth)
-        self.robots = {1: (0,0,'north'), 2: (0,0,'north')}
+        self.robots = {1: (0,20,'north'), 2: (0,0,'north')}
 
     @property
     def ground_truth(self):
@@ -45,14 +36,26 @@ class Environment():
     # -------
     def move(self, id_robot):
         x, y, orientation = self.robots[id_robot]
-        if orientation == 'north' and self.grid.is_path(x,y+10):
-            self.robots[id_robot] = (x, y+10, orientation)
-        elif orientation == 'south' and self.grid.is_path(x,y-10):
-            self.robots[id_robot] = (x, y-10, orientation)
-        elif orientation == 'east' and self.grid.is_path(x+10,y):
-            self.robots[id_robot] = (x+10, y, orientation)
-        elif orientation == 'west' and self.grid.is_path(x-10,y):
-            self.robots[id_robot] = (x-10, y, orientation)
+        if id_robot == 1:
+            x_other, y_other, _ = self.robots[2]
+        else:
+            x_other, y_other, _ = self.robots[1]
+        if orientation == 'north' and self.grid.is_path(x,y+5):
+            self.robots[id_robot] = (x, y+5, orientation)
+        elif orientation == 'south' and self.grid.is_path(x,y-5):
+            self.robots[id_robot] = (x, y-5, orientation)
+        elif orientation == 'east' and self.grid.is_path(x+5,y):
+            self.robots[id_robot] = (x+5, y, orientation)
+        elif orientation == 'west' and self.grid.is_path(x-5,y):
+            self.robots[id_robot] = (x-5, y, orientation)
+        # if orientation == 'north' and self.grid.is_path(x,y+10) and (x==x_other) and y+10 != y_other:
+        #     self.robots[id_robot] = (x, y+10, orientation)
+        # elif orientation == 'south' and self.grid.is_path(x,y-10) and (x==x_other) and y-10 != y_other:
+        #     self.robots[id_robot] = (x, y-10, orientation)
+        # elif orientation == 'east' and self.grid.is_path(x+10,y) and (y==y_other) and x+10 != x_other:
+        #     self.robots[id_robot] = (x+10, y, orientation)
+        # elif orientation == 'west' and self.grid.is_path(x-10,y) and (y==y_other) and x-10 != x_other:
+        #     self.robots[id_robot] = (x-10, y, orientation)
         return self
 
     # -------
@@ -97,18 +100,30 @@ class Environment():
     # -------
     def sensor_read(self, id_robot):
         x, y, orientation = self.robots[id_robot]
+        if id_robot == 1:
+            x_other, y_other, _ =  self.robots[2]
+        else: 
+            x_other, y_other, _ =  self.robots[1]
         if orientation == 'north':
-            readings = (self.grid.is_path(x-10,y), self.grid.is_path(x,y+10), 
-                    self.grid.is_path(x+10,y))
+            readings = (self.grid.is_path(x-5,y), self.grid.is_path(x,y+5), 
+                    self.grid.is_path(x+5,y))
+            if x == x_other and y+5 == y_other:
+                return (-1, -1, -1)
         elif orientation == 'south':
-            readings = (self.grid.is_path(x+10,y), self.grid.is_path(x,y-10), 
-                    self.grid.is_path(x-10,y))
+            readings = (self.grid.is_path(x+5,y), self.grid.is_path(x,y-5), 
+                    self.grid.is_path(x-5,y))
+            if x == x_other and y-5 == y_other:
+                return (-1, -1, -1)
         elif orientation == 'east':
-            readings = (self.grid.is_path(x,y+10), self.grid.is_path(x+10,y), 
-                    self.grid.is_path(x,y-10))
+            readings = (self.grid.is_path(x,y+5), self.grid.is_path(x+5,y), 
+                    self.grid.is_path(x,y-5))
+            if y == y_other and x+5 == x_other:
+                return (-1, -1, -1)
         elif orientation == 'west':
-            readings = (self.grid.is_path(x,y-10), self.grid.is_path(x-10,y), 
-                    self.grid.is_path(x,y+10))
+            readings = (self.grid.is_path(x,y-5), self.grid.is_path(x-5,y), 
+                    self.grid.is_path(x,y+5))
+            if y == y_other and x-5 == x_other:
+                return (-1, -1, -1)
         # print()
         # print(self.robots[id_robot])
         # print(readings)
@@ -125,7 +140,7 @@ class Grid():
         self.edges = edges
         w, h = 160, 160
         self.dimension = (w, h)
-        self.m = np.zeros((int(h/10)+1, int(w/10)+1))
+        self.m = np.zeros((int(h/5)+1, int(w/5)+1))
         self.fill()
     
     # -------
@@ -154,8 +169,8 @@ class Grid():
     def xy2ij(self, x, y):
         (w, h) = self.dimension
         (w_center, h_center) = (int(w/2), int(h/2))
-        i = int((h-y)/10)
-        j = int((x+w_center)/10)
+        i = int((h-y)/5)
+        j = int((x+w_center)/5)
         return (i, j)
 
    

@@ -73,13 +73,13 @@ class GUI():
         self.surface_user.fill((45,45,45)) 
 
         self.icon_run = pygame.image.load('icons/run_small.png').convert_alpha()  
-        self.rect_run = pygame.Rect((50, 50, 50, 50))
+        self.rect_run = pygame.Rect((50, 125, 50, 50))
         self.icon_stop = pygame.image.load('icons/stop_small.png').convert_alpha() 
-        self.rect_stop = pygame.Rect((125, 50, 50, 50))
+        self.rect_stop = pygame.Rect((125, 125, 50, 50))
 
         self.rect_increment = pygame.Rect((200, 50, 50, 50))
         
-        self.timer = pygame.Rect((50, 125, 200, 50))
+        self.timer = pygame.Rect((50, 200, 200, 50))
         self.log = pygame.Rect((50, 200, 200, 150))
 
         pygame.display.set_caption(self.title)
@@ -179,7 +179,6 @@ class GUI():
     def draw_user_interface(self):
         self.draw_buttons()
         self.draw_timer()
-        self.draw_log()
         self.screen.blit(self.surface_user, (self.wm, 0))
 
 
@@ -187,7 +186,6 @@ class GUI():
     def draw_buttons(self):
         self.draw_button(self.rect_run, self.icon_run)
         self.draw_button(self.rect_stop, self.icon_stop)
-        self.draw_button(self.rect_increment)
 
 
     #---------------
@@ -295,11 +293,12 @@ class GUI():
     def draw_robots(self):
         if self.robots == None or len(self.robots) == 0:
             return self
-        color = self.colors.robot
+        color_1 = self.colors.robot_1
+        color_2 = self.colors.robot_2
         radius = self.radius_robot
         dim = self.dimensions_map
         myrobots = self.environment.get_robots()
-        for robot in myrobots:
+        for robot, color in zip(myrobots, [color_1,color_2]):
         # for robot in self.robots:
             # (xy, orientation) = robot
             # (x,y) = xy

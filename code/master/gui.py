@@ -178,7 +178,7 @@ class GUI():
     def draw_user_interface(self):
         self.draw_buttons()
         self.draw_timer()
-        self.draw_log()
+        # self.draw_log()
         self.screen.blit(self.surface_user, (self.wm, 0))
 
 
@@ -186,7 +186,7 @@ class GUI():
     def draw_buttons(self):
         self.draw_button(self.rect_run, self.icon_run)
         self.draw_button(self.rect_stop, self.icon_stop)
-        self.draw_button(self.rect_increment)
+        # self.draw_button(self.rect_increment)
 
 
     #---------------
