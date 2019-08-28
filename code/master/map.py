@@ -1,27 +1,12 @@
-"""
-    Defining the class containing all the information gathered by the 
-    robots regarding the map.
-"""
-
 
 import numpy as np
 from copy import deepcopy
-
 from graph import Graph, Node
 from utils import PriorityQueue, center2xy
 
-
-# TODO all the special manipulations of map/graph like turn, rotate_axis, 
-#   need to me summarized in big test file (because it's tricky) (low priority)
-
-
 #---------------
 class Map:
-    """ 
-    Describe class & parameters. coordinates are in the form xy center otherwise 
-    mentionned.
-    """
-
+    
     def __init__(self, params):
 
         self.dimensions = params.dimensions
@@ -37,11 +22,8 @@ class Map:
             robot = Robot(robot_id, robot_pose, map_orientation)
             assert self.is_valid_position(robot.position)
             self._robots[robot_id] = robot
-            # self.update(robot_id, 7, 0) 
 
-
-
-    #---------------
+    #-------
     @property
     def frontiers(self):
         temp = deepcopy(self._frontiers)
@@ -49,8 +31,7 @@ class Map:
             self.update_frontier(frontier)
         return list(self._frontiers)
 
-
-    #---------------
+    #-------
     @property
     def frontiers_gui(self):
         frontiers = []
@@ -65,8 +46,7 @@ class Map:
                 elif orientation == 3: frontiers.append((x-5,y))
         return frontiers
 
-
-    #---------------
+    #-------
     @property
     def summary(self):
         edges = self.graph.edges
@@ -74,8 +54,7 @@ class Map:
         robots = [(robot.position, robot.orientation) for robot in self._robots.values()]
         return (edges, frontiers, robots)
 
-
-    #---------------
+    #-------
     def is_valid_position(self, xy):
         (x, y) = center2xy(xy, self.dimensions)
         (x_max, y_max) = self.dimensions
@@ -85,68 +64,61 @@ class Map:
             return False
         return True
 
-
-    #---------------
+    #-------
     def is_valid_intersection(self, type_intersection):
         return type_intersection >= 0 and type_intersection <= 9
 
-
-    #---------------
+    #-------
     def get_robot(self, id_robot):
         assert self.is_robot(id_robot)
         return self._robots[id_robot]
 
-
-    #---------------
+    #-------
     def get_robot_position(self, id_robot):
         assert self.is_robot(id_robot)
         return self._robots[id_robot].position
 
-    #---------------
+    #-------
     def get_robot_orientation(self, id_robot):
         assert self.is_robot(id_robot)
         return self._robots[id_robot].orientation
 
-
-    #---------------
+    #-------
     def is_robot(self, id_robot):
         return self._robots.get(id_robot) != None
 
-
-    #---------------
+    #-------
     def is_node(self, xy):
         return self.graph.is_node(xy)
-
 
     #---------------
     def is_frontier(self, xy):
         return xy in self._frontiers
 
-
-    #---------------
+    #-------
     def new_frontier(self, frontier):
         assert(self.is_node(frontier))
         if frontier not in self._frontiers:  
             self._frontiers.add(frontier)
         self.update_frontier(frontier)
 
-    #---------------
+    #-------
     def type_intersection(self, position):
         assert(self.is_node(position))
         return self.graph.get_node(position).type_intersection
 
-    #---------------
+    #-------
     def update_frontier(self, frontier):
         node = self.graph.get_node(frontier)
         if (len(node.unexplored_orientations) == 0):
             self._frontiers.remove(frontier)
 
-    #---------------
+    #-------
     def set_robot_pose(self, id_robot, position, orientation):
         self._robots[id_robot].set_position(position)
         self._robots[id_robot].set_orientation(orientation)
 
-    #---------------
+    #-------
     def update(self, id_robot, type_intersection, distance):
         assert self.is_valid_intersection(type_intersection) and distance >= 0   
         if distance == 0 and type_intersection == 0:
@@ -166,18 +138,15 @@ class Map:
                 coming_from, distance)
         self.new_frontier(robot.position)
 
-
-    #---------------
+    #-------
     def turn_robot(self, id_robot, direction):
         return self.get_robot(id_robot).turn(direction)
 
-
-    #---------------
+    #-------
     def is_robot_at_frontier(self, id_robot):
         return self.is_frontier(self.get_robot(id_robot).position)
 
-
-    #---------------
+    #-------
     def unexplored_directions(self, id_robot):
         robot = self.get_robot(id_robot)
         position = robot.position
@@ -186,7 +155,7 @@ class Map:
         orientation_edges = node.unexplored_orientations
         return [Robot.or2dir(orientation_robot, o) for o in orientation_edges]
 
-    #---------------
+    #-------
     def explored_directions(self, id_robot):
         robot = self.get_robot(id_robot)
         position = robot.position
@@ -195,19 +164,19 @@ class Map:
         orientation_edges = node.explored_orientations
         return [Robot.or2dir(orientation_robot, o) for o in orientation_edges]
     
-    #---------------
+    #-------
     def get_next_neighbor(self, position, orien):
         assert self.is_node(position)
         node = self.graph.get_node(position)
         return node.get_neighbor(orien)
 
-    #---------------
+    #-------
     def is_neighbor(self, position, orien):
         assert self.is_node(position)
         node = self.graph.get_node(position)
         return not node.get_neighbor(orien) is None
 
-    #---------------
+    #-------
     def shortest_path(self, start_, end_, heuristic, undesired):  
         assert self.is_node(start_) and self.is_node(end_)
         self.graph.reset()
@@ -246,14 +215,10 @@ class Map:
             return None
         return path
 
-
-    
+ 
 #---------------
 class Robot:
-    """
-    Blabla. Origins are same as associated map.
-    """
-
+    
     def __init__(self, id_robot, robot_pose, map_orientation):
         (x, y, orientation) = robot_pose
         self._id = id_robot
@@ -263,21 +228,18 @@ class Robot:
         self._orientation = orientation
         self.map_orientation = map_orientation 
 
-
-    #---------------
+    #-------
     @staticmethod
     def or2dir(current_orientation, target_orientation):
         """ 
         Determines which direction to take for turning to specified orientation. 
         """   
-
         for direc in ["left", "right", "uturn", "straight"]:
             if Robot.dir2or(direc, current_orientation) == target_orientation:
                 return direc
         assert False
 
-
-    #---------------
+    #-------
     @staticmethod
     def dir2or(direction, orientation):
         if direction == "left":  # ... <- N <- E <- S <- W <- ...
@@ -288,32 +250,30 @@ class Robot:
             return (orientation + 6) % 4
         return orientation
 
-
-    #---------------
+    #-------
     @property
     def id(self):
         return _id
 
-
-    #---------------
+    #-------
     @property
     def position(self):
         return (self._x, self._y)
 
-
-    #---------------
+    #-------
     @property
     def orientation(self):
         return self._orientation
 
+    #-------
     def set_position(self, position):
         self._x, self._y = position
 
+    #-------
     def set_orientation(self, orientation):
         self._orientation = orientation
 
-
-    #---------------
+    #-------
     def travel(self, distance): 
         if self._orientation == self.map_orientation['N']:
             self._y += distance
@@ -325,8 +285,7 @@ class Robot:
             self._x -= distance
         return self
 
-
-    #---------------
+    #-------
     def turn(self, direction):
         if direction == "stop": return self
         self._orientation = Robot.dir2or(direction, self._orientation)

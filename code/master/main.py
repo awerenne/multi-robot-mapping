@@ -1,16 +1,10 @@
-"""
-    Description.
-"""
-
 
 from queue import Queue
-
 from master import NaiveMaster
 from gui import GUI
 from utils import Parameters, Container
 from robots import Robots
 from environment import Environment
-
 
 #---------------
 def make_queues():
@@ -35,11 +29,10 @@ def make_queues():
     } 
     return Container(q)
 
-
 #---------------
 if __name__ == '__main__':
 
-    params = Parameters(path="../config/config.yaml")
+    params = Parameters(path="../config.yaml")
     q = make_queues()
     env = Environment().new()
     robots = Robots(params, q.robots)
@@ -54,7 +47,6 @@ if __name__ == '__main__':
     while not gui.close:
         gui.check_user_event().update()
 
-    # Quit properly threads TODO
 
 
 

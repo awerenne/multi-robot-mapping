@@ -1,20 +1,12 @@
-"""
-    Description.
-"""
-
 
 import pygame
 import time
 import sys
 from utils import Container, xy2ij, center2xy
 
-# TODO change input target speed with scroll bar input instead
-
+#---------------
 class GUI():
-    """
-    Extensive description of class.
-    """  
-
+    
     def __init__(self, params, queues, ground_truth=None):
         
         self.q = queues
@@ -23,14 +15,12 @@ class GUI():
         self.init_map_meta()
         self._close = False
 
-
-    #---------------
+    #------
     @property
     def close(self):
         return self._close
-    
 
-    #---------------
+    #------
     def load_params(self, params):
         self.dimensions_screen = (1025,500)
         self.dimensions_map = (700,450)
@@ -57,10 +47,8 @@ class GUI():
         self.font_name = params.gui.font.name
         self.font_size = params.gui.font.size
         
-
-    #---------------
+    #------
     def init_display(self):
-        # assert self.valid_dimensions()
         pygame.init()
 
         self.screen = pygame.display.set_mode(self.dimensions_screen)
@@ -89,8 +77,7 @@ class GUI():
         self.reset_map()
         self.t_start = None
 
-
-    #---------------
+    #------
     def reset_map(self):
         self.surface_map.fill((255,255,255)) 
         for y in range(0, self.hm, self.block_size):
@@ -98,16 +85,14 @@ class GUI():
                 rect = pygame.Rect(x, y, self.block_size, self.block_size)
                 pygame.draw.rect(self.surface_map, (235,235,235), rect, 1)
 
-
-    #---------------
+    #------
     def init_map_meta(self):
         self.edges = {}
         self.frontiers = {}
         self.robots = {}
         self.updated_view_map = False  # Avoids update of screen when not needed
 
-
-    #---------------
+    #------
     def check_user_event(self):
         for event in pygame.event.get():  
             if event.type == pygame.QUIT: 
@@ -118,8 +103,7 @@ class GUI():
                 self.handle_click(event.pos)
         return self
 
-
-    #---------------
+    #------
     def handle_click(self, position):
         if self.is_mouse_on_button(position, self.rect_run):
             self.send_user_request_to_master("run")
@@ -129,30 +113,26 @@ class GUI():
         elif self.is_mouse_on_button(position, self.rect_increment):
             self.send_user_request_to_master("increment")
 
-
-    #---------------
+    #------
     def is_mouse_on_button(self, position, button):
         relative_position = (position[0]-725, position[1]-50) 
         if button.collidepoint(relative_position):
             return True
         return False
 
-
-    #---------------
+    #------
     def rescale(self, xy):
         def f(x):
             offset = int(self.block_size/2)
             return x*self.scale + offset
         return list(map(f, xy))
 
-
-    #--------------- 
+    #------
     def send_user_request_to_master(self, request):
         directive = {"type_directive": "request_" + request}
         self.q.gui2master.put(Container(directive))
 
-
-    #---------------
+    #------
     def update(self):
         self.receive_directive_from_master()
         self.draw_user_interface()
@@ -161,35 +141,28 @@ class GUI():
         pygame.display.update()
         return self
           
-
-    #---------------
+    #------
     def receive_directive_from_master(self):
         if not self.q.master2gui.empty():
             directive = self.q.master2gui.get(timeout=1)
             if directive != None and directive.type_directive == "update_summary":
-                # print(directive)
                 self.edges = directive.summary.edges
                 self.frontiers = directive.summary.frontiers
                 self.robots = directive.summary.robots
-                self.updated_view_map = False  
-            
+                self.updated_view_map = False            
 
-    #---------------
+    #------
     def draw_user_interface(self):
         self.draw_buttons()
         self.draw_timer()
-        # self.draw_log()
         self.screen.blit(self.surface_user, (self.wm, 0))
 
-
-    #---------------
+    #------
     def draw_buttons(self):
         self.draw_button(self.rect_run, self.icon_run)
         self.draw_button(self.rect_stop, self.icon_stop)
-        # self.draw_button(self.rect_increment)
 
-
-    #---------------
+    #------
     def draw_button(self, rect, icon=None):    
         if self.is_mouse_on_button(pygame.mouse.get_pos(), rect):
             color = (228,106,104)
@@ -199,8 +172,7 @@ class GUI():
         if icon != None:
             self.surface_user.blit(icon, (rect.x+12, rect.y, rect.w, rect.h))
 
-
-    #---------------
+    #------
     def draw_timer(self):
         pygame.draw.rect(self.surface_user, (45,45,45),
                 self.timer)
@@ -210,9 +182,8 @@ class GUI():
         text_surf = self.font_timer.render(string_time, True, self.colors.user.font)
         self.surface_user.blit(text_surf, (self.timer.x+15, self.timer.y+5,
                 self.timer.w, self.timer.h))
-    
 
-    #---------------
+    #------
     def timer_format(self, t):
         def format(x):
             return "0"+str(x) if x < 10 else str(x)
@@ -221,15 +192,13 @@ class GUI():
         seconds = format(int(t)%60)
         return hours + ":" + minutes + ":" + seconds
 
-
-    #---------------
+    #------
     def draw_log(self):
         pygame.draw.rect(self.surface_user, (171,171,171), self.log)
         text_surf = self.font_log.render("Log...", True, self.colors.user.font)
         self.surface_user.blit(text_surf, (self.log.x+25, self.log.y+25))
-
         
-    #---------------
+    #------
     def draw_map(self):
         if self.updated_view_map:
             return
@@ -238,8 +207,7 @@ class GUI():
         self.screen.blit(self.surface_map, (0, 0))
         self.updated_view_map = True
 
-
-    #---------------
+    #------
     def draw_edges(self):
         if self.edges == None or len(self.edges) == 0:
             return self
@@ -256,8 +224,7 @@ class GUI():
             pygame.draw.line(self.surface_map, color, a, b, width)
         return self
 
-
-    #---------------
+    #------
     def draw_frontiers(self):
         if self.frontiers == None or len(self.frontiers) == 0:
             return self
@@ -272,8 +239,7 @@ class GUI():
             pygame.draw.rect(self.surface_map, color, rect)
         return self
 
-
-    #---------------
+    #------
     def draw_robots(self):
         if self.robots == None or len(self.robots) == 0:
             return self

@@ -10,17 +10,19 @@ Coex::Coex(const byte* pins_messenger, const byte* pins_actuators,
     sensors = new Sensors(pins_qta, parameters_qta, pin_sharp);
     anom = new Anomalies();
     
-    pid_speed = new PIDController(12, 0, 0.022);
-    pid_forward = new PIDController(15, 0.07, 0.065);
-    pid_line = new PIDController(50, 0.025, 0.15);
-    pid_responsive = new PIDController(2, 2, 0);
+    pid_speed = new PIDControllerSpeed(12, 0, 0.022);
+    pid_forward = new PIDControllerSpeed(15, 0.07, 0.065);
+    // pid_line = new PIDControllerLine(50, 0.025, 0.15);
+    pid_line = new PIDControllerLine(200, 1.5, 0);
+    // pid_responsive = new PIDControllerSpeed(2, 2, 0);
+    pid_responsive = new PIDControllerLine(2, 2, 0);
     pid_speed->setMin(0);
     pid_speed->setMax(255);
     pid_forward->setMin(-255);
     pid_forward->setMax(255);
     pid_line->setMin(-255);
     pid_line->setMax(255);
-    pid_line->setZeta(3.1415/2.5);
+    pid_line->setZeta(1000);
 
     acc_normal = new Accelerator(0.1);
     acc_rotation = new Accelerator(0.1);
@@ -63,6 +65,13 @@ void Coex::readMsg() {
 //============
 int Coex::getMsgInstruction() {
     return messenger->getMessage()[0];
+}
+
+
+//============
+void Coex::automaticCalibration() {
+    sensors->automaticCalibration(actuators);
+    // TODO: put in header file
 }
 
 
@@ -114,27 +123,92 @@ float Coex::errorForward() {
     return sensors->getSpeedRight() - sensors->getSpeedLeft();
 }
 
+//============
+int Coex::test_receive_msg_pid(float& kp, float& kd, float& ki) {
+    if (messenger->receiveMessage()) {
+        messenger->parseMessage();
+        int instruction = (int) messenger->getMessage()[0];
+        kp = (float) messenger->getMessage()[1];
+        kd = (float) messenger->getMessage()[2];
+        ki = (float) messenger->getMessage()[3];
+        return instruction;
+    }
+    return -1;
+}
+
 
 //============
 float Coex::followLine() {
     float dist = 0;
+
+    if (f_msg->isNewState()) {
+        float Kp = 0, Kd = 0, Ki = 0, zeta = 0;
+        int instruction = test_receive_msg_pid(Kp, Kd, Ki);
+        if (instruction == 0) { // Stop
+            stop();
+            off = true;
+            delay(1000);
+            return -1;
+        }
+        if (instruction == 1) { // change kp, kd, ki
+            stop();
+            delay(1000);
+            pid_line->setParameters(Kp, Kd, Ki);
+            newLine(target_speed, true);
+            off = true;
+            delay(1000);
+            return 0;
+        }
+        if (instruction == 2) { // change zeta
+            stop();
+            delay(1000);
+            pid_line->setZeta(Kp);
+            newLine(target_speed, true);
+            off = true;
+            delay(1000);
+            return 0;
+        }
+        if (instruction == 3) { // change speed
+            stop();
+            delay(1000);
+            newLine(Kp, true);
+            off = false;
+            delay(1000);
+            return 0;
+        }   
+    }
+
     if (f_obstacle->isNewState() && sensors->isObstacle()) {
         stop();
+        off = true;
+        delay(1000);
         return -1;
     }
+
+    if (off) {
+        delay(20);
+        return 0;
+    }
+
     if (f_dir_line_ctrl->isNewState()) {
         sensors->qtraRead();
-        alpha = pid_line->correction(errorLine());
+        alpha = pid_line->correction(sensors->getError(), 0, progress_speed);
         if (with_intersection && isAnomaly()) {
-            if (isIntersection()) return -2;
+            if (isIntersection()) {
+                off = true;
+                delay(100);
+                return -2;
+            }
             dist += 2.1;
         }
     }
+
     if (f_speed_ctrl->isNewState()) {
         sensors->encodersRead();
         dist += sensors->getDistance();
         beta = pid_speed->correction(errorSpeed());
     }
+    
     float pwm_left = beta + alpha;
     float pwm_right = beta - alpha;
     actuators->updatePWM(pwm_left, pwm_right);
@@ -232,30 +306,27 @@ bool Coex::isAnomaly() {
 
 //============
 bool Coex::isIntersection() {
-    newForward(6);
     float x = 0;
     sendMsg("-1;3");
     while (true) {
-        float ret = forward();
-        if (ret == -1) {
-            sendMsg("-1;4");
-            return false;
+        float dist = 0;
+        if (f_dir_fwd_ctrl->isNewState()) {
+            sensors->encodersRead();
+            dist = sensors->getDistance();
         }
-        x += ret;
-        if (ret > 0 && f_dir_line_ctrl->isNewState()) {
+        x += dist;
+        if (dist > 0 && f_dir_line_ctrl->isNewState()) {
             sensors->qtraRead();
             anom->new_(x);
             anom->newLeft(sensors->isRoadLeft());
             anom->newCenter(sensors->isRoadCenter());
             anom->newRight(sensors->isRoadRight());
             if (anom->isFinished()) {
-                // sendMsg("-1;1");
                 if (anom->isIntersection()) {
                     forwardAlign(x);
-                    // sendMsg("-1;2");
                     return true;
                 }
-                newLine(6, true);
+                //newLine(6, true);
                 return false;
             }
         }
@@ -273,10 +344,13 @@ byte Coex::typeIntersection() {
 //============
 void Coex::forwardAlign(float x) {
     while(true) {
-        float ret = forward();
-        if (ret == -1) return;
-        x += ret;
-        if (x > 7.5) {
+        float dist = 0;
+        if (f_dir_fwd_ctrl->isNewState()) {
+            sensors->encodersRead();
+            dist = sensors->getDistance();
+        }
+        x += dist;
+        if (x > 5.5) {
             stop();
             return;
         }
@@ -308,8 +382,10 @@ void Coex::turnAlign(const float& speed, byte instruction, byte type_intersectio
     alpha = 0;
     beta = 0;
     float pwm_left = 0, pwm_right = 0;
-    pid_responsive->setParameters(2,2,0);
-    float xinit = 2.25, e = 0.05, L = 10, v_min = 2, a = 0, x;
+    // pid_responsive->setParameters(2,2,0);
+    pid_responsive->setParameters(64,128,0);
+    float xinit = 2.25, e = 0.6, L = 10, v_min = 1, a = 0, x; 
+    // e : 0.05
     bool clockwise = true, signal_ = false, second_pass = false;
 
     switch (instruction) {
@@ -334,7 +410,8 @@ void Coex::turnAlign(const float& speed, byte instruction, byte type_intersectio
     if (clockwise) {
         xinit *= -1;
         e *= -1;
-        pid_responsive->setParameters(1,1,0);
+        pid_responsive->setParameters(128,256,0);
+        // pid_responsive->setParameters(1,1,0);
     }
     x = xinit;
     while (true) {
@@ -355,7 +432,7 @@ void Coex::turnAlign(const float& speed, byte instruction, byte type_intersectio
                 if (v < 0.5) break;
                 x = -sensors->getError();
                 x = floorf((x/1250.)*100)/100;
-                float gamma = pid_responsive->correction(f(x,a,e,v_min) - v);
+                float gamma = pid_responsive->correction(f(x,a,e,v_min) - v, f(x,a,e,v_min), 1);
                 beta += gamma;
                 pwm_left = beta + alpha;
                 pwm_left = pwm_left < 0 ? 0 : pwm_left;

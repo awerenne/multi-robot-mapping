@@ -24,3 +24,5 @@ report/figs/
 *.blg
 
 *.out
+
+*.pyc

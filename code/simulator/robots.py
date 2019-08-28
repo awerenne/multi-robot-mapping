@@ -1,7 +1,3 @@
-"""
-    Description.
-"""
-
 
 from threading import Thread
 import time
@@ -9,10 +5,7 @@ import time
 
 # ---------------
 class Robot(Thread):
-    """
-    ...
-    """
-
+    
     def __init__(self, id_, queues, environment):
         Thread.__init__(self)
         self.id_ = id_

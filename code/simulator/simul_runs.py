@@ -1,10 +1,5 @@
-"""
-    Description.
-"""
-
 
 from queue import Queue
-
 import sys
 sys.path.append('../master/')
 from master import NaiveMaster
@@ -43,8 +38,7 @@ def make_queues():
 #---------------
 if __name__ == '__main__':
 
-    params = Parameters(path="../config/config.yaml")
-
+    params = Parameters(path="../config.yaml")
     mean_time = []
     std_time = []
     for lambda_ in np.linspace(0,2,21):
@@ -57,7 +51,6 @@ if __name__ == '__main__':
             robot1 = Robot(1, q.robots, env)
             robot2 = Robot(2, q.robots, env)
             master = NaiveMaster(params, q.master, lambda_=lambda_)
-
             robot1.start()
             robot2.start()
             master.start()
@@ -79,18 +72,12 @@ if __name__ == '__main__':
                 times.append((current_time - start_time)/len(gt))
             else:
                 n_failures += 1
-        print()
-        print(n_failures)
         times = np.asarray(times)
         mean = np.mean(times)
         mean_time.append(mean)
         std = np.std(times)
         std_time.append(std)
-        print(lambda_)
-        print(mean)
-        print(std)
-        print()
-    print(np.linspace(0.125,0.875,4))
+    print(np.linspace(0,2,21))
     print(mean_time)
     print(std_time)
 

@@ -9,6 +9,8 @@
 #include <EncoderState.h>
 
 
+#include "Actuators.h"
+
 //============
 class Sensors {
     public:
@@ -16,7 +18,7 @@ class Sensors {
             const byte& pin_sharp);
         void manualCalibration();
         void oneStepCalibration();
-        void automaticCalibration();
+        void automaticCalibration(Actuators* actuators);
         void qtraRead();
         int getError();
         unsigned int* getValues() { return sensor_values; }

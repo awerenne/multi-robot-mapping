@@ -1,17 +1,9 @@
-"""
-    Description.
-"""
-
 
 from random import sample 
 
-
-
-
-# Return all edges with simplification
-
 N_ROWS = 5
 N_COLS = 7
+
 
 #---------------
 class Node:
@@ -120,6 +112,7 @@ def recursion(all_nodes, node):
         if not new_node.get_flag():
             recursion(all_nodes, new_node)
 
+
 #---------------
 def connectivity(all_nodes):
     reset(all_nodes)
@@ -162,12 +155,13 @@ def fixing(all_nodes):
             all_nodes[new_neighbor] = Node(new_neighbor)
         all_nodes[new_neighbor].connect(node.coords)
         node.connect(new_neighbor)
-        # print(node.coords, new_neighbor)
+
 
 #---------------
 def reset(all_nodes):
     for coords, node in all_nodes.items():
             node.set_flag(False)
+
 
 #---------------
 def get_edges(all_nodes):
@@ -187,7 +181,6 @@ def get_edges(all_nodes):
                 if neigbor < node.coords: 
                     continue
                 if node.coords[0] == 0 and neigbor[0] == 0 and node.coords[1] == 40 and neigbor[1] == 60:
-                    # print((node.coords, neigbor))
                     exter_edges.append((node.coords, neigbor))
                 # First row
                 if node.coords[0] == -40 and neigbor[0] == -40:
@@ -208,6 +201,7 @@ def get_edges(all_nodes):
     return inside_edges, exter_edges
 
 
+#---------------
 def generate():
     all_nodes = initialization()
     construction(all_nodes)
@@ -222,17 +216,8 @@ def generate():
 if __name__ == "__main__":
     all_nodes = initialization()
     construction(all_nodes)
-
     inside_edges, exter_edges = get_edges(all_nodes)
-    # print(inside_edges)
-    # print()
-    # print(exter_edges)
-
     random_destruction(all_nodes, inside_edges)
-    # inside_edges, exter_edges = get_edges(all_nodes)
-    # print(inside_edges)
-    # print()
-
     fixing(all_nodes)
     inside_edges, exter_edges = get_edges(all_nodes)
     print()

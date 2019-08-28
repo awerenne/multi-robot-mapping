@@ -1,7 +1,3 @@
-/*
-    Test autonomous exploration of maze by robot (Algorithm: left-hand rule)
-*/
-
 
 #include <Coex.h>
 
@@ -17,6 +13,7 @@ const unsigned int pin_emitter = 5, n_sensors = 6, n_samples = 4;
 const unsigned int parameters_qta[3] = {pin_emitter, n_sensors, n_samples}; 
 Coex* coex = new Coex(pins_messenger, pins_actuators, pins_qta, pin_sharp,
             baud_rate, parameters_qta);
+
 
 //============
 void setup() {
@@ -65,8 +62,6 @@ void loop() {
                         break;
                 case 4: coex->uturn(6, coex->typeIntersection());
                         break;
-                // case 5: coex->stop();
-                //         break;
             }
             coex->newLine(7,true);
             x = -ret;
@@ -92,3 +87,14 @@ void flicker_led(byte led, unsigned int n, unsigned int delay_) {
 //============
 void update_counter_left() { coex->getSensors()->incrementLeft(); }
 void update_counter_right() { coex->getSensors()->incrementRight(); }
+
+
+
+
+
+
+
+
+
+
+

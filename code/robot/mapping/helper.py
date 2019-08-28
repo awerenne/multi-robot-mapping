@@ -1,11 +1,6 @@
-"""
-    Description.
-"""
-
 
 import serial
 import time
-
 
 serial_port = '/dev/cu.DSDTECHHC-05-DevB';
 baud_rate = 9600; 

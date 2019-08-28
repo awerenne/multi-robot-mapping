@@ -21,6 +21,33 @@ void Sensors::manualCalibration() {
 
 
 //============
+void Sensors::automaticCalibration(Actuators* actuators) {
+    int clockwise = -1;
+    int pwm_left = 85, pwm_right = 85;
+    bool first_loop = true;
+    for (int i = 0; i < 200;) {
+        actuators->updatePWM(clockwise * pwm_left, -clockwise * pwm_right);
+        if (first_loop) {
+            for (int j = 0; j < 10; j++) qtra->calibrate();  
+            i += 10;
+        }
+        else {
+            for (int j = 0; j < 20; j++) qtra->calibrate();  
+            i += 20;
+        }
+        actuators->stop();
+        clockwise *= -1;
+        first_loop = false;
+        delay(200);
+    }
+    actuators->updatePWM(clockwise * pwm_left, -clockwise * pwm_right);
+    for (int j = 0; j < 10; j++) qtra->calibrate(); 
+    actuators->stop();
+}
+
+
+
+//============
 void Sensors::oneStepCalibration() {
     qtra->calibrate(); 
 }
@@ -44,15 +71,15 @@ void Sensors::setCalibration(unsigned int* calib_min, unsigned int* calib_max) {
 }      
 
 
-//============
-void Sensors::automaticCalibration() {
-    unsigned int calib_min_dark[6] = {100,100,100,100,100,100};  
-    unsigned int calib_max_dark[6] = {750,750,750,750,750,750}; 
-    unsigned int calib_min_light[6] = {100,100,100,100,100,100};  
-    unsigned int calib_max_light[6] = {600,600,600,600,600,600};  
-    if (ambientIsDark()) setCalibration(calib_min_dark, calib_max_dark);
-    else setCalibration(calib_min_light, calib_max_light);
-}
+// //============
+// void Sensors::automaticCalibration() {
+//     unsigned int calib_min_dark[6] = {100,100,100,100,100,100};  
+//     unsigned int calib_max_dark[6] = {750,750,750,750,750,750}; 
+//     unsigned int calib_min_light[6] = {100,100,100,100,100,100};  
+//     unsigned int calib_max_light[6] = {600,600,600,600,600,600};  
+//     if (ambientIsDark()) setCalibration(calib_min_dark, calib_max_dark);
+//     else setCalibration(calib_min_light, calib_max_light);
+// }
 
 
 //============

@@ -1,28 +1,14 @@
-"""
-    Description.
-"""
-
 
 from threading import Thread
 from abc import ABCMeta, abstractmethod
 from queue import Queue
 import time
-
 from map import Map
 from messenger import MessengerSimul, MessengerReal
-# from utils import Container, heuristic
 from utils import *
-
-# TODO: proper thread/general quitting - join (low priority)
-# Write unit testing framework
-
 
 #---------------
 class Master(Thread, metaclass=ABCMeta):
-    """
-    Blabla.
-    """
-
     def __init__(self, params, queues, lambda_=None):  
         Thread.__init__(self)
         self.travels = {}
@@ -34,24 +20,22 @@ class Master(Thread, metaclass=ABCMeta):
         for id_ in self.id_robots:
             self.first_cycle[id_] = True
         self.stopped = {1:True, 2: True}
-
         self.flag_recovery = False
         self.meta_recovery = {}
         self._finished = False
 
-
+    #------
     @property
     def finished(self):
         return self._finished
     
-    #---------------
+    #------
     def build_map(self):
         self.map = Map(self.params)  
         self.send_summary_to_gui(self.map.summary)
         return self
         
-
-    #---------------
+    #------
     def build_messenger(self):
         self.q["messenger2master"] = Queue()
         self.q["master2messenger"] = Queue()
@@ -69,23 +53,20 @@ class Master(Thread, metaclass=ABCMeta):
             self.messenger = MessengerReal(self.params, Container(q_messenger))
         return self
 
-
-    #---------------
+    #------
     def run(self):
         self.messenger.start()
         robots_thread = Thread(target=self.receive_information_from_robot).start()
         gui_thread = Thread(target=self.receive_user_request_from_gui).start()  
 
-
-    #--------------- 
+    #------
     def receive_information_from_robot(self):
         while True:   
             directive = self.q.messenger2master.get()  
             if directive.type_directive == "information":
                 self.process_information(directive.id_robot, directive.information)
 
-
-    #--------------- 
+    #------
     def receive_user_request_from_gui(self):
         while True:        
             directive = self.q.gui2master.get()
@@ -96,8 +77,7 @@ class Master(Thread, metaclass=ABCMeta):
             elif directive.type_directive == "request_increment":
                 self.increment_speed()
 
-
-    #--------------- 
+    #------ 
     def send_instruction_to_robot(self, id_robot, instruction):
         directive = {
             "type_directive": "instruction",
@@ -110,8 +90,7 @@ class Master(Thread, metaclass=ABCMeta):
             self.stopped[id_robot] = False
         self.q.master2messenger.put(Container(directive))
 
-
-    #--------------- 
+    #------
     def send_summary_to_gui(self, summary):
         (edges, frontiers, robots) = summary
         directive = {
@@ -124,29 +103,22 @@ class Master(Thread, metaclass=ABCMeta):
         }
         self.q.master2gui.put(Container(directive))
 
-
-    #--------------- 
+    #------
     def run_robots(self):
         self.send_instruction_to_robot(1, self.direction2instruction("straight"))
-        # for id_robot in self.id_robots:
-        #     self.send_instruction_to_robot(id_robot,
-        #             self.direction2instruction("straight"))
 
-
-    #--------------- 
+    #------ 
     def stop_robots(self):
         for id_robot in self.id_robots:
             self.send_instruction_to_robot(id_robot,
                     self.direction2instruction("stop"))
 
-
-    #--------------- 
+    #------
     def increment_speed(self):
         for id_robot in self.id_robots:
             self.send_instruction_to_robot(id_robot, 5)
 
-
-    #--------------- 
+    #------
     def process_information(self, id_robot, information):
         def onetotwo(id_):
             if id_ == 1: 
@@ -180,7 +152,6 @@ class Master(Thread, metaclass=ABCMeta):
             if id_robot != id_mover:
                 return
             if self.meta_recovery['step'] == 1:
-                # print("step1")
                 if id_robot in self.travels.keys():
                     self.travels.pop(id_robot)
                 directions = self.map.explored_directions(id_robot)
@@ -198,7 +169,6 @@ class Master(Thread, metaclass=ABCMeta):
                 return
 
             if self.meta_recovery['step'] == 2:
-                # print("step2")
                 if id_robot in self.travels.keys():
                     dist = self.travels.pop(id_robot)  # discard if already explored
                 else:
@@ -238,14 +208,12 @@ class Master(Thread, metaclass=ABCMeta):
         self.send_instruction_to_robot(id_robot, instruction)
         self.send_summary_to_gui(self.map.summary)
 
-
-    #--------------- 
+    #------ 
     def direction2instruction(self, direction):
         return {"stop": 0, "straight": 1, "left": 2, "right": 3,
             "uturn": 4}[direction]
 
-
-    #---------------
+    #------
     @abstractmethod
     def make_decision(self, id_robot):
         pass
@@ -254,38 +222,28 @@ class Master(Thread, metaclass=ABCMeta):
 
 #---------------
 class NaiveMaster(Master):
-    """    
-    Description.
-    """
-
     def __init__(self, params, queues, lambda_=0):
         super().__init__(params, queues)
         self.targets = {}
         self.lambda_ = lambda_
 
-
-    #---------------
+    #------
     def make_decision(self, id_robot):
         for id_, target in self.targets.items():
             if (id_ != id_robot) and (target != self.map.get_robot_position(id_robot)):
                 del self.targets[id_]
                 break
-
         if self.map.is_robot_at_frontier(id_robot):
             self.remove_target(id_robot)
             directions = self.map.unexplored_directions(id_robot)
             return self.left_hand_rule(directions)
-
         if self.target_reached(id_robot):
             self.remove_target(id_robot)
-
         if not self.target_assigned(id_robot):
             self.assign_target_to_robot(id_robot)
-
         return self.next_direction_to_target(id_robot)
    
-
-    #---------------
+    #------
     def left_hand_rule(self, directions):
         if "left" in directions:
             return "left"
@@ -295,32 +253,27 @@ class NaiveMaster(Master):
             return "right"
         return "uturn"
 
-
-    #---------------
+    #------
     def remove_target(self, id_robot):
         if self.target_assigned(id_robot):
             del self.targets[id_robot]
 
-
-    #---------------
+    #------
     def target_reached(self, id_robot):
         return self.target_assigned(id_robot) and \
             self.targets[id_robot] == self.map.get_robot_position(id_robot)
 
-
-    #---------------
+    #------
     def target_assigned(self, id_robot):
         return id_robot in self.targets.keys() 
 
-
-    #---------------
+    #------
     def get_remaining_targets(self):
         A = set(self.map.frontiers)
         B = set(self.targets.values()) 
         return list(A.difference(B))
 
-
-    #---------------
+    #------
     def assign_target_to_robot(self, id_robot):
         start_ = self.map.get_robot_position(id_robot)
         if len(self.id_robots) <= 1:
@@ -336,18 +289,16 @@ class NaiveMaster(Master):
         if len(self.map.frontiers) == 0:
             self.targets[id_robot] = (0,0)
             return
-            # self.targets[id_robot] = start_
         self.targets[id_robot] = self.nearest(start_, remaining_targets, other_robot)
 
-
-    #---------------
+    #------
     def nearest(self, start_, positions, other_robot):
         costs = [heuristic(start_, x, other_robot, self.lambda_) for x in positions]
         if len(costs) == 0:
             return start_
         return positions[costs.index(min(costs))]
 
-    #---------------
+    #------
     def get_undesired(self, id_robot):
         if self.flag_recovery:
             return self.meta_recovery['to_mask']
@@ -357,19 +308,16 @@ class NaiveMaster(Master):
         next_ = self.map.get_next_neighbor(self.map.get_robot_position(id_robot), orien)
         if next_ is None:
             return None
-            # return self.map.get_robot_position(id_robot)
         return next_
 
-    #---------------
+    #------
     def next_direction_to_target(self, id_robot):
         assert self.target_assigned(id_robot)
         start_ = self.map.get_robot_position(id_robot)
         end_ = self.targets[id_robot]
         if start_ == end_:
+            self.remove_target(id_robot)
             return "stop"
-            # self.remove_target(id_robot)
-            # return self.make_decision(id_robot)
-
         if id_robot == 1:
             undesired = self.get_undesired(2)
         else: 
@@ -381,7 +329,6 @@ class NaiveMaster(Master):
         if neighbor == (0,0):
             self._finished = True
 
-        # TODO: CHANGE and put in map
         sx, sy = start_
         nx, ny = neighbor
         current_orientation = self.map.get_robot_orientation(id_robot)
@@ -396,11 +343,6 @@ class NaiveMaster(Master):
         else:
             assert False
         direction = self.map.get_robot(id_robot).or2dir(current_orientation, target_orientation)
-
-        # print("Current position: " + str(start_))
-        # print("Target position: " + str(end_))
-        # print("Next position: " + str(neighbor))
-
         self.travels[id_robot] = manhattan_distance(start_, neighbor)
         return direction
 

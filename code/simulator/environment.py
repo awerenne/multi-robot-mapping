@@ -1,6 +1,3 @@
-"""
-    Description.
-"""
 
 import numpy as np
 from generation.main import generate
@@ -8,18 +5,15 @@ from generation.main import generate
 
 #---------------
 class Environment():
-    """
-    ...
-    """
-
+    
     def __init__(self):
         self._ground_truth = [((0, 0), (0, 40))] + generate()
         if not ((0, 40), (0, 60)) in self._ground_truth:
             self._ground_truth += [((0, 40), (0, 60))]
-        # self._ground_truth = [((0, 0), (0, 40)),((-40, 80), (-20, 80)), ((-40, 100), (-20, 100)), ((-40, 140), (-20, 140)), ((-20, 40), (-20, 60)), ((-20, 60), (-20, 80)), ((-20, 60), (0, 60)), ((-20, 100), (0, 100)), ((-20, 120), (-20, 140)), ((-20, 120), (0, 120)), ((-20, 140), (0, 140)), ((0, 40), (0, 60)), ((0, 60), (20, 60)), ((0, 80), (0, 100)), ((0, 120), (0, 140)), ((0, 120), (20, 120)), ((0, 140), (0, 160)), ((20, 40), (20, 60)), ((20, 60), (40, 60)), ((20, 80), (20, 100)), ((20, 100), (20, 120)), ((20, 100), (40, 100)), ((20, 140), (20, 160)), ((20, 140), (40, 140)), ((-40, 40), (-40, 60)), ((-40, 40), (-20, 40)), ((-40, 60), (-40, 80)), ((-40, 80), (-40, 100)), ((-40, 100), (-40, 120)), ((-40, 120), (-40, 140)), ((-40, 140), (-40, 160)), ((-40, 160), (-20, 160)), ((-20, 40), (0, 40)), ((-20, 160), (0, 160)), ((0, 40), (20, 40)), ((0, 160), (20, 160)), ((20, 40), (40, 40)), ((20, 160), (40, 160)), ((40, 40), (40, 60)), ((40, 60), (40, 80)), ((40, 80), (40, 100)), ((40, 100), (40, 120)), ((40, 120), (40, 140)), ((40, 140), (40, 160))]
         self.grid = Grid(self.ground_truth)
         self.robots = {1: (0,20,'north'), 2: (0,0,'north')}
 
+    # -------
     @property
     def ground_truth(self):
         return self._ground_truth
@@ -48,14 +42,6 @@ class Environment():
             self.robots[id_robot] = (x+5, y, orientation)
         elif orientation == 'west' and self.grid.is_path(x-5,y):
             self.robots[id_robot] = (x-5, y, orientation)
-        # if orientation == 'north' and self.grid.is_path(x,y+10) and (x==x_other) and y+10 != y_other:
-        #     self.robots[id_robot] = (x, y+10, orientation)
-        # elif orientation == 'south' and self.grid.is_path(x,y-10) and (x==x_other) and y-10 != y_other:
-        #     self.robots[id_robot] = (x, y-10, orientation)
-        # elif orientation == 'east' and self.grid.is_path(x+10,y) and (y==y_other) and x+10 != x_other:
-        #     self.robots[id_robot] = (x+10, y, orientation)
-        # elif orientation == 'west' and self.grid.is_path(x-10,y) and (y==y_other) and x-10 != x_other:
-        #     self.robots[id_robot] = (x-10, y, orientation)
         return self
 
     # -------
@@ -124,18 +110,12 @@ class Environment():
                     self.grid.is_path(x,y+5))
             if y == y_other and x-5 == x_other:
                 return (-1, -1, -1)
-        # print()
-        # print(self.robots[id_robot])
-        # print(readings)
         return readings
 
 
 #---------------
 class Grid():
-    """
-    ...
-    """
-
+    
     def __init__(self, edges):
         self.edges = edges
         w, h = 160, 160

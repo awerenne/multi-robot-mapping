@@ -39,16 +39,20 @@ class Coex {
         void turnRight(const float& speed);
         void uturn(const float& speed, byte typeIntersection);
         void turnAlign(const float& speed, byte intersection, byte type_intersection);
+        int test_receive_msg_pid(float& kp, float& kd, float& ki);
+        void automaticCalibration();
 
         Sensors* getSensors() { return this->sensors; }
         Actuators* getActuators() { return this->actuators; }
 
     private:
+        bool off = true;
         Sensors* sensors;
         Actuators* actuators;
         Messenger* messenger;
         Anomalies* anom;
-        PIDController *pid_speed, *pid_forward, *pid_line, *pid_responsive;
+        PIDControllerSpeed *pid_speed, *pid_forward;
+        PIDControllerLine *pid_line, *pid_responsive;
         FrequencyState *f_obstacle, *f_speed_ctrl, *f_dir_fwd_ctrl,
                 *f_dir_line_ctrl, *f_acc, *f_msg, *f_rotation;
         Accelerator *acc_normal, *acc_rotation;

@@ -1,10 +1,5 @@
-"""
-    Description.
-"""
-
 
 from queue import Queue
-
 import sys
 sys.path.append('../master/')
 from master import NaiveMaster
@@ -41,7 +36,7 @@ def make_queues():
 #---------------
 if __name__ == '__main__':
 
-    params = Parameters(path="../config/config.yaml")
+    params = Parameters(path="../config.yaml")
     q = make_queues()
     env = Environment()
     robot1 = Robot(1, q.robots, env)
@@ -57,8 +52,6 @@ if __name__ == '__main__':
     # Main thread
     while not gui.close:
         gui.check_user_event().update()
-
-    # Quit properly threads TODO
 
 
 
