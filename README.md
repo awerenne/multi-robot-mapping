@@ -5,11 +5,10 @@ Video demonstrations of the robot can be found [here](https://drive.google.com/d
 #### TEST ####
 gif demo
 <p align="center">
-    ![Demo](gifs/giphy.gif)
+    <img width="460" height="300" src="gifs/giphy.gif">
 </p>
 
 #### TODO ####
-Things to do 
     * Readme
     * Add final demo video of two robots
     * Add gifs of demo as [here](https://medium.com/@josephcardillo/how-to-add-gifs-to-your-github-readme-89c74da2ce47)
