@@ -9,6 +9,8 @@ code/simulator/__pycache__/
 
 *.JPG
 
+!step-*.jpg
+
 report/figs/
 
 *.toc
