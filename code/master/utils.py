@@ -137,7 +137,7 @@ def xy2center(xy, dimension):
     (w, h) = dimension
     (w_center, h_center) = (int(w/2), int(h/2))
     x -= w_center
-    y -= h_center
+    # y -= h_center
     return (x, y)
 
 
@@ -148,7 +148,7 @@ def center2xy(xy, dimension):
     (w, h) = dimension
     (w_center, h_center) = (int(w/2), int(h/2))
     x += w_center
-    y += h_center
+    # y += h_center
     return (x, y)
 
 

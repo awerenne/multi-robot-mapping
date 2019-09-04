@@ -32,19 +32,22 @@ void setup() {
 //============
 void loop() {   
     digitalWrite(led_signal, HIGH);  
+    //coex->automaticCalibration();
     coex->calibration();
     digitalWrite(led_signal, LOW);  
     delay(1000);
     float ret = 0, x = 8.5;
-    while (!coex->availableMsg()) continue;
+    while (!coex->availableMsg()) {
+        continue;
+    }
     coex->readMsg();
     int instruction = coex->getMsgInstruction();
     if (instruction != 1) exit(0);
-    coex->newLine(7, true);
+    coex->newLine(8.5, true);
     while (true) {
         ret = coex->followLine();
         if (ret == -1) {
-            coex->sendMsg(String(x));
+            coex->sendMsg(String(-1) + ";" + String(x));
             flicker_led(led_signal, 10, 1000);
             break;
         }
@@ -56,14 +59,14 @@ void loop() {
             switch (instruction) {
                 case 0: coex->stop();
                         exit(0);
-                case 2: coex->turnLeft(6);
+                case 2: coex->turnAlign(6.5, 0, coex->typeIntersection());
                         break;
-                case 3: coex->turnRight(6);
+                case 3: coex->turnAlign(7.5, 1, coex->typeIntersection());
                         break;
-                case 4: coex->uturn(6, coex->typeIntersection());
+                case 4: coex->turnAlign(6, 2, coex->typeIntersection());
                         break;
             }
-            coex->newLine(7,true);
+            coex->newLine(8.5,true);
             x = -ret;
             x += 8.5;
         }
@@ -87,14 +90,3 @@ void flicker_led(byte led, unsigned int n, unsigned int delay_) {
 //============
 void update_counter_left() { coex->getSensors()->incrementLeft(); }
 void update_counter_right() { coex->getSensors()->incrementRight(); }
-
-
-
-
-
-
-
-
-
-
-

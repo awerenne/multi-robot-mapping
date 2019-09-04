@@ -6,7 +6,7 @@
 #include <Messenger.h>
 #include <Actuators.h>
 #include <Sensors.h>
-#include <PidController.h>
+#include <PIDController.h>
 #include <FrequencyState.h>
 #include <Accelerator.h>
 #include <math.h>
@@ -25,9 +25,9 @@ Actuators* actuators = new Actuators(pins_actuators);
 const unsigned int parameters_qta[3] = {5, 6, 8};  // Emitter pin (digital PWM), number of sensors, number of samples to average per sensor reading
 Sensors* sensors = new Sensors(pins_qta, parameters_qta, pin_sharp);
 
-PIDController* pid_speed = new PIDController(0,0,0);
-PIDController* pid_forward = new PIDController(0,0,0);
-PIDController* pid_line = new PIDController(0,0,0);
+PIDControllerSpeed* pid_speed = new PIDControllerSpeed(0,0,0);
+PIDControllerSpeed* pid_forward = new PIDControllerSpeed(0,0,0);
+PIDControllerLine* pid_line = new PIDControllerLine(0,0,0);
 //PIDControllerSpeed* pid_speed = new PIDControllerSpeed(0,0,0);
 //PIDControllerSpeed* pid_forward = new PIDControllerSpeed(0,0,0);
 //PIDControllerLine* pid_line = new PIDControllerLine(0,0,0);
@@ -52,7 +52,7 @@ void setup() {
 
 //============
 void loop() {
-    test(4);
+    test(6);
     exit(0);
 }
 

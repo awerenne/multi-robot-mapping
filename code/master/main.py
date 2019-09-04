@@ -3,8 +3,8 @@ from queue import Queue
 from master import NaiveMaster
 from gui import GUI
 from utils import Parameters, Container
-from robots import Robots
-from environment import Environment
+# from robots import Robots
+# from environment import Environment
 
 #---------------
 def make_queues():
@@ -34,13 +34,13 @@ if __name__ == '__main__':
 
     params = Parameters(path="../config.yaml")
     q = make_queues()
-    env = Environment().new()
-    robots = Robots(params, q.robots)
+    # env = Environment().new()
+    # robots = Robots(params, q.robots)
     master = NaiveMaster(params, q.master)
-    gui = GUI(params, q.gui, env.ground_truth)
+    gui = GUI(params, q.gui, None)
 
     # Start child threads
-    robots.start()
+    # robots.start()
     master.start()
 
     # Main thread

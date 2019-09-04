@@ -29,7 +29,8 @@ class GUI():
         (self.wm, self.hm) = self.dimensions_map
         (self.wu, self.hu) = self.dimensions_user
 
-        self.scale = 5  # A0 paper size -> map in GUI
+        self.scale = 2  # A0 paper size -> map in GUI
+        # self.scale = 5  # A0 paper size -> map in GUI
         self.discretization = 5
         self.block_size = self.scale * self.discretization  # Must be uneven to have center!!
 
@@ -243,20 +244,23 @@ class GUI():
     def draw_robots(self):
         if self.robots == None or len(self.robots) == 0:
             return self
-        color = self.colors.robot
+        color = self.colors.robot_1
         radius = self.radius_robot
         dim = self.dimensions_map
         for robot in self.robots:
             (xy, orientation) = robot
             (x,y) = xy
-            if orientation == 0: xy = (x,y+5)
-            if orientation == 1: xy = (x+5,y)
-            if orientation == 2: xy = (x,y-5)
-            if orientation == 3: xy = (x-5,y)
+            if x != 0 and (y != 0 or y!= 20):  
+                if orientation == 0: xy = (x,y+5)
+                if orientation == 1: xy = (x+5,y)
+                if orientation == 2: xy = (x,y-5)
+                if orientation == 3: xy = (x-5,y)
             (x,y) = self.rescale(xy)
             xy = (x+1,y+1)
             ij = xy2ij(center2xy(xy, dim), dim)
             (i,j) = ij
+            ij = (int(i), int((j)))
+            # print("BUG: " + str(ij))
             pygame.draw.circle(self.surface_map, color, ij, radius)
             base = [(i,j-3), (i+3,j), (i,j+3), (i-3,j)]
             tops = [(i,j-7), (i+7,j), (i,j+7), (i-7,j)]

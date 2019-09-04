@@ -28,12 +28,12 @@ void test_1() {
 void test_2() {
     flicker_led(led_signal, 10, 200);
     digitalWrite(led_signal, LOW); 
-    coex->automaticCalibration();
-    // coex->calibration();
+    //coex->automaticCalibration();
+    coex->calibration();
     digitalWrite(led_signal, HIGH);
-    delay(15000);
+    delay(7000);
 
-    float target_speed = 7.5;
+    float target_speed = 7;
     coex->newLine(target_speed, true);
     float ret = 0;
     while (true) {
@@ -41,10 +41,12 @@ void test_2() {
         if (ret == -2) {
             coex->stop();
             delay(1000);
+            break;
         }
         if (ret == -1) {
             coex->stop();
             delay(1000);
+            break;
         }
     }
 
@@ -80,12 +82,12 @@ void test_3() {
     delay(3000);
     coex->turnAlign(target_speed, 0, 0);
     delay(3000);
-//    coex->turnAlign(target_speed, 2, 0);
-//    delay(10000);
+    coex->turnAlign(target_speed, 2, 0);
+    delay(10000);
     
     coex->turnAlign(target_speed, 1, 0);
     delay(3000);
     coex->turnAlign(target_speed, 1, 0);
-//    delay(3000);
-//    coex->turnAlign(target_speed, 2, 0);
+    delay(3000);
+    coex->turnAlign(target_speed, 2, 0);
 }

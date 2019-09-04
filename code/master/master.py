@@ -15,6 +15,7 @@ class Master(Thread, metaclass=ABCMeta):
         self.params = params
         self.q = queues
         self.id_robots = self.params.robots.keys()
+        self.n_robots = len(self.id_robots)
         self.build_messenger().build_map()
         self.first_cycle = {}
         for id_ in self.id_robots:
@@ -64,6 +65,7 @@ class Master(Thread, metaclass=ABCMeta):
         while True:   
             directive = self.q.messenger2master.get()  
             if directive.type_directive == "information":
+                print("R: "+ str(directive))
                 self.process_information(directive.id_robot, directive.information)
 
     #------
@@ -88,6 +90,8 @@ class Master(Thread, metaclass=ABCMeta):
             self.stopped[id_robot] = True
         else: 
             self.stopped[id_robot] = False
+        print("M: " + str(directive))
+        print()
         self.q.master2messenger.put(Container(directive))
 
     #------
@@ -127,6 +131,9 @@ class Master(Thread, metaclass=ABCMeta):
 
         """ Robot encounter detection """
         if information.type_intersection == -1:
+            if self.n_robots == 1:
+                self.send_instruction_to_robot(1, self.direction2instruction("stop"))
+                return
             self.send_instruction_to_robot(1, self.direction2instruction("stop"))
             self.send_instruction_to_robot(2, self.direction2instruction("stop"))
             time.sleep(1)
@@ -300,6 +307,8 @@ class NaiveMaster(Master):
 
     #------
     def get_undesired(self, id_robot):
+        if self.n_robots == 1:
+            return None
         if self.flag_recovery:
             return self.meta_recovery['to_mask']
         if self.stopped[id_robot]:

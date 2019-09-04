@@ -88,8 +88,8 @@ float forward_control() {
 //============
 float line_control() {
     float error = sensors->getError();
-    error = floorf((error/1250.)*100)/100; 
-    return pid_line->correction(error);
+    //error = floorf((error/1250.)*100)/100; 
+    return pid_line->correction(error, 0, 6);
 }
 
 

@@ -89,6 +89,9 @@ class Messenger(Thread, metaclass=ABCMeta):
         seq_number = self.robots[id_robot]["seq_number_sending"]
         msg = "<" + str(id_robot) + "/" + str(seq_number) + \
                     "/" + str(instruction) + ">"
+        # TODO: check physical robot
+        # msg = "<" + str(id_robot) + "/" + str(seq_number) + \
+        #             "/" + str(instruction) + ">"
         return msg
                 
     #-------
@@ -121,13 +124,16 @@ class Messenger(Thread, metaclass=ABCMeta):
 
     #-------
     def discretize(self, distance):
-        # temp = int(distance/5.) * 5
-        # temp = distance
-        # if temp <= 22.5: return 20
-        # if temp <= 33: return 25
-        # if temp <= 44: return 40
-        # return 50
-        return distance
+        if distance >= 10 and distance < 30:
+            return 20
+        if distance >= 30 and distance < 50:
+            return 40
+        if distance >= 50 and distance < 70:
+            return 60
+        if distance >= 70 and distance < 90:
+            return 80
+        return 0
+
 
 
 #---------------

@@ -250,7 +250,7 @@ void test_6() {
 
     pid_speed->reset();
     pid_line->reset();
-    pid_line->setZeta(3.1415/2);
+    pid_line->setZeta(1000);
     sensors->encodersReset();
 
     pid_speed->setParameters(12,0,0.022);
@@ -289,7 +289,7 @@ void test_6() {
         }
         if (instruction == 1 && !acc->isRunning() && !wait) { 
             pid_line->reset();
-            acc->start(progress_speed, 6, 1.5);
+            acc->start(progress_speed, 7.5, 0.8);
         }
         if (freq_direction_control->isNewState() && !wait) {
             sensors->qtraRead();

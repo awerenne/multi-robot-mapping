@@ -37,7 +37,8 @@ def set_pid_values():
 # ------------
 def plot_measures():
     # serial_port = '/dev/cu.wchusbserial1d1120';
-    serial_port = '/dev/cu.wchusbserial14120';
+    serial_port = '/dev/cu.wchusbserial1d1130';
+    # serial_port = '/dev/cu.wchusbserial14120';
     seq_number = 0
     ser = serial.Serial(serial_port, BAUD_RATE, timeout=0.1)
     last_lower_interval = seq_number
