@@ -194,7 +194,7 @@ class Map:
                 break
             for (neighbor, weight) in current.neighbors:
                 if current.position == undesired or neighbor.position == undesired:
-                    weight = 1000 # Mask out to avoid crossing
+                    weight = 10000 # Mask out to avoid crossing
                 g = current.cost + weight
                 if not neighbor.visited or g <= neighbor.cost:  
                     neighbor.cost = g
@@ -208,6 +208,7 @@ class Map:
         node = end_
         while (node != None):
             path.append(node.position)
+            if end_ != (0,0) and node.cost >= 5000: return None
             if node == start_: break
             node = node.parent
         path.reverse()

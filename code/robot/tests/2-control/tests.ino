@@ -114,7 +114,7 @@ void test_3() {
             seq_nb++;
         }
         pwm = beta;
-        actuators->updatePWM(pwm, 0);
+        actuators->updatePWM(0, pwm);
         if (freq_acceleration->isNewState()) acc->accelerate(progress_speed);
     }
     actuators->stop();
@@ -138,7 +138,8 @@ void test_4() {
     */
 
     pid_speed->setParameters(12, 0, 0.022);
-    pid_forward->setParameters(15, 0.07, 0.065);
+    //pid_forward->setParameters(15, 0.07, 0.065);
+    pid_forward->setParameters(0, 0, 0);
     pid_speed->reset();
     pid_forward->reset();
     sensors->encodersReset();

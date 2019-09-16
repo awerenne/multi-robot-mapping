@@ -12,7 +12,7 @@ class Robot(Thread):
         self.q = queues
         self.stop = True
         self.distance = 0
-        self.seq_send = 0
+        self.seq_number = 0
         self.environment = environment
 
     # -------
@@ -37,7 +37,9 @@ class Robot(Thread):
 
     # -------
     def execute_instruction(self, msg):
-        _, instruction = self.parse_instruction(msg)
+        _, instruction, seq_number = self.parse_instruction(msg)
+        self.seq_number = seq_number
+        print(seq_number)
         if instruction == 0:
             self.stop = True
         elif instruction == 1:
@@ -57,19 +59,20 @@ class Robot(Thread):
     def parse_instruction(self, msg):
         msg = msg[1:-1]  # remove delimeters
         (id_robot, seq_number, instruction) = msg.split('/') 
-        return int(id_robot), int(instruction)
+        return int(id_robot), int(instruction), int(seq_number)
 
     # -------
     def next_is_for_me(self, instruction):
-        id_robot, _ = self.parse_instruction(self.q.messenger2robots.queue[0])
+        id_robot, _, _ = self.parse_instruction(self.q.messenger2robots.queue[0])
         return id_robot == self.id_
 
     # -------
     def send_information(self, intersection):
-        msg = "<" + str(self.id_) + "/" + str(self.seq_send) + "/" + \
+        self.seq_number += 1
+        msg = "<" + str(self.id_) + "/" + str(self.seq_number) + "/" + \
                 str(intersection) + ";" + str(self.distance) + ">"
         self.q.robots2messenger.put(msg)
-        self.seq_send += 1
+        print(msg)
         return self
 
     # -------

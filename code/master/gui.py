@@ -23,14 +23,14 @@ class GUI():
     #------
     def load_params(self, params):
         self.dimensions_screen = (1025,500)
-        self.dimensions_map = (700,450)
-        self.dimensions_user = (300,400)
+        self.dimensions_map = (400,450)
+        self.dimensions_user = (400,75)
         (self.w, self.h) = self.dimensions_screen
         (self.wm, self.hm) = self.dimensions_map
         (self.wu, self.hu) = self.dimensions_user
 
-        self.scale = 2  # A0 paper size -> map in GUI
-        # self.scale = 5  # A0 paper size -> map in GUI
+        # self.scale = 2  # A0 paper size -> map in GUI
+        self.scale = 5  # A0 paper size -> map in GUI
         self.discretization = 5
         self.block_size = self.scale * self.discretization  # Must be uneven to have center!!
 
@@ -54,21 +54,20 @@ class GUI():
 
         self.screen = pygame.display.set_mode(self.dimensions_screen)
         self.surface_screen = pygame.Surface(self.dimensions_screen)
-        self.surface_map = self.surface_screen.subsurface(pygame.Rect(25, 25,
+        self.surface_map = self.surface_screen.subsurface(pygame.Rect(25, 75,
                             self.wm, self.hm))
-        self.surface_user = self.surface_screen.subsurface(pygame.Rect(725,
-                            50, self.wu, self.hu))
+        self.surface_user = self.surface_screen.subsurface(pygame.Rect(0, 0, self.wu, self.hu))
         self.surface_screen.fill((45,45,45)) 
         self.surface_user.fill((45,45,45)) 
 
         self.icon_run = pygame.image.load('icons/run_small.png').convert_alpha()  
-        self.rect_run = pygame.Rect((50, 50, 50, 50))
+        self.self.rect_run = pygame.Rect((25, 15, 50, 50))
         self.icon_stop = pygame.image.load('icons/stop_small.png').convert_alpha() 
-        self.rect_stop = pygame.Rect((125, 50, 50, 50))
+        self.rect_stop = pygame.Rect((100, 15, 50, 50))
 
         self.rect_increment = pygame.Rect((200, 50, 50, 50))
         
-        self.timer = pygame.Rect((50, 125, 200, 50))
+        self.timer = pygame.Rect((215, 25, 200, 50))
         self.log = pygame.Rect((50, 200, 200, 150))
 
         pygame.display.set_caption(self.title)
@@ -116,7 +115,7 @@ class GUI():
 
     #------
     def is_mouse_on_button(self, position, button):
-        relative_position = (position[0]-725, position[1]-50) 
+        relative_position = (position[0], position[1]) 
         if button.collidepoint(relative_position):
             return True
         return False
@@ -125,7 +124,8 @@ class GUI():
     def rescale(self, xy):
         def f(x):
             offset = int(self.block_size/2)
-            return x*self.scale + offset
+            return int(x*self.scale/2 + offset)
+            # return x*self.scale + offset
         return list(map(f, xy))
 
     #------

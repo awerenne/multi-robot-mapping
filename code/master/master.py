@@ -18,12 +18,15 @@ class Master(Thread, metaclass=ABCMeta):
         self.n_robots = len(self.id_robots)
         self.build_messenger().build_map()
         self.first_cycle = {}
+        self.last_instruction = {}
         for id_ in self.id_robots:
             self.first_cycle[id_] = True
+            self.last_instruction[id_] = 0
         self.stopped = {1:True, 2: True}
         self.flag_recovery = False
         self.meta_recovery = {}
         self._finished = False
+
 
     #------
     @property
@@ -86,6 +89,7 @@ class Master(Thread, metaclass=ABCMeta):
             "id_robot": id_robot,
             "instruction": instruction
         }
+        self.last_instruction[id_robot] = instruction
         if instruction == 0:
             self.stopped[id_robot] = True
         else: 
@@ -124,6 +128,9 @@ class Master(Thread, metaclass=ABCMeta):
 
     #------
     def process_information(self, id_robot, information):
+        if information.distance == -1:
+            self.send_instruction_to_robot(id_robot, self.last_instruction[id_robot])
+
         def onetotwo(id_):
             if id_ == 1: 
                 return 2
@@ -198,6 +205,7 @@ class Master(Thread, metaclass=ABCMeta):
             if id_robot == 1:  # Turn left
                 self.map.turn_robot(id_robot, "left")
                 self.send_instruction_to_robot(1, self.direction2instruction("left"))
+                # time.sleep(0.05)
                 self.map.set_robot_pose(1, (0,40), 3)
                 self.send_summary_to_gui(self.map.summary)
                 self.first_cycle[id_robot] = False
@@ -208,11 +216,16 @@ class Master(Thread, metaclass=ABCMeta):
         else:
             if (id_robot + 1) in self.id_robots and self.first_cycle[id_robot+1]:
                 self.send_instruction_to_robot(id_robot+1, self.direction2instruction("straight"))
+                time.sleep(6.5) # 0.25
             self.map.update(id_robot, information.type_intersection, dist)
-        direction = self.make_decision(id_robot)
-        self.map.turn_robot(id_robot, direction)
-        instruction = self.direction2instruction(direction)
-        self.send_instruction_to_robot(id_robot, instruction)
+        ids = [id_robot] 
+        if self.stopped[onetotwo(id_robot)] and not self.flag_recovery:
+            ids += [onetotwo(id_robot)]
+        for id_ in ids:
+            direction = self.make_decision(id_)
+            self.map.turn_robot(id_, direction)
+            instruction = self.direction2instruction(direction)
+            self.send_instruction_to_robot(id_, instruction)
         self.send_summary_to_gui(self.map.summary)
 
     #------ 
@@ -316,6 +329,17 @@ class NaiveMaster(Master):
         orien = self.map.get_robot_orientation(id_robot)
         next_ = self.map.get_next_neighbor(self.map.get_robot_position(id_robot), orien)
         if next_ is None:
+            (x, y) = self.map.get_robot_position(id_robot)
+            if orien == 0:
+                next_ = (x, y+20)
+            elif orien == 2:
+                next_ = (x, y-20)
+            elif orien == 1:
+                next_ = (x+20, y)
+            elif orien == 3:
+                next_ = (x-20, y)
+            if self.map.is_node(next_):
+                return next_
             return None
         return next_
 
@@ -333,7 +357,8 @@ class NaiveMaster(Master):
             undesired = self.get_undesired(1)
         neighbor = self.map.shortest_path(start_, end_, manhattan_distance, undesired)
         if neighbor is None:
-            return self.left_hand_rule(self.map.explored_directions(id_robot))
+            return "stop"
+            # return self.left_hand_rule(self.map.explored_directions(id_robot))
         neighbor = neighbor[1]
         if neighbor == (0,0):
             self._finished = True

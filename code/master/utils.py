@@ -107,7 +107,7 @@ def manhattan_distance(a, b):
 
 #---------------
 def heuristic(robot, frontier, other_robot, lambda_):
-    return manhattan_distance(robot, frontier) + lambda_*manhattan_distance(frontier, other_robot)
+    return manhattan_distance(robot, frontier) - lambda_*manhattan_distance(frontier, other_robot)
 
 
 #---------------

@@ -12,7 +12,7 @@ const int baud_rate = 9600;
 const unsigned int pin_emitter = 5, n_sensors = 6, n_samples = 4;
 const unsigned int parameters_qta[3] = {pin_emitter, n_sensors, n_samples}; 
 Coex* coex = new Coex(pins_messenger, pins_actuators, pins_qta, pin_sharp,
-            baud_rate, parameters_qta);
+            baud_rate, parameters_qta, 1);
 
 
 //============
@@ -37,10 +37,10 @@ void loop() {
     digitalWrite(led_signal, LOW);  
     delay(1000);
     float ret = 0, x = 8.5;
-    while (!coex->availableMsg()) {
-        continue;
+    while (true) {
+        if(coex->availableMsg() && coex->readMsg() == 0)
+            break;
     }
-    coex->readMsg();
     int instruction = coex->getMsgInstruction();
     if (instruction != 1) exit(0);
     coex->newLine(8.5, true);
@@ -52,9 +52,17 @@ void loop() {
             break;
         }
         if (ret == -2) {
-            coex->sendMsg(String(coex->typeIntersection()) + ";" + String(x));
-            while (!coex->availableMsg()) continue;
-            coex->readMsg();
+            byte type_intersection = coex->typeIntersection();
+            coex->sendMsg(String(type_intersection) + ";" + String(x));
+            //unsigned long init_time = millis();
+            while (true) {
+//                if (millis() > init_time + 3500) {
+//                    coex->sendMsg(String(type_intersection) + ";" + String(-1));
+//                    init_time = millis();
+//                }
+                if(coex->availableMsg() && coex->readMsg() == 0)
+                    break;
+            }
             int instruction = coex->getMsgInstruction();
             switch (instruction) {
                 case 0: coex->stop();

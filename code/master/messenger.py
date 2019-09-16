@@ -67,10 +67,10 @@ class Messenger(Thread, metaclass=ABCMeta):
 
     #-------
     def process_msg_from_robot(self, id_robot, raw_msg):
-        if not self.valid_syntax(raw_msg):
+        if raw_msg is None or not self.valid_syntax(raw_msg):
             return None
         parsed_msg = self.parse_msg(raw_msg)
-        return self.valid_msg(parsed_msg)
+        return self.valid_msg(parsed_msg, id_robot)
 
     #-------
     def parse_msg(self, msg):
@@ -86,29 +86,28 @@ class Messenger(Thread, metaclass=ABCMeta):
 
     #-------
     def make_msg(self, id_robot, instruction):
-        seq_number = self.robots[id_robot]["seq_number_sending"]
-        msg = "<" + str(id_robot) + "/" + str(seq_number) + \
+        self.robots[id_robot]["seq_number"] += 1
+        msg = "<" + str(id_robot) + "/" + str(self.robots[id_robot]["seq_number"]) + \
                     "/" + str(instruction) + ">"
-        # TODO: check physical robot
-        # msg = "<" + str(id_robot) + "/" + str(seq_number) + \
-        #             "/" + str(instruction) + ">"
         return msg
                 
     #-------
-    def valid_msg(self, parsed_msg):
+    def valid_msg(self, parsed_msg, id_):
+        if (not id_ is None) and id_ != parsed_msg.id_robot:
+            return None
         if not self.valid_checksum(parsed_msg):
             return None
-        if not self.valid_order(parsed_msg):
-            return None
+        # if not self.valid_order(parsed_msg):
+        #     return None
         if not self.valid_args(parsed_msg):
             return None
         id_robot = parsed_msg.id_robot
-        self.robots[id_robot]["seq_number_receiving"] = parsed_msg.seq_number
+        self.robots[id_robot]["seq_number"] = parsed_msg.seq_number
         return parsed_msg
 
     #-------
     def valid_args(self, msg):
-        return msg.distance > 0
+        return msg.distance > 0 or msg.distance == -1
 
     #-------
     def valid_syntax(self, msg):
@@ -120,11 +119,13 @@ class Messenger(Thread, metaclass=ABCMeta):
 
     #-------
     def valid_order(self, msg):
-        return msg.seq_number >= self.robots[msg.id_robot]["seq_number_receiving"]
+        return msg.seq_number == self.robots[msg.id_robot]["seq_number"]+1
 
     #-------
     def discretize(self, distance):
-        if distance >= 10 and distance < 30:
+        if int(distance) == -1:
+            return -1
+        if distance >= 5 and distance < 30:
             return 20
         if distance >= 30 and distance < 50:
             return 40
@@ -150,21 +151,24 @@ class MessengerReal(Messenger):
         for robot_id, robot_comm in self.params.robots.items():
             temp = {}
             temp["serial"] = serial.Serial(robot_comm["port"],
-                    robot_comm["baud_rate"])
-            temp["seq_number_sending"] = 0
-            temp["seq_number_receiving"] = 0
+                    robot_comm["baud_rate"], timeout=0.35)
+            temp["seq_number"] = 0
             self.robots[robot_id] = temp
         self.robots = Container(self.robots)
 
     #-------
     def send_msg_to_robot(self, id_robot, msg):
-        self.robots[id_robot]["serial"].write(msg.encode())
-        self.robots[id_robot]["seq_number_sending"] += 1
+        time.sleep(0.65)
+        for i in range(1):
+            self.robots[id_robot]["serial"].write(msg.encode())
 
     #-------
     def check_msg_from_robot(self, id_robot=None):
         serial = self.robots[id_robot]["serial"]    
-        raw_msg = serial.readline().decode("utf-8").rstrip();
+        try:
+            raw_msg = serial.readline().decode("utf-8").rstrip();
+        except: 
+            return self.process_msg_from_robot(id_robot, None)
         return self.process_msg_from_robot(id_robot, raw_msg)
 
 
@@ -182,20 +186,18 @@ class MessengerSimul(Messenger):
         for i in range(self.n_robots):
             id_robot = i+1
             comm = {}
-            comm["seq_number_sending"] = 0
-            comm["seq_number_receiving"] = 0
+            comm["seq_number"] = 0
             self.robots[id_robot] = comm
         self.robots = Container(self.robots)
 
     #-------
     def send_msg_to_robot(self, id_robot, msg):
         self.q.messenger2robots.put(msg)
-        self.robots[id_robot]["seq_number_sending"] += 1
 
     #-------
     def check_msg_from_robot(self, id_robot=None):
         raw_msg = self.q.robots2messenger.get()  
-        return self.process_msg_from_robot(id_robot, raw_msg)
+        return self.process_msg_from_robot(None, raw_msg)
 
 
 

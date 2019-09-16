@@ -36,7 +36,7 @@ if __name__ == '__main__':
     q = make_queues()
     # env = Environment().new()
     # robots = Robots(params, q.robots)
-    master = NaiveMaster(params, q.master)
+    master = NaiveMaster(params, q.master, lambda_=0.2)
     gui = GUI(params, q.gui, None)
 
     # Start child threads

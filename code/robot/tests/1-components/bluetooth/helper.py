@@ -97,8 +97,8 @@ def sinus_receiving():
 # ------------
 if __name__ == "__main__":
     # simple_sending()
-    # simple_reception()
-    sinus_test()
+    simple_reception()
+    # sinus_test()
 
 
 
