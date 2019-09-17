@@ -101,9 +101,9 @@ Liège, Belgium\\[4cm]
 \pagenumbering{roman}
 \renewcommand{\abstractname}{Foreword}
 \begin{abstract}
-This work was performed in the context of the optional course \textit{Personal Project} at the University of Liege. The objective is to design and develop a realistic interdisciplinary project from the conceptual to the operational phase. Moreover, the project must be chosen by the student, approved by the advisor and carried out remotely. 
+This work was performed in the context of the optional course \textit{Personal Project} at the University of Liege. The goal of the course is to design and develop a realistic interdisciplinary project from the conceptual to the operational phase. Moreover, the project must be chosen by the student, approved by the advisor and carried out remotely. 
 
-The choice was made to construct two robots cooperating to explore and map an unknown environment.
+The choice was made to construct two robots cooperating to explore and map an unknown environment rapidly.
 
 To conclude, I would like to express my sincere gratitude to my advisor Prof. Bernard Boigelot at the University of Liège. The door to Prof. Boigelot office was always open whenever I ran into a trouble spot or had a question about my project. He consistently allowed this project to be my own work, but steered me in the right direction whenever he thought I needed it. Thank you.
 \end{abstract}
@@ -114,27 +114,27 @@ To conclude, I would like to express my sincere gratitude to my advisor Prof. Be
 %------------------------------------------------
 \section{Motivation}
 %------------------------------------------------
-Constructing a map of environments using robots can be of great interest for rescue teams, especially for environments situated in war zones or affected by natural disasters. In those cases the rapidity component is of particular importance. In an attempt to improve the speed of the exploration process researchers investigated the use of multiple robots to cooperate during the mapping process \cite{burgard, kurt}.
+Constructing a map of environments using robots can be of great interest for rescue teams, especially for environments situated in war zones or affected by natural disasters. In those cases the rapidity component is of particular importance. In an attempt to increase the speed of the exploration process researchers investigated the use of multiple robots \cite{burgard, kurt}.
 
-In this work we decided to develop a simple algorithm for a dual robotic system whose goal is to map an environment like the one shown in Figure \ref{fig:env}. The algorithm was then validated in a self-constructed simulator. Once the results were satisfying, the robots were constructed and tested on physical environments.
+In this work we decided to develop a simple algorithm for a dual robotic system whose goal is to map an environment like the one shown in Figure \ref{fig:env}. The algorithm was then validated in a self-constructed simulator. Once the results became satisfying, the robots were constructed and tested on physical environments.
 
 \begin{figure}[!h]
 \vspace*{4mm}
 \centering
 \includegraphics[scale=0.025]{figs/fixing}
-\caption{Example of an environment. The robots/slaves start their exploration at the bottom edge. In the physical world, the scale is such that the smallest edge displayed above corresponds to 20 cm.}
+\caption{Example of the structure of an environment. The robots start their exploration at the bottom edge. In the physical world, the scale is such that the smallest edge displayed above corresponds to 20 cm.}
 \label{fig:env}
 \end{figure}
 
 %------------------------------------------------
 \section{Problem Statement \& Hypothesis}
 %------------------------------------------------
-The objective is to construct two robots that cooperate to map an unknown environment as quickly as possible. The environments considered are exclusively composed of straight paths\footnote{Also called \textit{edges} and \textit{roads} in this work.} intersecting each other with right angles, where the paths are modelled by black lines on a white background (see Fig. \ref{fig:env}). The robots are only allowed to move along the black lines. Furthermore, each robot is equipped with sensors enabling it to i) distinguish the black line from the white background ii) detect and classify an intersection iii) detect the other robot if it is in a very close range.
+The environments considered are exclusively composed of straight paths\footnote{Also called \textit{edges} and \textit{roads} interchangeably in this work.} intersecting each other with right angles, where the paths are modelled by black lines on a white background (see Fig. \ref{fig:env}). The robots are only allowed to move along the black lines. Furthermore, each robot is equipped with sensors enabling it to i) distinguish the black line from the white background ii) detect and classify an intersection iii) detect the other robot if it is in a very close range.
 
 %------------------------------------------------
 \section{Proposed Solution}
 %------------------------------------------------
-The proposed solution is implemented in the form of a master-slave architecture, where the master will be running locally in our computer and the slaves correspond to the robots (see Figure \ref{fig:master-slave}). The slaves move through the environment while incrementing a distance counter until an intersection is encountered. In this case, the slave stops and sends an information message to the master, containing the travelled distance and the type of encountered intersection. The master receives this information, and is used to further construct an internal representation of the map. Next, the master computes the direction the slave needs to move towards to. This instruction is then send to the slave. It is worth noticing that the slave stays at rest during the decision process of the master. The code for this work can be found at \href{https://github.com/Werenne/multi-agent-mapping}{this}\footnote{Url: \url{https://github.com/Werenne/multi-agent-mapping}} repository.
+The proposed solution is implemented in the form of a master-slave architecture, where the master will be running locally in a computer and the slaves correspond to the robots (see Figure \ref{fig:master-slave}). The robots move through the environment while incrementing a distance counter until an intersection is encountered. In this case, the robot stops and sends an information message to the master, containing the travelled distance and the type of encountered intersection. The master receives this information, and is used to further construct an internal representation of the map. Next, the master computes the direction the robot needs to move towards to. This instruction is then send to the robot. It is worth noticing that the robot stays at rest during the decision process of the master. The code for this work can be found at \href{https://github.com/Werenne/multi-agent-mapping}{this}\footnote{Url: \url{https://github.com/Werenne/multi-agent-mapping}} repository.
 
 \begin{figure}[!h]
 \centering
@@ -150,11 +150,11 @@ The next chapter describes the implementation of the master and simulator. Chapt
 %------------------------------------------------
 \section{Random environment generation}
 %------------------------------------------------
-The structure of the environments on which our system is tested (in the simulator and physical world) is generated randomly. The algorithm for this task had to be written from scratch as no existent one was found. The procedure consists in three main steps,
+The structure of the environments on which our system is tested (in the simulator and physical world) is generated randomly. The algorithm for this task had to be written from scratch since no existent one could be found. The procedure is composed of three sequential steps,
 \begin{enumerate}
 \item \textit{Initialization}: initialize the set of edges as shown in Figure \ref{fig:gener-a}.
-\item \textit{Destruction}: remove randomly 40\%\footnote{Determined arbitrary by experimenting.} of the interior edges.
-\item \textit{Fixing}: adds an edge randomly on nodes disconnected from the rest of the graph (relative to the \textit{root node}\footnote{The root node refers to the node at the bottom, and is also the starting point of the robots.}). This process is repeated until all remaining nodes can be accessed from the \textit{root node}.
+\item \textit{Destruction}: remove randomly 80\%\footnote{Determined arbitrary by experimenting.} of the interior edges.
+\item \textit{Fixing}: adds an edge randomly on nodes disconnected from the rest of the graph (relative to the \textit{root node}\footnote{The root node refers to the node at the bottom, and corresponds also to the starting point of the robots.}). This process is repeated until all remaining nodes can be accessed from the \textit{root node}.
 \end{enumerate}
 
 \begin{figure}[!h]
@@ -183,17 +183,17 @@ The structure of the environments on which our system is tested (in the simulato
 %------------------------------------------------
 \section{Simulator}
 %------------------------------------------------
-It would be costly in time to design, debug and evaluate the performance of the master algorithm if ran in combination with the physical robots. Thus, a simulator was constructed emulating environment and robots. In particular, the simulated robots are constrained to be only able to follow roads (edges) in the environment. Furthermore, their sensory inputs were limited to a one-step lookahead in the front, left, and right directions. Each robot increments their distance and once they encounter an intersection, an information message is send to the master.
+It would be costly in time to design, debug and evaluate the performance of the master algorithm if ran in combination with the physical robots. Thus, a simulator was constructed emulating environment and robots. In particular, the simulated robots are constrained to follow edges in the environment, with their sensory inputs limited to a one-step lookahead in the front, left, and right directions. Each robot increments its distance and once they encounter an intersection, an information message is send to the master.
 
 %------------------------------------------------
 \section{Communication protocol}
 %------------------------------------------------
-Messages are of the following form: $<$\textit{identifier}, \textit{sequence number}, \textit{message}$>$. The \textit{message} can correspond to \textit{information} if the sender is a robot, or to an \textit{instruction} if it comes from the master. The \textit{identifier} is used so that the master is able to distinguish the robots, but also to prevent communication between the robots. The \textit{sequence number} permits to trigger a recovery mechanism for unreceived messages and to ignore redundant messages. Delimiters ($<$, $>$) are used to verify that the entire message is received.
+Messages are of the following form: $<$\textit{identifier}, \textit{sequence number}, \textit{message}$>$. The \textit{message} part corresponds to \textit{information} (type intersection \& distance) if the sender is a robot, or to an \textit{instruction} if it comes from the master. The \textit{identifier} is used to enable the master to distinguish robots, but also to prevent communication between the robots. Lastly, the \textit{sequence number} permits to trigger a recovery mechanism for unreceived messages and to ignore redundant messages. Delimiters ($<$, $>$) are used to verify that the entire message is received.
 
 %------------------------------------------------
 \section{Graphical User Interface}
 %------------------------------------------------
-Simulations are visualized in a Graphical User Interface (GUI), which was made with the framework \texttt{PyGame}\footnote{More information about the \texttt{Pygame} can be found \href{www.pygame.org}{here}.}. The GUI enables us, on the one hand to visualize the internal map representation of the master, and on the other hand the groundtruth environment and robots (see Figure \ref{fig:gui}). In order to keep the simulations smooth, the master, the simulator and the GUI are executed as separate threads. Let us emphasize that the same GUI is used for the physical robot exploration, but obviously does not display the groundtruth since it is not known. 
+Simulations are visualized in a Graphical User Interface (GUI), which was made with the framework \texttt{PyGame}\footnote{More information about the \texttt{Pygame} can be found \href{www.pygame.org}{here}.}. The GUI enables us, on the one hand to visualize the internal map representation of the master, and on the other hand the groundtruth environment and robots (see Figure \ref{fig:gui}). In order to keep the simulations smooth, the master, simulator and GUI are executed as separate threads. Let us emphasize that the same GUI is used for the physical robot exploration, but obviously does not display the groundtruth since it is not known \textit{a priori}. 
 
 \begin{figure}[!h]
 \centering
@@ -248,7 +248,7 @@ Different values of $\lambda$ are tested, for each $\lambda$ 20 environments wer
 %------------------------------------------------
 
 
-\chapter{Robot (slave)}\label{chapter-construction}
+\chapter{Robot}\label{chapter-construction}
 The first part of this chapter (Section \ref{sec:components} and \ref{sec:phys-constru}) discusses physical aspects of the robot such as its components and how these are assembled. The second part then describes the software and control aspect.
 
 %------------------------------------------------

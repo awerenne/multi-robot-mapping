@@ -2,7 +2,7 @@
 
 The objective of this project was to construct two robots, mapping an unknown environment as quickly as possible. The environments considered are exclusively composed of straight paths intersecting each other with right angles, where the paths are modelled by black lines on a white background. Furthermore, the robots are only allowed to move along those black lines during the exploration.
 
-The developed solution follows a master-slave architecture. Each robot (slave) follows a black line while keeping track of the travelled distance. Once an intersection detected, the robot stops and sends an information message to the master, where the information contains the type of intersection encountered and the travelled distance since the previous intersection. This information is used by the master (a program running locally on the computer) to update the map and compute the next instruction for the robot (stop, straight, turn left or right, uturn). 
+The developed solution follows a master-slave architecture. Each robot (slave) follows a black line while keeping track of the travelled distance. Once an intersection detected, the robot stops and sends an information message to the master, where the information contains the type of intersection encountered and the travelled distance since the previous intersection. This information is then used by the master (a program running locally on the computer) to update its internal representation of the environment (map) and compute the next instruction for the robot (stop, straight, turn left or right, uturn). 
 
 <p align="center">
     <img width="400" src="gifs/gif-exploration.gif">&nbsp;&nbsp;&nbsp;
@@ -12,7 +12,7 @@ The developed solution follows a master-slave architecture. Each robot (slave) f
 The left-part of the animation above shows a live screen recording of the constructed map in the master corresponding to the exploration performed in the right-part. A video of the complete demonstration can be found [here](https://drive.google.com/open?id=1ME8fCJpkcRnWXxbQvov_Zuj6nKWd1-8V). In addition, the report describing the implementation and results can be found [here](report/personal-project.pdf).
 
 ## Simulator
-It would be costly in time to debug the mapping algorithm of the master if executed with physical robots. To solve this issue, a simulator was implemented emulating random environments and robots. 
+It would have been costly in time to debug the mapping algorithm of the master if the exploration was performed by the physical robots. Instead, the master was first tested in a simulator, emulating random environments and robots. 
 
 <p align="center">
     <img width="500" src="gifs/gif-simul.gif">
@@ -27,7 +27,7 @@ To make the robot robust a first challenge was to enable it to follow a curved l
     <img width="500" src="gifs/gif-control.gif">
 </p>
 
-Thereupon, the robot was further designed to loop through a serie of steps during the exploration. This serie is implemented in the file *code/robot/mapping/mapping.ino*, which is based on low-level features implemented in the files located in the folder *code/robot/NewCOEX/*, where COEX stands for cooperative explorer. 
+Thereupon, the robot was further designed to loop through a serie of steps during the exploration. The high-level view of the main algorithm (serie of steps) is implemented in the file *code/robot/mapping/mapping.ino*, which is based on low-level features implemented in the files located in the folder *code/robot/NewCOEX/*, where COEX stands for cooperative explorer. 
 
 <p align="center">
     <img width="500" src="gifs/gif-steps.gif">
@@ -35,11 +35,11 @@ Thereupon, the robot was further designed to loop through a serie of steps durin
 
 ## Usage
 The physical exploration and mapping process can be executed as follows:
-1. Copy the folder *code/robot/NewCoex* in your Arduino folder, and load as explained [here](https://www.arduino.cc/en/guide/libraries)
-2. Upload the program *code/robot/mapping/mapping.ino* to the micro-controller
-3. Verify in the config file that <code>is_simulation = False</code>, and the port names correspond to the names of yours bluetooth modules
-4. Switch the robots on and calibrate the line sensors
-5. Launch the exploration with <code>python main.py</code> in *code/master/*
+1. Copy the folder *code/robot/NewCoex* in your Arduino folder, and load it as a library (explanations on how to load a library: [here](https://www.arduino.cc/en/guide/libraries)).
+2. Upload the program *code/robot/mapping/mapping.ino* to the micro-controller.
+3. Verify in the config file that <code>is_simulation: False</code>, and that the ports correspond to the names of the used bluetooth modules.
+4. Switch the power of the robots on, and calibrate the line sensors.
+5. Launch the exploration with <code>python main.py</code> in *code/master/* .
 
 
 
