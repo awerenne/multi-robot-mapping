@@ -2,10 +2,10 @@
 
 
 //============
-Messenger::Messenger(const byte* pins, int baud_rate) {
+Messenger::Messenger(const byte* pins, int baud_rate, int id_=1) {
     initBluetooth(pins, baud_rate);
     resetCommunication();
-    id_self = 1;
+    id_self = id_;
     id_master = 0;
     start_marker = '<';
     end_marker = '>';
@@ -16,8 +16,7 @@ Messenger::Messenger(const byte* pins, int baud_rate) {
 
 //============
 void Messenger::resetCommunication() {
-    seq_number_self = 0;
-    seq_number_master = 0;
+    seq_number = 0;
     new_data = false;
 }
 
@@ -58,30 +57,40 @@ bool Messenger::receiveMessage() {
 
 
 //============
-void Messenger::sendMessage(const String& information) {
+void Messenger::sendMessage(const String& information, int first=1) {
+    //if (first)
+    seq_number += 1;
     String msg = String(start_marker); 
     msg += String(id_self) + "/";
-    msg += String(seq_number_self) + "/";
+    msg += String(seq_number) + "/";
     msg += String(information) + String(end_marker) + "\n";
-    bluetooth->println(msg);
-    seq_number_self += 1;
+    //delay(1000);
+    for (int i = 0; i < 1; i++) {
+        bluetooth->println(msg);
+        //delay(200);
+    }
 }
 
 
 //============
-void Messenger::parseMessage() {
+int Messenger::parseMessage() {
     strcpy(temp_chars, received_chars);
     char* ptr; 
-
     ptr = strtok(temp_chars, "/");     
-    id_master = atoi(ptr); 
+    int dest = atoi(ptr); 
+    if (dest != id_self) 
+        return -1;
     ptr = strtok(NULL, "/"); 
-    seq_number_master = atoi(ptr); 
+    int new_seq = atoi(ptr); 
+    // if (seq_number > new_seq) 
+    //     return -1;
+    seq_number = new_seq;
     for (int i = 0; i < 5; i++) {
         ptr = strtok(NULL, "/"); 
         data[i] = atof(ptr);   
     }      
     new_data = false;
+    return 0;
 } 
 
 

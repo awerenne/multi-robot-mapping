@@ -26,6 +26,8 @@ class Master(Thread, metaclass=ABCMeta):
         self.flag_recovery = False
         self.meta_recovery = {}
         self._finished = False
+        self.on_purpose = False
+        self.on_purpose_once = False
 
 
     #------
@@ -216,10 +218,10 @@ class Master(Thread, metaclass=ABCMeta):
         else:
             if (id_robot + 1) in self.id_robots and self.first_cycle[id_robot+1]:
                 self.send_instruction_to_robot(id_robot+1, self.direction2instruction("straight"))
-                time.sleep(6.5) # 0.25
+                time.sleep(6) # 0.25
             self.map.update(id_robot, information.type_intersection, dist)
         ids = [id_robot] 
-        if self.stopped[onetotwo(id_robot)] and not self.flag_recovery:
+        if self.stopped[onetotwo(id_robot)] and not self.flag_recovery and not self.on_purpose:
             ids += [onetotwo(id_robot)]
         for id_ in ids:
             direction = self.make_decision(id_)
@@ -257,6 +259,13 @@ class NaiveMaster(Master):
             self.remove_target(id_robot)
             directions = self.map.unexplored_directions(id_robot)
             return self.left_hand_rule(directions)
+        # if self.on_purpose_once == False and self.map.get_robot_position(id_robot) == (20, 160):
+        #     self.on_purpose = True
+        #     self.on_purpose_once = True
+        #     return "stop"
+        # if self.on_purpose_once and self.map.get_robot_position(id_robot) == (20, 160):
+        #     self.on_purpose_once = False
+        #     return "left"
         if self.target_reached(id_robot):
             self.remove_target(id_robot)
         if not self.target_assigned(id_robot):
@@ -295,6 +304,11 @@ class NaiveMaster(Master):
 
     #------
     def assign_target_to_robot(self, id_robot):
+        def onetotwo(id_):
+            if id_ == 1: 
+                return 2
+            return 1
+
         start_ = self.map.get_robot_position(id_robot)
         if len(self.id_robots) <= 1:
             other_robot = start_
@@ -308,6 +322,8 @@ class NaiveMaster(Master):
             return
         if len(self.map.frontiers) == 0:
             self.targets[id_robot] = (0,0)
+            self.targets[onetotwo(id_robot)] = (0,0)
+            self.on_purpose = False
             return
         self.targets[id_robot] = self.nearest(start_, remaining_targets, other_robot)
 

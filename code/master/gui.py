@@ -22,7 +22,7 @@ class GUI():
 
     #------
     def load_params(self, params):
-        self.dimensions_screen = (1025,500)
+        self.dimensions_screen = (450,600)
         self.dimensions_map = (400,450)
         self.dimensions_user = (400,75)
         (self.w, self.h) = self.dimensions_screen
@@ -61,7 +61,7 @@ class GUI():
         self.surface_user.fill((45,45,45)) 
 
         self.icon_run = pygame.image.load('icons/run_small.png').convert_alpha()  
-        self.self.rect_run = pygame.Rect((25, 15, 50, 50))
+        self.rect_run = pygame.Rect((25, 15, 50, 50))
         self.icon_stop = pygame.image.load('icons/stop_small.png').convert_alpha() 
         self.rect_stop = pygame.Rect((100, 15, 50, 50))
 
@@ -235,8 +235,8 @@ class GUI():
         for xy in self.frontiers:
             xy = self.rescale(xy)
             (i, j) = xy2ij(center2xy(xy, dim), dim)
-            rect = pygame.Rect(i-self.block_size/2, j-self.block_size/2,
-                    self.block_size+1, self.block_size+1)
+            rect = pygame.Rect(i-self.block_size/4, j-self.block_size/4,
+                    self.block_size/2+1, self.block_size/2+1)
             pygame.draw.rect(self.surface_map, color, rect)
         return self
 

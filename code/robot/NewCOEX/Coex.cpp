@@ -4,17 +4,22 @@
 //============
 Coex::Coex(const byte* pins_messenger, const byte* pins_actuators,
             const byte* pins_qta, const byte pin_sharp, const int baud_rate,
-            const unsigned int* parameters_qta) {
-    messenger = new Messenger(pins_messenger, baud_rate);
+            const unsigned int* parameters_qta, int id_=1) {
+    messenger = new Messenger(pins_messenger, baud_rate, id_);
     actuators = new Actuators(pins_actuators);
     sensors = new Sensors(pins_qta, parameters_qta, pin_sharp);
     anom = new Anomalies();
+
+    my_id = id_;
     
     pid_speed = new PIDControllerSpeed(12, 0, 0.022);
     pid_forward = new PIDControllerSpeed(15, 0.07, 0.065);
     // pid_line = new PIDControllerLine(50, 0.025, 0.15);
     // pid_line = new PIDControllerLine(200, 1.5, 0);
-    pid_line = new PIDControllerLine(225, 1.7, 0);
+    pid_line = new PIDControllerLine(230, 1.7, 0);
+    if (id_ == 2) 
+        pid_line = new PIDControllerLine(185, 1.25, 0);
+        // pid_line = new PIDControllerLine(200, 1.4, 0);
     // pid_responsive = new PIDControllerSpeed(2, 2, 0);
     pid_responsive = new PIDControllerLine(2, 2, 0);
     pid_speed->setMin(0);
@@ -29,7 +34,7 @@ Coex::Coex(const byte* pins_messenger, const byte* pins_actuators,
     // acc_normal = new Accelerator(0.1);
     acc_rotation = new Accelerator(0.1);
    
-    f_msg = new FrequencyState(20);
+    f_msg = new FrequencyState(15); // 25
     f_obstacle = new FrequencyState(10);
     f_speed_ctrl = new FrequencyState(20);
     f_dir_fwd_ctrl = new FrequencyState(20);
@@ -39,7 +44,7 @@ Coex::Coex(const byte* pins_messenger, const byte* pins_actuators,
     f_acc = new FrequencyState(20);
 
     // delay_ = 4;
-    delay_ = 4;
+    delay_ = 5;
     alpha = 0;
     beta = 0;
 }
@@ -61,8 +66,8 @@ bool Coex::availableMsg() {
 
 
 //============
-void Coex::readMsg() {
-    messenger->parseMessage();
+int Coex::readMsg() {
+    return messenger->parseMessage();
 }
 
 
@@ -105,7 +110,7 @@ void Coex::newForward(const float& target_speed) {
 //============
 void Coex::setTargetSpeed(const float& target_speed) {
     this->target_speed = target_speed;
-    acc_normal->start(progress_speed, target_speed, 0.8);
+    acc_normal->start(progress_speed, target_speed, 1);
 }
 
 
@@ -354,6 +359,7 @@ byte Coex::typeIntersection() {
 
 //============
 void Coex::forwardAlign(float x) {
+    float dist_max = (my_id == 1) ? 5.5 : 4.9;
     while(true) {
         float dist = 0;
         if (f_dir_fwd_ctrl->isNewState()) {
@@ -365,7 +371,7 @@ void Coex::forwardAlign(float x) {
         actuators->updatePWM(beta + alpha, beta - alpha); //
 
         x += dist;
-        if (x > 5.5) {
+        if (x > dist_max) {
             stop();
             return;
         }
@@ -399,7 +405,7 @@ void Coex::turnAlign(const float& speed, byte instruction, byte type_intersectio
     float pwm_left = 0, pwm_right = 0;
     // pid_responsive->setParameters(2,2,0);
     pid_responsive->setParameters(64,128,0);
-    float xinit = 2.25, e = 0.7, L = 10, v_min = 1.2, a = 0, x; 
+    float xinit = 2.25, e = 0.5, L = 10, v_min = 1, a = 0, x; 
     // e : 0.05
     bool clockwise = true, signal_ = false, second_pass = false;
 
@@ -410,14 +416,14 @@ void Coex::turnAlign(const float& speed, byte instruction, byte type_intersectio
             break;
         case 1:
             clockwise = true;
-            e *= 1;
-            v_min *= 1;
+            e *= 0.8;
+            v_min *= 0.9;
             second_pass = false;
             break;
         case 2:
             clockwise = false;
-            e *= 1.15;
-            v_min *= 1.15;
+            e *= 1.1; // 1.15
+            v_min *= 1.1;  // 1.15
             if (type_intersection == 0 || type_intersection == 1
                 || type_intersection == 3) second_pass = true;
             else second_pass = false;

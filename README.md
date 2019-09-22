@@ -5,11 +5,11 @@ The objective of this project was to construct two robots, mapping an unknown en
 The developed solution follows a master-slave architecture. Each robot (slave) follows a black line while keeping track of the travelled distance. Once an intersection detected, the robot stops and sends an information message to the master, where the information contains the type of intersection encountered and the travelled distance since the previous intersection. This information is then used by the master (a program running locally on the computer) to update its internal representation of the environment (map) and compute the next instruction for the robot (stop, straight, turn left or right, uturn). 
 
 <p align="center">
-    <img width="400" src="gifs/gif-exploration.gif">&nbsp;&nbsp;&nbsp;
-    <img width="400" src="gifs/gif-exploration.gif">
+    <img width="400" src="gifs/gif-left.gif">&nbsp;&nbsp;&nbsp;
+    <img width="400" src="gifs/gif-right.gif">
 </p>
 
-The left-part of the animation above shows a live screen recording of the constructed map in the master corresponding to the exploration performed in the right-part. A video of the complete demonstration can be found [here](https://drive.google.com/open?id=1ME8fCJpkcRnWXxbQvov_Zuj6nKWd1-8V). In addition, the report describing the implementation and results can be found [here](report/personal-project.pdf).
+The left-part of the animation above shows a live screen recording of the constructed map in the master corresponding to the exploration performed in the right-part. A video of the complete demonstration can be found [here](https://www.youtube.com/watch?v=w8zaz-Xr6bw&t=6s). In addition, the report describing the implementation and results can be found [here](https://awerenne.github.io/files/pp-report.pdf).
 
 ## Simulator
 It would have been costly in time to debug the mapping algorithm of the master if the exploration was performed by the physical robots. Instead, the master was first tested in a simulator, emulating random environments and robots. 

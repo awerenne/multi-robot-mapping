@@ -17,11 +17,11 @@ class Coex {
     public: 
         Coex(const byte* pins_messenger, const byte* pins_actuators,
             const byte* pins_qta, const byte pin_sharp, const int baud_rate,
-            const unsigned int* parameters_qta);
+            const unsigned int* parameters_qta, int id_=1);
         void stop();
         bool availableMsg();
-        void readMsg();
-        void sendMsg(String msg) { messenger->sendMessage(msg); }
+        int readMsg();
+        void sendMsg(String msg, int first=1) { messenger->sendMessage(msg, first); }
         int getMsgInstruction();
         void setTargetSpeed(const float& target_speed);
         void calibration() {sensors->manualCalibration();}
@@ -56,7 +56,7 @@ class Coex {
         FrequencyState *f_obstacle, *f_speed_ctrl, *f_dir_fwd_ctrl,
                 *f_dir_line_ctrl, *f_acc, *f_msg, *f_rotation;
         Accelerator *acc_normal, *acc_rotation;
-        int delay_;
+        int delay_, my_id;
         bool with_intersection;
         float progress_speed, target_speed, alpha, beta;
 

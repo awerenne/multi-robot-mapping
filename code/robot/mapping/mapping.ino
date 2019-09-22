@@ -12,7 +12,7 @@ const int baud_rate = 9600;
 const unsigned int pin_emitter = 5, n_sensors = 6, n_samples = 4;
 const unsigned int parameters_qta[3] = {pin_emitter, n_sensors, n_samples}; 
 Coex* coex = new Coex(pins_messenger, pins_actuators, pins_qta, pin_sharp,
-            baud_rate, parameters_qta, 1);
+            baud_rate, parameters_qta, 2);
 
 
 //============
@@ -42,6 +42,7 @@ void loop() {
             break;
     }
     int instruction = coex->getMsgInstruction();
+    bool stopped = true;
     if (instruction != 1) exit(0);
     coex->newLine(8.5, true);
     while (true) {
@@ -54,24 +55,34 @@ void loop() {
         if (ret == -2) {
             byte type_intersection = coex->typeIntersection();
             coex->sendMsg(String(type_intersection) + ";" + String(x));
+            int instruction;
             //unsigned long init_time = millis();
             while (true) {
 //                if (millis() > init_time + 3500) {
 //                    coex->sendMsg(String(type_intersection) + ";" + String(-1));
 //                    init_time = millis();
 //                }
-                if(coex->availableMsg() && coex->readMsg() == 0)
-                    break;
+                if(coex->availableMsg() && coex->readMsg() == 0) {
+                    instruction = coex->getMsgInstruction();
+                    if (instruction != 0)
+                        break;
+                    else
+                        coex->stop();
+                }
             }
-            int instruction = coex->getMsgInstruction();
+            
             switch (instruction) {
                 case 0: coex->stop();
-                        exit(0);
+                        // exit(0);
+                        break;
                 case 2: coex->turnAlign(6.5, 0, coex->typeIntersection());
+                        stopped = false;
                         break;
                 case 3: coex->turnAlign(7.5, 1, coex->typeIntersection());
+                        stopped = false;
                         break;
                 case 4: coex->turnAlign(6, 2, coex->typeIntersection());
+                        stopped = false;
                         break;
             }
             coex->newLine(8.5,true);

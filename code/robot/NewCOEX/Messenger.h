@@ -7,16 +7,16 @@
 
 class Messenger {
     public:
-        Messenger(const byte* pins, int baud_rate);
-        void sendMessage(const String& information);
+        Messenger(const byte* pins, int baud_rate, int id_=1);
+        void sendMessage(const String& information, int first=1);
         bool receiveMessage();
-        void parseMessage();
+        int parseMessage();
         float* getMessage();
     
     private:
         SoftwareSerial* bluetooth;
-        int id_self, seq_number_self, parse_option;
-        int id_master, seq_number_master;
+        int id_self, seq_number, parse_option;
+        int id_master;
         char start_marker, end_marker;
         const byte num_chars = 64;
         char* received_chars;

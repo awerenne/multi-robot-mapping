@@ -1,4 +1,4 @@
-is_simulation: True
+is_simulation: False
 simulation:
     n_robots: 2
     robots: 
@@ -12,7 +12,7 @@ simulation:
         FREE: 1
         OCCUPIED: 2       
 real:
-    n_robots: 1
+    n_robots: 2
     robots:     
         1: 
             pose: [0, 20, 0]
