@@ -36,10 +36,11 @@ Thereupon, the robot was further designed to loop through a serie of steps durin
 ## Usage
 The physical exploration and mapping process can be executed as follows:
 1. Copy the folder *code/robot/NewCoex* in your Arduino folder, and load it as a library (explanations on how to load a library: [here](https://www.arduino.cc/en/guide/libraries)).
-2. Upload the program *code/robot/mapping/mapping.ino* to the micro-controller.
-3. Verify in the config file that <code>is_simulation: False</code>, and that the ports correspond to the names of the used bluetooth modules.
-4. Switch the power of the robots on, and calibrate the line sensors.
-5. Launch the exploration with <code>python main.py</code> in *code/master/* .
+2. Install the library corresponding to the QTR-X sensors, as explained [here](https://www.pololu.com/docs/0J19/2).
+3. Upload the program *code/robot/mapping/mapping.ino* to the micro-controller.
+4. Verify in the config file that <code>is_simulation: False</code>, and that the ports correspond to the names of the used bluetooth modules.
+5. Switch the power of the robots on, and calibrate the line sensors.
+6. Launch the exploration with <code>python main.py</code> in *code/master/* .
 
 
 

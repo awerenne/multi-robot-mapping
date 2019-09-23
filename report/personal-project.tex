@@ -206,32 +206,32 @@ Simulations are visualized in a Graphical User Interface (GUI), which was made w
 \section{Architecture \& Decision Algorithm}
 %------------------------------------------------
 \subsection*{Architecture}
-The architecture of the master is composed of three main classes: \texttt{map}, \texttt{messenger} and \texttt{master}. When a message is send by a robot, it is received, parsed and verified by the \texttt{messenger}. The information is then passed to the \texttt{map} which updates the internal representation of the environment and the corresponding robot pose. Then, the \texttt{master} computes and sends the optimal direction that must be taken by the robot.
+The architecture of the master is composed of three main classes: \texttt{map}, \texttt{messenger} and \texttt{master}. When a message is send by a robot, it is first received, parsed and checked by the \texttt{messenger}. The information is then passed to the \texttt{map}, which updates the internal representation of the environment and the corresponding robot pose (position and orientation). Finally, the \texttt{master} computes and sends the optimal direction that must be taken by the robot.
 
 \subsection*{Decision Algorithm}
-When a robot arrives at an intersection and sends the information, it waits for a new instruction. This instruction is determined by the decision algorithm described in the next paragraph. Beforehand, the concept of \textit{frontier}, although commonly used, must be specified: a frontier is referred to as a known but unexplored edge, i.e. the robot has sensed that there is a path but did not explore it.
+A robot arriving at an intersection sends an information, and waits for a response containing the new instruction. This instruction is determined by the decision algorithm of the master and is described in the next paragraph. Beforehand, the concept of \textit{frontier}, although commonly used, must be defined: a frontier is referred to as an intersection with at least one unexplored edge.
 
-The decision algorithm distinguishes three cases when a robot arrives at an intersection. In the first case, the intersection is a frontier, and thus the new direction is simply chosen by using the left-hand-rule on the unexplored edges. In the second case, the intersection is not a frontier and their are are no other frontiers in the current map. It is then concluded that the exploration is completed and the robots are send back to their start position (root note). For the last case the intersection is not a frontier, however, at least one frontier is still remaining elsewhere in the current map. The robot is then assigned to a frontier. The chose frontier is the one with the minimum Manhattan distance to the current position of the robot. Once the frontier assigned, the master computes the path to take for the robot via the $\text{A}^*$ algorithm\footnote{The Dijkstra algorithm improved with the heuristic that a path to a goal is always greater or equal to the Manhattan distance to that goal. This permits to avoid unnecessary computations. This heuristic is valid since all the angles are right.}. The robot then moves towards the assigned frontier following the determined path. However, the path is recomputed at each intersection since the explored environment expands, and thus new optimal paths could potentially be found.
+The decision algorithm distinguishes three cases when a robot arrives at an intersection. In the first case, the intersection is a frontier, and the new direction is simply chosen by applying the left-hand-rule on the unexplored edges. In the second case, the intersection is not a frontier and there are are no remaining frontiers in the current map. The master concludes that the exploration is completed and the robots are send back to their initial position (root note). In the last case the intersection is not a frontier, however, at least one frontier is still remaining elsewhere in the current map. The robot is then assigned to a frontier, which is the one with the minimum Manhattan distance to the current position of the robot. Once the frontier assigned, the master computes the path to take for the robot via the $\text{A}^*$ algorithm\footnote{The Dijkstra algorithm improved with the heuristic that a path to a goal is always greater or equal to the Manhattan distance to that goal. This permits to avoid unnecessary computations. This heuristic is valid since all the angles are right.}. The robot moves towards the assigned frontier following the determined path. However, the path is recomputed at each intersection since the explored environment expands, and thus new optimal paths could potentially appear.
  
-Simulations showed that using two robots with the aforementioned algorithm increased the rapidity by 61\% compared to only using one robot. Although the results seemed sufficient, four problems appeared during the simulations. These problems are described below with a proposed solution. 
+Simulations showed that using two robots with the aforementioned algorithm increased the rapidity by 61\% compared to only using one robot. Although these results may seem sufficient, four problems were observed during the simulations. These problems are described below along with a proposed solution. 
 
 \subsection*{Avoiding robot encounters}
-Since rapidity is the main objective, caution must be taken to avoid robot encounters as much as possible, since the recovery process (described in the next sub-section) would lead to a loss of time. The method applied to avoid encounters is by masking the neighbouring edges in the map around the other robot when computing a path. More specifically, the edges are masked by assigning them an infinite weight in the $\text{A}^*$ algorithm. Two cases are distinguished: if the other robot is on an intersection, the neighbourhood is defined as the set of edges directly connected to that intersection. On the other hand, if the other robot is moving on an edge, the neighbourhood corresponds to the neighbourhood of the next intersection the other robot will encounter. 
+Since rapidity is the main objective, caution must be taken to avoid robot encounters as much as possible. Indeed, the recovery process (described below) would lead to a loss of time. The method applied to avoid encounters is a masking of the neighbouring edges (infinite weights in $\text{A}^*$) in the map around the other robot during the decision algorithm. Two cases are further distinguished. First, if the other robot is on an intersection, the neighbourhood is defined as the set of edges directly connected to that intersection. Secondly, if the other robot is moving on an edge, the neighbourhood corresponds to the neighbourhood of the next intersection the other robot will encounter. 
 
 \subsection*{Handling robot encounters}
-Masking the neighbourhood will not guarantee to completely avoid robot encounters. For example, two robots moving from opposite sides on an unexplored edge can not be planned/predicted. When such an encounter occurs, one of the two robots is send away, and when out of reach, the second robot updates its path and moves forward.
+Masking the neighbourhood will not guarantee to entirely avoid robot encounters. For example, two robots moving from opposite sides on an unexplored edge cannot be predicted. If such an encounter occurs, one of the two robots is send out of reach, such that the second robot ucan compute a new path and move forward.
 
 \subsection*{Updating assigned frontiers}
-During the time a robot moves towards its assigned frontier, the other robot could potentially explore it, coming from the other side of the frontier. This issue is solved by verifying for each newly explored frontier if it was assigned.
+During the time a robot moves towards its assigned frontier, the other robot could potentially have already explore it, coming from another side of the frontier. This issue is solved by checking for each newly explored frontier if it has been assigned.
 
 \subsection*{Cooperative strategy}
-An attempt is made to induce a cooperative behaviour. Indeed, we suggest that the exploration may be more efficient if the robots are enforced to a certain degree to explore separate distant regions. To do this, the cost function to chose the frontier is adapted as follows:
+An attempt is made to induce a cooperative behaviour. We suggest that the exploration may be more efficient if the robots are forced, to a certain degree, to explore separate distant regions. To do this, the cost function deciding which frontier to assign is adapted as follows:
 \begin{equation}
 \text{cost}(\text{frontier}) = D(\text{current}, \text{frontier}) - \lambda D(\text{frontier}, \text{other robot})
 \end{equation}
-where the function $D$ represents the manhattan distance between two points, and $\lambda$ is the importance parameter controlling the trade-off between the two terms. The first term suggests to choose the most nearby frontier, whereas the second term induces the robot to chose the frontier which will be the most distant form the other robot.
+where the function $D$ represents the manhattan distance between two points, and $\lambda$ is the importance parameter controlling the trade-off between the two terms. Thus, the first term implies to choose the most nearby frontier, whereas the second term induces the robot to chose the frontier which will be the most distant form the other robot.
 
-Different values of $\lambda$ are tested, for each $\lambda$ 20 environments were generated and explored. Figure \ref{fig:coop} shows the mean elapsed time\footnote{The elapsed time rescaled by the covered length of the corresponding environment.} of the explorations. The optimal trade-off seems to be for $\lambda = 0.875$.
+Different values of $\lambda$ are tested, Figure \ref{fig:coop} shows the mean (mean on 20 explorations) elapsed time\footnote{The elapsed time rescaled by the covered length of the corresponding environment.} of the explorations. The optimal trade-off seems to be for $\lambda = 0.875$.
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.55]{figs/coop}
@@ -249,12 +249,12 @@ Different values of $\lambda$ are tested, for each $\lambda$ 20 environments wer
 
 
 \chapter{Robot}\label{chapter-construction}
-The first part of this chapter (Section \ref{sec:components} and \ref{sec:phys-constru}) discusses physical aspects of the robot such as its components and how these are assembled. The second part then describes the software and control aspect.
+The first part of this chapter (Section \ref{sec:components} and \ref{sec:phys-constru}) discusses the physical aspects of the robot , id est its components and how these are assembled. The second part then describes the software and control aspect.
 
 %------------------------------------------------
 \section{Components \& Functions}\label{sec:components}
 %------------------------------------------------
-We identified seven different requirements the robots needs to fulfil, they must be able to 
+We identified seven different requirements the robots needs to fulfil. They must be able to 
 \begin{itemize}
 \item perform basic computations.
 \item move and rotate.
@@ -266,14 +266,14 @@ We identified seven different requirements the robots needs to fulfil, they must
 \end{itemize}
 
 \subsection*{Computational unit}
-The \texttt{Arduino Nano} is used as the micro-controller. The main advantages are its simplicity of use and its relatively small dimensions. On the other hand, the \texttt{Arduino Nano} only contains 14 digital pins and 8 analog pins. Moreover, some capabilities (e.g. interrupt, PWM) are only available on specific pins. As a consequence of these constraints, the connectivity was a puzzle-work and the final result is shown in Figure \ref{fig:electric-diagram}.
+The \texttt{Arduino Nano} is used as the micro-controller. The main advantages being its simplicity of use and relatively small dimensions. On the other hand, the \texttt{Arduino Nano} only contains 14 digital pins and 8 analog pins, where some capabilities (e.g. interrupt, PWM) are only available on a subset of these pins. As a consequence, the connectivity was a puzzle-work and the final result is shown in Figure \ref{fig:electric-diagram}.
 
 \subsection*{Line localization}
-Straightforwardly, in order to perform efficient line-following it is important to be able to localize the line with respect to the center of the robot. This problem is solved by using an infra-red (IR) reflectance sensor, which is composed of an infra-red transmitter and a photo-diode receptor. The idea is that the reflectivity of infra-red light varies with color and distance of the reflecting surface.  The transmitter emits an infra-red beam onto a surface. The surface reflects the beam which is received back at the diode. For a light-coloured surface (e.g., white background), the intensity of the reflected signal will be high, resulting in a flow of current in the diode. On the contrary, if it is dark-coloured (e.g., black line), then the intensity of the reflected signal will be low, so that the diode blocks the current. By placing an array of those sensors side-by-side, the robot becomes able to detect where the black line is positioned on the white background. 
+Straightforwardly, in order to perform efficient line-following it is important to be able to localize the line with respect to the center of the robot. This is done using an infra-red (IR) reflectance sensor, composed of an infra-red transmitter and a photo-diode receptor. The idea being that the reflectivity of infra-red light varies with the color and distance of the reflecting surface. In particular, the transmitter emits an infra-red beam onto a surface, which reflects the beam back at the diode. For a light-coloured surface (e.g., white background), the intensity of the reflected signal will be high, resulting in a flow of current in the diode. On the contrary, if it is dark-coloured (e.g., black line), then the intensity of the reflected signal will be low, resulting in a blocking diode. Placing an array of those sensors side-by-side, enables the robot to localize the black line. 
 
-Instead of constructing such an array from separate sensors, we use the \texttt{QTRX-MD-06A Reflectance Sensor Array}, consisting of six IR sensors (see Figure \ref{photo-bottom} in Appendix \ref{chap-construction}). In addition, it has a high-level interface permitting the robot to obtain a continuous value for the position of the line (0 if line at left extremity, 5000 if line at right extremity). A continuous value is a significant advantage since it improves the smoothness of the control system (see Section \ref{sec:line-control}). 
+Instead of constructing such an array from separate sensors, we use the \texttt{QTRX-MD-06A Reflectance Sensor Array}, consisting of six IR sensors (see Figure \ref{photo-bottom} in Appendix \ref{chap-construction}). In addition, it comes with high-level interface permitting the robot to directly obtain a continuous value for the position of the line (0 if line at left extremity, 5000 if line at right extremity), which is a significant advantage since it improves the smoothness of the control system (see Section \ref{sec:line-control}). 
 
-In practice, from this continuous value we will compute the \textit{error line}. The error line is defined as the deviation from the center, such that the center of the robot corresponds to an error of zero. Figure \ref{fig:exp-qtr-flow} shows then error for a moving black line. As can be seen, the measures do not contain significant noise, due to pre-processing steps of the \texttt{QTRX} sensor. However, it was found experimentally that shadow differences in luminous environments could affect the performance. To solve this issue a shield in carton was constructed and placed around the sensor (see Figure \ref{photo-bottom}).
+From this value we will the \textit{error line} is computed, defined as the deviation from the center of the robot. Figure \ref{fig:exp-qtr-flow} shows the error for a manually moving black line. As can be seen, the measures do not contain significant noise, due to under-the-hood pre-processing steps of the \texttt{QTRX} sensor. Despite this, it was found experimentally that shadow differences in luminous environments could affect the performance. To solve this issue, a shield in carton was constructed and placed around the sensor (see Figure \ref{photo-bottom}).
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.55]{figs/qtr-flow}
@@ -282,21 +282,21 @@ In practice, from this continuous value we will compute the \textit{error line}.
 \end{figure}
 
 \subsection*{Obstacle detection}
-Since multiple robots are moving in the environment, collisions could occur. To avoid this, a \texttt{Sharp} sensor is placed in front of the robot to detect their peers. A Sharp sensor is also an infra-red sensor but with an additional feature, it can measure the distance to an object and return a corresponding analog value. The desired behaviour is to trigger a signal quickly for an object in a range close to collision. In order to do this, we chose the \texttt{Sharp GP2Y0D805Z0F}, which detects objects between 0.5 cm and 5 cm away, and has a quick response time.
+Since multiple robots are moving in the environment, collisions could occur. To avoid this, a \texttt{Sharp} sensor is placed in front of the robot to detect its peers. A Sharp sensor is also an infra-red sensor but with an additional feature, it measures the distance to an object and returns a corresponding analog value. In our use-case, the desired behaviour is to trigger a signal quickly for an object in a range close to collision. In order to do this, the \texttt{Sharp GP2Y0D805Z0F} was chosen, detecting objects in a range 0.5-5 cm interval, and has a very responsive detection time.
 
-It is commonly recommended to add a bypass capacitor because the sensor draws current in large and short bursts. A bypass capacitor is a low-pass filter placed across the power and ground close to the sensor, to diminish the possible interferences resulting from these bursts.
+It is recommended to add a bypass capacitor because the sensor draws current in large and short bursts. A bypass capacitor is a low-pass filter placed across the power and ground close to the sensor, to diminish the possible interferences resulting from these bursts.
 
 \subsection*{Moving}
-The robot is designed as a differentially steered two-wheel. It is differential in the sense that both wheels can have different rates of rotations but unlike a differential gearing system as in automobiles, a differentially steered system will have both wheels powered. In other words, to go to the left (resp. right) the speed of the right (resp. left) motor is increased. Additionally, a free rotating wheel is placed at the front of the robot to keep the body in balance and be able to rotate in both directions. Notice that the robot will rotate around the center between the two wheels. The wheels are powered by brushed DC gearmotors with a 150:1 ratio (see Figure \ref{photo-bottom} in Appendix \ref{chap-construction}), controlled by sending a special form a digital signal, namely a pulse width modulation (PWM). The higher the absolute value of the PWM, the faster the revolutions of the motor (a negative PWM corresponding to rotations in the opposite direction). In addition, a dual H-bridge \texttt{L298n} is used in order to decouple the power supply to the motors and the arduino. 
+The robot is designed as a differentially steered two-wheel. Differential in the sense that both wheels can have different rates of rotations but unlike a differential gearing system as in automobiles, a differentially steered system will have both wheels powered. In other words, to go to the left (resp. right) the speed of the right (resp. left) motor is increased. Additionally, a free rotating wheel is placed at the front of the robot to keep the body in balance. The wheels are powered by brushed DC gearmotors with a 150:1 ratio (see Figure \ref{photo-bottom} in Appendix \ref{chap-construction}), controlled by sending a special form a digital signal, namely a pulse width modulation (PWM). The higher the absolute value of the PWM, the faster the revolutions of the motor are (a negative PWM corresponding to rotations in the opposite direction). Lastly, a dual H-bridge \texttt{L298n} is used in order to decouple the power supply to the motors and the arduino. 
 
 \subsection*{Distance Measurement}
-The robot computes the travelled distance by multiplying speed and time, at short regular intervals. For this purpose, two quadrature encoders are soldered to the motors in order to measure the speed. The idea is that the rotating DC motors induce a hall effect in the encoders at each rotation. The used encoders trigger six counts per revolution. The number of revolutions of left and right motor, are denoted respectively $n_L$ and $n_R$. Thus, the angular velocity of the left wheel\footnote{The angular velocity of the right wheel is computed in an analogous manner.} can be computed,
+The robot computes the travelled distance in incremental steps by multiplying speed and time, at short regular intervals. For this purpose, two quadrature encoders are soldered to the motors in order to measure the speed. The idea is that the rotating DC motors induce a hall effect in the encoders at each rotation. The used encoders trigger six counts per revolution. The number of revolutions of the left and right motor, are denoted respectively $n_L$ and $n_R$. The angular velocity of the left wheel can be computed as
 \begin{equation}
 w_L = 2\pi f_L
 \qquad\text{with}\qquad	
 f_L = \frac{n_L}{6\, G_b \, \Delta{t} }
 \end{equation}
-with $G_b$ the gearbox ratio, $f_L$ the rotation frequency and $\Delta{t}$ the elapsed time. The robot being modelled as differentially steered two-wheel, we obtain the speed of the robot as
+with $G_b$ the gearbox ratio, $f_L$ the rotation frequency and $\Delta{t}$ the elapsed time. The angular velocity of the right wheel is computed in an analogous manner. The robot being modelled as differentially steered two-wheel, we obtain the speed of the robot as
 \begin{equation}
 v = \frac{v_L + v_R}{2} = \frac{R(w_L + w_R)}{2}
 \end{equation}
@@ -306,10 +306,10 @@ with $R$ the radius of each wheel. Thus, the travelled distance is written,
 \Delta{x} &= v\Delta{t}\\
 &= \frac{\pi R}{6 G_b}(n_L + n_R)
 \end{align*}
-Several factors are not taken into account in this computation such as acceleration, noise in the measurements and the fact that the robot experiences small deviations during the line-following process. With this in mind, the computed distance is discretized in sufficiently large intervals (5 cm) to be considered completely error-free. Lastly, interrupt routines were used, since the counts of the encoders must occur independently of the program flow.
+Several factors are not taken into account in this computation such as acceleration, noise in the measurements and the fact that the robot experiences small deviations during the line-following process. With this in mind, the computed distance is discretized in sufficiently large intervals (5 cm) to be considered an entirely error-free measure of the travelled edge length's. Since the counts of the encoders must occur independently of the program flow, interrupt routines were used.
 
 \subsection*{Communication}
-Communication with the master is performed via a bluetooth module \texttt{HC-06}. This specific module is adapted for establishing short range wireless data communication between two systems. Notably, a voltage divider was added to the circuit because of the difference between the logic level voltage of the Arduino ($0-5$ Volt) and the bleutooth module ($0-3.3$ Volt) (see Figure \ref{fig:electric-diagram}).
+Communication with the master is performed via a bluetooth module \texttt{HC-06}, which is adapted for establishing short range wireless data communication between two systems. Notably, a voltage divider was added to the circuit because of the difference between the logic level voltage of the Arduino ($0-5$ Volt) and the bleutooth module ($0-3.3$ Volt) (see Figure \ref{fig:electric-diagram}):
 
 \begin{align*} 
 V_{arduino} &=  \frac{R_4}{R_3+R_4}V_{bleutooth} \\[0.4cm]
@@ -317,7 +317,7 @@ V_{arduino} &=  \frac{R_4}{R_3+R_4}V_{bleutooth} \\[0.4cm]
 \end{align*}
 
 \subsection*{Power supply}
-Most components have a low consumption. Moreover, no high-performance speed was required. Thus, a rechargeable NiMH Battery of 7.2 Volts with a capacity of 900 mAh seemed sufficient.
+Most components have a low current consumption, and no high-performance speed was required. Thus, a rechargeable NiMH Battery of 7.2 Volts with a capacity of 900 mAh seemed sufficient.
 
 %------------------------------------------------
 \section{Physical construction}\label{sec:phys-constru}
@@ -384,7 +384,7 @@ The main steps of the robot's algorithm are detailed below. As can be observed, 
 \end{algorithm}
 
 \subsection*{Intersection detection \& classification}
-An anomaly is triggered when black is detected at one of the extremities of the \texttt{QTR} sensor. Since it could be a noisy measure, the robot continues its execution and checks if the same anomaly pattern occurs consecutively. If this is the case, the anomaly is finally viewed as an intersection. Whenever an intersection is detected, it continues its movement for a few inches in order to classify its type as given by Figure \ref{fig:types}.
+An anomaly is triggered when a black line is detected at one of the extremities of the \texttt{QTR} sensor. To distinguish noise, the robot continues its execution and checks if the same anomaly pattern occurs consecutively. If this is the case, the anomaly is finally viewed as an intersection. Whenever an intersection is detected, it continues its movement for a few inches in order to classify its type as given by Figure \ref{fig:types}.
 
 \begin{figure}[!h]
 \centering
@@ -394,12 +394,12 @@ An anomaly is triggered when black is detected at one of the extremities of the 
 \end{figure}
 
 \subsection*{Forward align}
-Since the robot rotates around the central point between the wheels (at the back), the robot must align the wheels with the detected intersection. This permits the robot to still be nicely aligned after a turn, and thus avoid large initial deviations in the line-following. In other words, once an intersection is detected the robot moves forward for a distance equivalent to its own length. As there may be no black line in front, the robot moves without the follow-line procedure but instead controls the speed of the two motors to be equal in order to go in a straight line.
+Since the robot rotates around its central point between the wheels, the robot first aligns the wheels with the detected intersection. This permits the robot to remain nicely aligned after a turn, and thus avoids large initial deviations in the line-following. In other words, once an intersection detected, the robot moves forward for a distance equivalent to its own length. As there may be no black line in front, the robot moves without the follow-line procedure, and instead controls the speed of the motors to be equal, in order to move in a straight line.
 
 \section{Architecture}\label{sec:archi}
-Figure \ref{fig:architecture} shows the architecture of the implementation in the micro-controller. The \textit{main} corresponds to the algorithm above. The \textit{COEX} class refers to the high-level features related to the cooperative exploration, which is based on low-level features. The advantages offered by this modularity are two-fold: it makes the debugging easier and the low-level features could be re-used for a different purpose.
+Figure \ref{fig:architecture} shows the architecture of the implementation in the micro-controller. The \textit{main} corresponds to the algorithm above. The \textit{COEX} class refers to the high-level features related to the cooperative exploration, which is based on low-level features. The advantages offered by this modularity are two-fold: it makes the debugging easier, and the low-level features can be re-used for a different purpose.
 
-A particular problem observed experimentally was that the sensors and actuators had optimal performance at different frequencies. The solution implemented assigns a frequency object to each to component/task.
+A particular problem observed experimentally was that the sensors and actuators obtained optimal performance levels at different frequencies. The implementation assigns a frequency object to each component to solve this issue.
 
 \begin{figure}[!h]
 \centering
@@ -413,7 +413,7 @@ A particular problem observed experimentally was that the sensors and actuators 
 \section{Control}
 %------------------------------------------------
 \subsection*{Line Following \& Speed Control}\label{sec:line-control}
-As a beginner roboticist I thought naively that the robot would go straight if the signal (PWM) send to the left and right motor were equal. To verify that this claim does not hold in reality, an experiment was performed were the same PWM signal is send to both motors and their respective speed are measured with the encoders. The result is shown in Figure \ref{fig:probs-control}. A varying difference between the two motors can clearly be noted. Moreover, we also observe that this relationship varies as the power supply discharges. With this in  mind a speed controller was developed in addition to a line-following controller. The two controllers take the form of a PID and are combined as in Figure \ref{fig:control-base}. Straightforwardly, the error of the speed controller is the \textit{target speed}\footnote{For the demo we fix the target speed to 8 centimeter per second.} $v^*$ minus the \textit{measured speed} $v$. On the other hand, the error of the direction controller is given by the so-called \textit{error line}, $x^*-x$ (previously discussed in Section \ref{sec:components}). The computed PWM values are denoted $u_L$ and $u_R$ for the left and right motor. With anti-windup.
+As an amateur roboticist I naively thought that the robot would go straight if the signals (PWM) send to the left and right motor were equal. Figure \ref{fig:probs-control} shows the result of an experiment were the same PWM signal is send to both motors and their respective speeds are measured with the encoders. A varying difference between the two motors can clearly be noted. Moreover, we also observe that this relationship varies as the power supply discharges. With this in  mind a speed controller was developed in addition to a line-following controller. The two controllers take the form of a PID (with anti-windup) and are combined as shown in Figure \ref{fig:control-base}. Straightforwardly, the error of the speed controller is the \textit{target speed}\footnote{For the demo we fix the target speed to 8 centimeter per second.} $v^*$ minus the \textit{measured speed} $v$. On the other hand, the error of the direction controller is given by the so-called \textit{error line}, $x^*-x$ (previously discussed in Section \ref{sec:components}). The computed PWM values are denoted $u_L$ and $u_R$ for the left and right motor.
 \begin{figure}[!h]
   \centering
   \includegraphics[scale=0.6]{figs/motors_merged}
@@ -440,11 +440,9 @@ The tuning of the parameters of the speed controller is done with respect to a t
 
 To adjust the parameters of the direction controller, the robot was placed on a parcours formed by curved black lines. The heuristic used for tuning was to double the $K_p$ parameter until oscillations occurred, then half it back one time and start to tune the other parameters. Once this was done, the target speed was increased by a small increment and the process repeated (until the desired behaviour). 
 
-By experimenting, several improvements were developed as can be viewed in the block diagram of Figure \ref{fig:control-base}. Indeed, the first observation to make is that there are a lot starts/stops during the exploration, which caused instabilities. It was suspected that this was due to a high current drainage by the motors for a sudden acceleration. A solution is to design and implement a smoother acceleration profile\footnote{See Appendix \ref{chap-extra}.} for a desired target speed to attain in a specific time interval, an intermediate value is computed namely the \textit{progress speed} The progress speed follows an acceleration in trapezoidal form, permitting the robots to have a slower start. 
+By experimenting, several improvements were developed as can be viewed in the block diagram of Figure \ref{fig:control-base}. Indeed, the first observation to make is that there are a lot starts/stops during the exploration, which causes instabilities. It was suspected that this was due to a high current drainage by the motors for a sudden acceleration. The proposed solution implements a smoother acceleration profile\footnote{See Appendix \ref{chap-extra}.}. For a desired target speed to attain in a specific time interval, an intermediate value is computed, namely the \textit{progress speed} The progress speed follows an acceleration in trapezoidal form, permitting the robots to perform a slower start. 
 
-
-
-Another challenge is that there can be a misalignment between the black line and the center of the robot after a turn. As a result, a \textit{derivative kick}\footnote{A derivative kick refers to a very large derivative as a consequence of a significant error. As large corrections are undesired, a common approach is to derive the measurements instead (already our case by default since setpoint remains unchanged) and to fix initial derivation to zero.} can occur, which was solved by fixing the initial derivation to zero. A second consequence of the misalignment is that in combination with the smooth acceleration, the correction from the direction controller is potentially too large with respect to the correction of the speed controller. This issue was solved by having a dynamic setpoint weighting, so that the direction correction is weighted with an hyperbolic tangent function converging rapidly with time to unity. 
+Another challenge is that there can be a misalignment between the black line and the center of the robot after a turn. As a result, a \textit{derivative kick}\footnote{A derivative kick refers to a very large derivative as a consequence of a significant error. As large corrections are undesired, a common approach is to derive the measurements instead (already our case by default since setpoint remains unchanged) and to fix initial derivation to zero.} can occur, which was solved by fixing the initial derivation to zero. A second consequence of the misalignment is that in combination with the smooth acceleration, the correction at start from the direction controller is potentially significantly large with respect to the correction of the speed controller. This issue was solved by having a dynamic setpoint weighting, such that the direction correction is weighted with an hyperbolic tangent function converging rapidly with time to unity. 
 
 \subsection*{Turning}
 The COEX-1 is modelled as a two-wheel robot (see figure below). By integrating the angular velocity under the assumption that $v_R = -v_L$, rotational displacement can be deduced
@@ -502,7 +500,7 @@ The algorithm of the master that was developed in simulation, showed satisfying 
 
 Constructing and implementing the physical robot to be robust and fast was challenging. Nevertheless, an efficient error-free mapping system with one robot could be demonstrated.
 
-Finally, two robots were used to map a physical environment. No entirely error-free solution was found as collisions could not be avoided for certain angles and speeds.
+Finally, two robots were used to map a physical environment. No entirely error-free solution was found as collisions could not always be avoided for certain angles and speeds.
 
 
 
