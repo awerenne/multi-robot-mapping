@@ -1,27 +1,27 @@
 # Multi-robot environment mapping 
 
-The objective of this project was to construct two robots, mapping an unknown environment as quickly as possible. The environments considered are exclusively composed of straight paths intersecting each other with right angles, where the paths are modelled by black lines on a white background. Furthermore, the robots are only allowed to move along those black lines during the exploration.
+The goal of this project was to construct two robots, mapping unknown environments as quickly as possible. The considered environments are exclusively composed of straight paths, intersecting each other with right angles, and modelled by black lines on a white background. Furthermore, the robots are only allowed to move along those black lines during the exploration.
 
-The developed solution follows a master-slave architecture. Each robot (slave) follows a black line while keeping track of the travelled distance. Once an intersection detected, the robot stops and sends an information message to the master, where the information contains the type of intersection encountered and the travelled distance since the previous intersection. This information is then used by the master (a program running locally on the computer) to update its internal representation of the environment (map) and compute the next instruction for the robot (stop, straight, turn left or right, uturn). 
+The developed solution follows a master-slave architecture. Each robot (slave) follows a black line while keeping track of the travelled distance. The robot stops once an intersection detected, and sends an information message to the master. The information contains the type of intersection encountered and the travelled distance since the previous intersection. This is then used by a program (master), running locally on a computer, to update its internal representation of the environment (i.e. map). The next instruction (stop, straight, turn left or right, uturn) for the robot is then computed and send. This procedure is repeated until the entire environment is detected.
 
 <p align="center">
     <img width="400" src="gifs/gif-left.gif">&nbsp;&nbsp;&nbsp;
     <img width="400" src="gifs/gif-right.gif">
 </p>
 
-The left-part of the animation above shows a live screen recording of the constructed map in the master corresponding to the exploration performed in the right-part. A video of the complete demonstration can be found [here](https://www.youtube.com/watch?v=w8zaz-Xr6bw&t=6s). In addition, the report describing the implementation and results can be found [here](https://awerenne.github.io/files/pp-report.pdf).
+The left-part of the animation above shows a live screen recording of the master constructing the map, corresponding to the exploration performed displayed in the right-part. A video of the complete demonstration can be found [here](https://www.youtube.com/watch?v=w8zaz-Xr6bw&t=6s). The implementation and results are described in the [report](https://awerenne.github.io/files/pp-report.pdf).
 
 ## Simulator
-It would have been costly in time to debug the mapping algorithm of the master if the exploration was performed by the physical robots. Instead, the master was first tested in a simulator, emulating random environments and robots. 
+Debugging the mapping algorithm with the exploration being performed by physical robots, would have been costly in time. Instead, the master was first tested in a simulator. The latter emulating random environments and robots. 
 
 <p align="center">
     <img width="500" src="gifs/gif-simul.gif">
 </p>
 
-The algorithm of the master is explained in the [report](report/personal-project.pdf)) (pages 8-11). A simulation can be lauched with <code>python main.py</code> in the folder *code/simulator/*. Notice that the flag <code>is_simulation</code> needs to be set to true in the config file.
+The algorithm of the master is explained in the [report](report/personal-project.pdf)) (pages 8-11). A simulation can be lauched with <code>python main.py</code> in the folder *code/simulator/*. The flag <code>is_simulation</code> needs to be set to true in the config file.
 
 ## Robot
-To make the robot robust a first challenge was to enable it to follow a curved line at constant speed. To this end, a speed and steering controller was developed (described in the [report](report/personal-project.pdf), pages 20-24). The result is shown below.
+To make the robot robust a first challenge was to enable it to follow a curved line at constant speed. To this end, a speed and steering controller were developed (described in the [report](report/personal-project.pdf), pages 20-24). The result is shown below.
 
 <p align="center">
     <img width="500" src="gifs/gif-control.gif">
