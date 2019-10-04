@@ -44,7 +44,7 @@ chassis and the wheels are placed on the motor shafts.
     <img width="460" height="300" src="step-7.jpg">
 </p>
 
-8. Wiring all the components as [here](../diagrams/electric.pdf)
+8. Wiring all the components as [here](../diagrams/electric.pdf).
 
 <p align="center">
     <img width="460" height="300" src="step-8.jpg">
