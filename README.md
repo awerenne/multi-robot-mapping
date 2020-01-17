@@ -2,7 +2,7 @@
 
 The goal of this project was to construct two robots, able to map unknown environments as quickly as possible. The considered environments are exclusively composed of straight black lines on a white background, intersecting each other with right angles. The robots being only allowed to move along those black lines during the exploration phase.
 
-The developed solution follows a master-slave architecture. Each robot (slave) follows a black line while keeping track of the travelled distance. Once an intersection detected, the robot stops and sends an information message to the master. The message contains the type of intersection encountered and the travelled distance since the previous intersection. This information is then used by a program (master), running locally on a computer, in order to update its internal representation of the environment (i.e. map). The next instruction (stop, straight, turn left or right, uturn) for the robot is then computed and send back to the rboto. This procedure is repeated until the entire environment is explored.
+The developed solution follows a master-slave architecture. Each robot (slave) follows a black line while keeping track of the travelled distance. Once an intersection detected, the robot stops and sends an information message to the master. The message contains the type of intersection encountered and the travelled distance since the previous intersection. This information is then used by a program (master), running locally on a computer, in order to update its internal representation of the environment (i.e. map). The next instruction (stop, straight, turn left or right, uturn) for the robot is then computed and send back to the rboto. This procedure is repeated until the environment is entirely explored.
 
 <p align="center">
     <img width="400" src="gifs/gif-left.gif">&nbsp;&nbsp;&nbsp;
@@ -38,12 +38,13 @@ The simulator can be launched as follows:
 1. ...
 
 The physical exploration can be launched as follows:
-1. Copy the folder *code/robot/NewCoex* in your Arduino folder, and load it as a library (explanations on how to load a library: [here](https://www.arduino.cc/en/guide/libraries)).
-2. Install the library corresponding to the QTR-X sensors, as explained [here](https://www.pololu.com/docs/0J19/2).
+1. Copy the folder *code/robot/NewCoex* in your Arduino folder, and load it as a library ([how to load a library](https://www.arduino.cc/en/guide/libraries)).
+2. Install the library corresponding to the [QTR-X sensors](https://www.pololu.com/docs/0J19/2).
 3. Upload the program *code/robot/mapping/mapping.ino* to the micro-controller.
-4. Verify in the config file that <code>is_simulation: False</code>, and that the ports correspond to the names of the used bluetooth modules.
-5. Switch the power of the robots on, and calibrate the line sensors.
-6. Launch the exploration with <code>python main.py</code> in *code/master/* .
+4. Set the flag <code>is_simulation</code> to false in the config file
+5. Check that the ports in the config files are correctly configured with the names of the bluetooth modules.
+5. Switch the power of the robots on and calibrate the line sensors.
+6. Launch the exploration with the command <code>python main.py</code> (in the folder *code/master/*).
 
 
 
