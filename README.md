@@ -35,16 +35,17 @@ The robot was then further augmented to loop through a serie of steps during the
 
 ## Usage
 The simulator can be launched as follows:
-1. ...
+1. Set the flag <code>is_simulation</code> to True in the config file.
+2. Run the command <code>python main.py</code> (in the folder *code/simulator/*).
 
 The physical exploration can be launched as follows:
 1. Copy the folder *code/robot/NewCoex* in your Arduino folder, and load it as a library ([how to load a library](https://www.arduino.cc/en/guide/libraries)).
 2. Install the library corresponding to the [QTR-X sensors](https://www.pololu.com/docs/0J19/2).
 3. Upload the program *code/robot/mapping/mapping.ino* to the micro-controller.
-4. Set the flag <code>is_simulation</code> to false in the config file
+4. Set the flag <code>is_simulation</code> to False in the config file.
 5. Check that the ports in the config files are correctly configured with the names of the bluetooth modules.
 5. Switch the power of the robots on and calibrate the line sensors.
-6. Launch the exploration with the command <code>python main.py</code> (in the folder *code/master/*).
+6. Run the command <code>python main.py</code> (in the folder *code/master/*).
 
 
 
