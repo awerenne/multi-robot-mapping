@@ -9,7 +9,7 @@ The developed solution follows a master-slave architecture. Each robot (slave) f
     <img width="400" src="gifs/gif-right.gif">
 </p>
 
-The left-part of the animation above shows a live screen recording of the master constructing the map, corresponding to the robot exploration performed (displayed in the right-part). A video of the complete demonstration can be found [here](https://www.youtube.com/watch?v=w8zaz-Xr6bw&t=6s). The implementation and results are described in the [report](https://awerenne.github.io/files/pp-report.pdf).
+The left-part of the animation above shows a live screen recording of the master constructing the map, corresponding to the robot exploration performed (displayed in the right-part). A video of the complete demonstration can be found [here](https://www.youtube.com/watch?v=w8zaz-Xr6bw&t=6s). The implementation and results are described in the [report](https://awerenne.github.io/files/pp-report.pdf). The different steps of the construction of the robots are documented [here](https://github.com/awerenne/multi-robot-mapping/blob/master/construction/README.md).
 
 ## Simulator
 Testing the mapping algorithm with the exploration being performed by physical robots would have been time-consuming. Instead, the exploration was simulated on random environments. 
